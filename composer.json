@@ -1,0 +1,27 @@
+{
+  "name": "kiwi-suite/media",
+  "description": "kiwi-suite/media",
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Andreas Friedrichgite "
+    }
+  ],
+  "require": {
+    "php": "^7.1",
+    "ext-gd":">=2.0",
+    "ext-imagick":">=6.5.7",
+    "kiwi-suite/servicemanager": "dev-develop",
+    "intervention/image":"^2.4.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.0.6",
+    "friendsofphp/php-cs-fixer": "^2.5",
+  },
+  "autoload": {
+    "psr-4": {
+      "KiwiSuite\\Media\\": "src/"
+    }
+  }
+}
