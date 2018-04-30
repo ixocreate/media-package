@@ -7,7 +7,7 @@ use KiwiSuite\Media\Entity\Media;
 
 interface DelegatorInterface
 {
-    public function responsible(Media $media);
+    public static function getName() : string;
 
-    public function process(Media $media);
+    public function responsible(Media $media);
 }

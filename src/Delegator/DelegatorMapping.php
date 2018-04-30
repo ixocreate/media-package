@@ -12,21 +12,34 @@ final class DelegatorMapping implements SerializableServiceInterface
      */
     private $mapping;
 
+    /**
+     * DelegatorMapping constructor.
+     * @param array $mapping
+     */
     public function __construct(array $mapping)
     {
         $this->mapping = $mapping;
     }
 
+    /**
+     * @return array
+     */
     public function getMapping(): array
     {
         return $this->mapping;
     }
 
+    /**
+     * @return string
+     */
     public function serialize()
     {
         return \serialize($this->mapping);
     }
 
+    /**
+     * @param string $serialized
+     */
     public function unserialize($serialized)
     {
         $this->mapping = \unserialize($serialized);

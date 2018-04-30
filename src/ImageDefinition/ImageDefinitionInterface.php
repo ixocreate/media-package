@@ -5,5 +5,13 @@ namespace KiwiSuite\Media\ImageDefinition;
 
 interface ImageDefinitionInterface
 {
-    public function generateImage($media);
+    public static function getName (): string;
+
+    public function getWidth(): ?int;
+
+    public function getHeight(): ?int;
+
+    public function getFit(): bool;
+
+    public function getDirectory(): string;
 }

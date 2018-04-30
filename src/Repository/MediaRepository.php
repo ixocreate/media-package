@@ -17,7 +17,10 @@ final class MediaRepository extends AbstractRepository
     {
         return Media::class;
     }
-    
+
+    /**
+     * @param ClassMetadataBuilder $builder
+     */
     public function loadMetadata(ClassMetadataBuilder $builder): void
     {
         $metadata = (new MediaMetadata($builder));

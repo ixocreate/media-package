@@ -12,6 +12,9 @@ use KiwiSuite\ServiceManager\SubManager\SubManagerConfigurator;
 
 final class DelegatorConfigurator implements ConfiguratorInterface
 {
+    /**
+     * @var SubManagerConfigurator
+     */
     private $subManagerConfigurator;
 
     /**
@@ -22,6 +25,9 @@ final class DelegatorConfigurator implements ConfiguratorInterface
         $this->subManagerConfigurator = new SubManagerConfigurator(DelegatorSubManager::class, DelegatorInterface::class);
     }
 
+    /**
+     * @return SubManagerConfigurator
+     */
     public function getManagerConfigurator()
     {
         return $this->subManagerConfigurator;
@@ -33,7 +39,7 @@ final class DelegatorConfigurator implements ConfiguratorInterface
      */
     public function addDirectory(string $directory, bool $recursive = true): void
     {
-        $this->subManagerConfigurator->addDirectory($directory,$recursive);
+        $this->subManagerConfigurator->addDirectory($directory, $recursive);
     }
 
     /**
@@ -59,7 +65,8 @@ final class DelegatorConfigurator implements ConfiguratorInterface
             if (!\is_subclass_of($id, DelegatorInterface::class, true)) {
                 throw new \InvalidArgumentException(\sprintf("'%s' doesn't implement '%s'", $id, DelegatorInterface::class));
             }
-            $name = \forward_static_call([$id, 'name']);
+
+            $name = \forward_static_call([$id, 'getName']);
             $delegatorMapping[$name] = $id;
         }
 

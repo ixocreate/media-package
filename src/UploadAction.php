@@ -8,14 +8,14 @@
 
 namespace KiwiSuite\Media;
 
-
-use App\Entity\Media;
-use App\Repository\MediaRepository;
+use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Media\Repository\MediaRepository;
 use Cocur\Slugify\Slugify;
-use Intervention\Image\ImageManager;
 use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
 use KiwiSuite\CommandBus\CommandBus;
+use KiwiSuite\Media\Delegator\DelegatorMapping;
+use KiwiSuite\Media\Delegator\DelegatorSubManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -35,22 +35,44 @@ final class UploadAction implements MiddlewareInterface
      */
     private $mediaRepository;
 
-    public function __construct(CommandBus $commandBus, MediaRepository $mediaRepository)
+    /**
+     * @var DelegatorMapping
+     */
+    private $delegatorMapping;
+
+    /**
+     * @var DelegatorSubManager
+     */
+    private $delegatorSubManager;
+
+
+    /**
+     * UploadAction constructor.
+     * @param CommandBus $commandBus
+     * @param MediaRepository $mediaRepository
+     * @param DelegatorMapping $delegators
+     * @param DelegatorSubManager $delegatorSubManager
+     */
+    public function __construct(CommandBus $commandBus, MediaRepository $mediaRepository, DelegatorMapping $delegators, DelegatorSubManager $delegatorSubManager)
     {
         $this->commandBus = $commandBus;
         $this->mediaRepository = $mediaRepository;
+        $this->delegatorMapping = $delegators;
+        $this->delegatorSubManager = $delegatorSubManager;
     }
 
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!\array_key_exists('file', $request->getUploadedFiles())) {
             return new ApiErrorResponse("invalid_file");
         }
-
 
         $upload = $request->getUploadedFiles()['file'];
         if (!($upload instanceof UploadedFile)) {
@@ -80,38 +102,13 @@ final class UploadAction implements MiddlewareInterface
             'createdAt' => new \DateTimeImmutable(),
         ]);
 
-        $media = $this->mediaRepository->save($media);
+        foreach ($this->delegatorMapping->getMapping() as $delegator) {
+            $delegator = $this->delegatorSubManager->get($delegator);
+            $delegator->responsible($media);
+        }
 
-        $this->generateImage($media);
+        $this->mediaRepository->save($media);
 
         return new ApiSuccessResponse();
-    }
-
-    private function generateImage(Media $media)
-    {
-        if (substr($media->mimeType(), 0 , 6)  !== 'image/') {
-            return;
-        }
-
-        if (strpos($media->mimeType(), 'svg') !== false) {
-            return;
-        }
-
-        $imageManager = new ImageManager(['driver' => 'imagick']);
-
-        mkdir('data/media/img/promotion/' . $media->basePath(), 0777, true);
-        $image = $imageManager->make('data/media/' . $media->basePath() . $media->filename());
-        $image->resize(680, null, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-        $image->save('data/media/img/promotion/' . $media->basePath() . $media->filename());
-        $image->destroy();
-
-        mkdir('data/media/img/admin-thumb/' . $media->basePath(), 0777, true);
-        $image = $imageManager->make('data/media/' . $media->basePath() . $media->filename());
-        $image->fit(500, 500);
-        $image->save('data/media/img/admin-thumb/' . $media->basePath() . $media->filename());
-        $image->destroy();
     }
 }
