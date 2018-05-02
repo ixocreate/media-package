@@ -36,17 +36,17 @@ final class AdminThumb implements ImageDefinitionInterface
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
-    public function getWidth()
+    public function getWidth(): ?int
     {
         return $this->width;
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
-    public function getHeight()
+    public function getHeight(): ?int
     {
         return $this->height;
     }
@@ -54,7 +54,7 @@ final class AdminThumb implements ImageDefinitionInterface
     /**
      * @return bool
      */
-    public function getFit()
+    public function getFit(): bool
     {
         return $this->fit;
     }

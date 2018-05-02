@@ -54,7 +54,7 @@ final class Promotion implements ImageDefinitionInterface
     /**
      * @return bool
      */
-    public function getFit()
+    public function getFit(): bool
     {
         return $this->fit;
     }
@@ -62,7 +62,7 @@ final class Promotion implements ImageDefinitionInterface
     /**
      * @return string
      */
-    public function getDirectory()
+    public function getDirectory(): string
     {
         return $this->directory;
     }

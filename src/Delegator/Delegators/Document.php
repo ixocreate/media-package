@@ -26,21 +26,21 @@ final class Document implements DelegatorInterface
         return 'Document';
     }
 
-    /**
-     * @param Media $media
-     */
+
     public function responsible(Media $media)
     {
         $pathInfo = \pathinfo($media->filename());
         $extension = $pathInfo['extension'];
+        $responsible = true;
 
-        if (!\in_array($media->mimeType(), $this->allowedMimeTypes)) {
-            return;
+        if ((!\in_array($media->mimeType(), $this->allowedMimeTypes)) &&
+            (!\in_array($extension, $this->allowedFileExtensions))) {
+            $responsible = false;
         }
-        if (!\in_array($extension, $this->allowedFileExtensions)) {
-            return;
+        if ($responsible === true) {
+            $this->process($media);
         }
-        $this->process($media);
+        return $responsible;
     }
 
     /**

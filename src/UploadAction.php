@@ -45,6 +45,16 @@ final class UploadAction implements MiddlewareInterface
      */
     private $delegatorSubManager;
 
+    /**
+     * @var int
+     */
+    private $countDelegators;
+
+    /**
+     * @var int
+     */
+    private $countDenies;
+
 
     /**
      * UploadAction constructor.
@@ -59,6 +69,7 @@ final class UploadAction implements MiddlewareInterface
         $this->mediaRepository = $mediaRepository;
         $this->delegatorMapping = $delegators;
         $this->delegatorSubManager = $delegatorSubManager;
+        $this->countDelegators = count($this->delegatorMapping->getMapping());
     }
 
     /**
@@ -102,9 +113,17 @@ final class UploadAction implements MiddlewareInterface
             'createdAt' => new \DateTimeImmutable(),
         ]);
 
+        $notResponsible = 0;
+
         foreach ($this->delegatorMapping->getMapping() as $delegator) {
             $delegator = $this->delegatorSubManager->get($delegator);
-            $delegator->responsible($media);
+            if ($delegator->responsible($media) === false) {
+                $notResponsible++;
+            }
+        }
+
+        if ($notResponsible === $this->countDelegators) {
+            return new ApiErrorResponse('File-Type not supported');
         }
 
         $this->mediaRepository->save($media);
