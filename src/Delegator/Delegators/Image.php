@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Delegator\Delegators;
 
+use KiwiSuite\Config\Config;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
@@ -42,14 +43,21 @@ final class Image implements DelegatorInterface
     private $imageDefinitionSubManager;
 
     /**
+     * @var array|mixed|null
+     */
+    private $mediaConfig;
+
+    /**
      * Image constructor.
      * @param ImageDefinitionMapping $imageDefinitionMapping
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
+     * @param Config $config
      */
-    public function __construct(ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager)
+    public function __construct(ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, Config $config)
     {
         $this->imageDefinitionMapping = $imageDefinitionMapping;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
+        $this->mediaConfig = $config->get('media');
     }
 
     /**
@@ -82,9 +90,10 @@ final class Image implements DelegatorInterface
      */
     private function process(Media $media)
     {
+        $imageManager = new ImageManager(['driver' => $this->mediaConfig['driver']]);
+
         foreach ($this->imageDefinitionMapping->getMapping() as $imageDefinition) {
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
-            $imageManager = new ImageManager(['driver' => 'imagick']);
 
             $width = $imageDefinition->getWidth();
             $height = $imageDefinition->getHeight();

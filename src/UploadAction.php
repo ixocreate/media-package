@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: afriedrich
- * Date: 20.04.18
- * Time: 13:14
- */
+declare(strict_types=1);
 
 namespace KiwiSuite\Media;
 
@@ -25,7 +20,6 @@ use Zend\Diactoros\UploadedFile;
 
 final class UploadAction implements MiddlewareInterface
 {
-
     /**
      * @var CommandBus
      */
@@ -51,12 +45,6 @@ final class UploadAction implements MiddlewareInterface
     private $countDelegators;
 
     /**
-     * @var int
-     */
-    private $countDenies;
-
-
-    /**
      * UploadAction constructor.
      * @param CommandBus $commandBus
      * @param MediaRepository $mediaRepository
@@ -73,11 +61,11 @@ final class UploadAction implements MiddlewareInterface
     }
 
     /**
-     * Process an incoming server request and return a response, optionally delegating
-     * response creation to a handler.
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
