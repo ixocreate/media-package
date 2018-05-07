@@ -9,6 +9,7 @@ use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
+use KiwiSuite\Media\MediaConfig;
 
 final class Image implements DelegatorInterface
 {
@@ -43,7 +44,7 @@ final class Image implements DelegatorInterface
     private $imageDefinitionSubManager;
 
     /**
-     * @var array|mixed|null
+     * @var MediaConfig
      */
     private $mediaConfig;
 
@@ -51,13 +52,13 @@ final class Image implements DelegatorInterface
      * Image constructor.
      * @param ImageDefinitionMapping $imageDefinitionMapping
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
-     * @param Config $config
+     * @param MediaConfig $mediaConfig
      */
-    public function __construct(ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, Config $config)
+    public function __construct(ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
     {
         $this->imageDefinitionMapping = $imageDefinitionMapping;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
-        $this->mediaConfig = $config->get('media');
+        $this->mediaConfig = $mediaConfig;
     }
 
     /**
@@ -90,7 +91,7 @@ final class Image implements DelegatorInterface
      */
     private function process(Media $media)
     {
-        $imageManager = new ImageManager(['driver' => $this->mediaConfig['driver']]);
+        $imageManager = new ImageManager(['driver' => $this->mediaConfig->getDriver()]);
 
         foreach ($this->imageDefinitionMapping->getMapping() as $imageDefinition) {
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
