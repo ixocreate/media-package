@@ -5,7 +5,7 @@ namespace KiwiSuite\Media\Exceptions;
 
 use Psr\Container\ContainerExceptionInterface;
 
-class InvalidExtensionException extends \RuntimeException implements
+class InvalidConfigException extends \RuntimeException implements
     ContainerExceptionInterface
 {
 }
