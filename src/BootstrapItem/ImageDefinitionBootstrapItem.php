@@ -38,6 +38,6 @@ final class ImageDefinitionBootstrapItem implements BootstrapItemInterface
      */
     public function getFileName(): string
     {
-        return 'imageDefinition.php';
+        return 'image_definition.php';
     }
 }

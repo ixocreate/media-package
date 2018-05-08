@@ -110,7 +110,6 @@ final class UploadAction implements MiddlewareInterface
         ]);
 
         $notResponsible = 0;
-
         foreach ($this->delegatorMapping->getMapping() as $delegator) {
             $delegator = $this->delegatorSubManager->get($delegator);
             if ($delegator->responsible($media) === false) {
