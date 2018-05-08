@@ -9,7 +9,7 @@
  */
 declare(strict_types=1);
 
-namespace KiwiSuite\Media;
+namespace KiwiSuite\Media\Action;
 
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Repository\MediaRepository;
