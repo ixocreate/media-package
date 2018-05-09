@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace KiwiSuite\Media;
-/** @var \KiwiSuite\Database\Repository\RepositoryConfigurator $repository */
 
 use KiwiSuite\Media\Repository\MediaRepository;
 
+/** @var \KiwiSuite\Database\Repository\RepositoryConfigurator $repository */
 $repository->addRepository(MediaRepository::class);

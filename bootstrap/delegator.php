@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace KiwiSuite\Media;
+
 use KiwiSuite\Media\Delegator\DelegatorConfigurator;
 
 /** @var DelegatorConfigurator $delegator */

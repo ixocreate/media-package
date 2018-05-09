@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace KiwiSuite\Media;
+
 use KiwiSuite\ServiceManager\ServiceManagerConfigurator;
 use KiwiSuite\Media\MediaConfig;
 use KiwiSuite\Media\Factory\MediaConfigFactory;
