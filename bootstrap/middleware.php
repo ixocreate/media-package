@@ -1,10 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace KiwiSuite\Media;
-
 use KiwiSuite\ApplicationHttp\Middleware\MiddlewareConfigurator;
-use KiwiSuite\Media\UploadAction;
 
 /** @var MiddlewareConfigurator $middleware */
-$middleware->addAction(UploadAction::class);
+$middleware->addAction(\KiwiSuite\Media\Action\UploadAction::class);
+$middleware->addAction(\KiwiSuite\Media\Action\IndexAction::class);
