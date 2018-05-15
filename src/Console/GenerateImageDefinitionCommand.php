@@ -24,17 +24,10 @@ final class GenerateImageDefinitionCommand extends Command implements CommandInt
      */
     private $template = <<<'EOD'
 <?php
-/**
- * kiwi-suite/%s (https://github.com/kiwi-suite/%s)
- *
- * @package kiwi-suite/%s
- * @see https://github.com/kiwi-suite/%s
- * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
- * @license MIT License
- */
+
 declare(strict_types=1);
 
-namespace KiwiSuite\%s\ImageDefinition;
+namespace App\Media\ImageDefinition;
 
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 
@@ -116,7 +109,6 @@ EOD;
     {
         $this
             ->addArgument('name', InputArgument::REQUIRED, 'Name of the Definition.')
-            ->addArgument('repo', InputArgument::REQUIRED, 'Name of the Repository in which ImageDefinition should be generated')
         ;
     }
 
@@ -128,40 +120,37 @@ EOD;
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $sanatizedInput = $this->sanatizeInput($input);
-
-        if (!\is_dir(\getcwd() . '/vendor/kiwi-suite/' . $sanatizedInput['repo'])) {
-            throw new \Exception(sprintf("Given Repository '%s' does not exist!", $sanatizedInput['repo']));
+        if(!\is_dir(\getcwd() . '/src/App/Media')){
+            \mkdir(\getcwd() . '/src/App/Media');
         }
 
-        if (\file_exists(\getcwd() . '/vendor/kiwi-suite/' . $sanatizedInput['repo'] . '/src/ImageDefinition/' . $sanatizedInput['name'] . '.php')) {
+        if(!\is_dir(\getcwd() . '/src/App/Media/ImageDefinition')){
+            \mkdir(\getcwd() . '/src/App/Media/ImageDefinition');
+        }
+
+        if (\file_exists(\getcwd() .
+            '/src/App/Media/ImageDefinition/' .
+            \trim(\ucfirst($input->getArgument('name'))) . '.php')) {
             throw new \Exception("ImageDefinition file already exists");
         }
 
-        if(!\is_dir(\getcwd() . '/vendor/kiwi-suite/' . $sanatizedInput['repo'] . '/src/ImageDefinition')){
-            \mkdir(\getcwd() . '/vendor/kiwi-suite/' . $sanatizedInput['repo'] . '/src/ImageDefinition');
-        }
+        $this->generateFile($input);
 
-        $this->generateFile($sanatizedInput);
-
-        $output->writeln(\sprintf("<info>ImageDefinition '%s' generated</info>", $sanatizedInput['name']));
+        $output->writeln(
+            \sprintf("<info>ImageDefinition '%s' generated</info>", \trim(\ucfirst($input->getArgument('name'))))
+        );
     }
 
     /**
      * @param array $sanatizedInput
      */
-    private function generateFile(array $sanatizedInput): void
+    private function generateFile(InputInterface $input): void
     {
         \file_put_contents(
-            \getcwd() . '/vendor/kiwi-suite/' . $sanatizedInput['repo'] . '/src/ImageDefinition/' . $sanatizedInput['name'] . '.php',
+            \getcwd() . '/src/App/Media/ImageDefinition/' . \trim(\ucfirst($input->getArgument('name'))) . '.php',
             \sprintf($this->template,
-                $sanatizedInput['repo'],
-                $sanatizedInput['repo'],
-                $sanatizedInput['repo'],
-                $sanatizedInput['repo'],
-                \ucfirst($sanatizedInput['repo']),
-                $sanatizedInput['name'],
-                $sanatizedInput['name']
+                \trim(\ucfirst($input->getArgument('name'))),
+                \trim(\ucfirst($input->getArgument('name')))
             )
         );
     }
@@ -173,18 +162,4 @@ EOD;
     {
         return "media:generate-imageDefinition";
     }
-
-    /**
-     * @param InputInterface $input
-     * @return array
-     */
-    private function sanatizeInput(InputInterface $input): array {
-        $sanatizeInput = [
-            'name' => \trim(\ucfirst($input->getArgument('name'))),
-            'repo' => \trim(\lcfirst($input->getArgument('repo')))
-        ];
-        return $sanatizeInput;
-    }
-
-    // TODO : Maybe auto-register generated ImageDefinitions
 }
