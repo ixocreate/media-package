@@ -42,15 +42,13 @@ final class ImageDefinitionListCommand extends Command implements CommandInterfa
 
         $data = [];
         foreach ($this->imageDefinitionMapping->getMapping() as $name => $namespace) {
-            $repo = explode('\\',$namespace);
             $data[] = [
                 $name,
-                $repo[1]
             ];
         }
 
         $io->table(
-            ['ImageDefinition', 'Repository'],
+            ['ImageDefinition'],
             $data
         );
     }
