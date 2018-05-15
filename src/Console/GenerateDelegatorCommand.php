@@ -22,19 +22,11 @@ final class GenerateDelegatorCommand extends Command implements CommandInterface
      */
     private $template = <<<'EOD'
 <?php
-/**
- * kiwi-suite/media (https://github.com/kiwi-suite/media)
- *
- * @package kiwi-suite/media
- * @see https://github.com/kiwi-suite/media
- * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
- * @license MIT License
- */
+
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Delegator\Delegators;
+namespace App\Media\Delegator;
 
-use KiwiSuite\Config\Config;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Delegator\DelegatorInterface;
 
@@ -62,7 +54,10 @@ final class %s implements DelegatorInterface
         return '%s';
     }
 
-
+    /**
+     * @param Media $media
+     * @return bool
+     */
     public function responsible(Media $media)
     {
         $pathInfo = \pathinfo($media->filename());
@@ -88,6 +83,9 @@ final class %s implements DelegatorInterface
 }
 EOD;
 
+    /**
+     * GenerateDelegatorCommand constructor.
+     */
     public function __construct()
     {
         parent::__construct(self::getCommandName());
@@ -99,14 +97,33 @@ EOD;
         $this->addArgument('name', InputArgument::REQUIRED, 'Name of Delegator');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (\file_exists(\getcwd() . '/vendor/kiwi-suite/media/src/Delegator/Delegators/' . \trim(\ucfirst($input->getArgument('name'))) . '.php')) {
+        if(!\is_dir(\getcwd() . '/src/App/Media')){
+            \mkdir(\getcwd() . '/src/App/Media');
+        }
+
+        if(!\is_dir(\getcwd() . '/src/App/Media/Delegator')){
+            \mkdir(\getcwd() . '/src/App/Media/Delegator');
+        }
+
+        if (\file_exists(\getcwd() .
+            '/src/App/Media/Delegator/' .
+            \trim(\ucfirst($input->getArgument('name'))) . '.php')) {
             throw new \Exception("Delegator file already exists");
         }
+
         $this->generateFile($input);
 
-        $output->writeln(\sprintf("<info>Delegator '%s' generated</info>", \trim(\ucfirst($input->getArgument('name')))));
+        $output->writeln(
+            \sprintf("<info>Delegator '%s' generated</info>", \trim(\ucfirst($input->getArgument('name'))))
+        );
     }
 
     /**
@@ -115,7 +132,7 @@ EOD;
     private function generateFile(InputInterface $input): void
     {
         \file_put_contents(
-            \getcwd() . '/vendor/kiwi-suite/media/src/Delegator/Delegators/' . \trim(\ucfirst($input->getArgument('name'))) . '.php',
+            \getcwd() . '/src/App/Media/Delegator/' . \trim(\ucfirst($input->getArgument('name'))) . '.php',
             \sprintf($this->template,
                 \trim(\ucfirst($input->getArgument('name'))),
                 \trim(\ucfirst($input->getArgument('name')))
@@ -123,10 +140,12 @@ EOD;
         );
     }
 
+    /**
+     * @return string
+     */
     public static function getCommandName()
     {
         return "media:generate-Delegator";
     }
 
-    // TODO : Maybe auto-register generated Delegators
 }
