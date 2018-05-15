@@ -40,15 +40,13 @@ final class DelegatorListCommand extends Command implements CommandInterface
 
         $data = [];
         foreach ($this->delegatorMapping->getMapping() as $name => $namespace) {
-            $repo = explode('\\',$namespace);
             $data[] = [
                 $name,
-                $repo[1]
             ];
         }
 
         $io->table(
-            ['Delegator', 'Repository'],
+            ['Delegator'],
             $data
         );
     }
