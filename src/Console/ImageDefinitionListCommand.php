@@ -58,6 +58,6 @@ final class ImageDefinitionListCommand extends Command implements CommandInterfa
      */
     public static function getCommandName()
     {
-        return 'media:list-ImageDefinitions';
+        return 'media:list-imageDefinitions';
     }
 }
