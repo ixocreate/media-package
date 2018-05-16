@@ -9,7 +9,7 @@ use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
 use KiwiSuite\Media\MediaConfig;
-use App\Repository\MediaRepository;
+use KiwiSuite\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
