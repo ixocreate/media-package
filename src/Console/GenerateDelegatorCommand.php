@@ -145,7 +145,7 @@ EOD;
      */
     public static function getCommandName()
     {
-        return "media:generate-Delegator";
+        return "media:generate-delegator";
     }
 
 }
