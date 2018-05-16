@@ -43,7 +43,9 @@ class Package implements PackageInterface
      */
     public function getConfigProvider(): ?array
     {
-        return null;
+        return [
+            ConfigProvider::class,
+        ];
     }
 
     /**
@@ -66,7 +68,7 @@ class Package implements PackageInterface
      */
     public function getConfigDirectory(): ?string
     {
-        return __DIR__ . '/../config';
+        return null;
     }
 
     /**
