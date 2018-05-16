@@ -56,6 +56,6 @@ final class DelegatorListCommand extends Command implements CommandInterface
      */
     public static function getCommandName()
     {
-        return 'media:list-Delegators';
+        return 'media:list-delegators';
     }
 }
