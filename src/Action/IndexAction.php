@@ -37,7 +37,7 @@ final class IndexAction implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $media = [];
-        $result = $this->mediaRepository->findBy([], ['createdAt' => 'DESC']);
+        $result = $this->mediaRepository->findBy([], ['createdAt' => 'ASC']);
         foreach ($result as $item) {
             $media[] = $item->toPublicArray();
         }

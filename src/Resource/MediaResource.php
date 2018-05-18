@@ -35,6 +35,11 @@ final class MediaResource implements ResourceInterface
         return "fa";
     }
 
+    public function indexAction(): ?string
+    {
+        return IndexAction::class;
+    }
+
     public function schema(): array
     {
         return [
