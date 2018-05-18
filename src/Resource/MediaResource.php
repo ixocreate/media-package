@@ -14,6 +14,7 @@ namespace KiwiSuite\Media\Resource;
 
 use KiwiSuite\Admin\Resource\ResourceInterface;
 use KiwiSuite\Admin\Resource\ResourceTrait;
+use KiwiSuite\Media\Action\IndexAction;
 use KiwiSuite\Media\Repository\MediaRepository;
 
 final class MediaResource implements ResourceInterface
