@@ -109,7 +109,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
             $progressBar = new ProgressBar($output, $count);
             $this->generateFiles($imageDefinition, $progressBar);
         } else {
-            $count = \count($this->mediaRepository->findAll()) * \count($this->imageDefinitionMapping->getMapping());
+            $count = (\count($this->mediaRepository->findAll())) * (\count($this->imageDefinitionMapping->getMapping()));
             foreach ($this->imageDefinitionMapping->getMapping() as $imageDefinition) {
                 $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
                 $progressBar = new ProgressBar($output, $count);
