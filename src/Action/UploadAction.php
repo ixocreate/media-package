@@ -88,17 +88,17 @@ final class UploadAction implements MiddlewareInterface
 
         do {
             $basePath = \implode('/', str_split(bin2hex(random_bytes(3)), 2)) . '/';
-            $exists = is_dir('data/media/' . $basePath);
+            $exists = \is_dir('data/media/' . $basePath);
         } while ($exists === true);
 
-        mkdir('data/media/' . $basePath, 0777, true);
+        \mkdir('data/media/' . $basePath, 0777, true);
         $filenameParts = pathinfo($upload->getClientFilename());
         $slugify = new Slugify();
         $filename = $slugify->slugify($filenameParts['filename']) . '.' . $filenameParts['extension'];
 
         $upload->moveTo('data/media/' . $basePath . $filename);
 
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $finfo = \finfo_open(FILEINFO_MIME_TYPE);
 
         $media = new Media([
             'id' => Uuid::uuid4(),
