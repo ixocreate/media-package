@@ -17,6 +17,7 @@ use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
+use KiwiSuite\Media\Processor\ImageProcessor;
 use KiwiSuite\Media\MediaConfig;
 
 final class Image implements DelegatorInterface
@@ -99,34 +100,20 @@ final class Image implements DelegatorInterface
      */
     private function process(Media $media)
     {
-        $imageManager = new ImageManager(['driver' => $this->mediaConfig->getDriver()]);
-
         foreach ($this->imageDefinitionMapping->getMapping() as $imageDefinition) {
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
 
-            $width = $imageDefinition->getWidth();
-            $height = $imageDefinition->getHeight();
-            $fit = $imageDefinition->getFit();
-            $directory = trim($imageDefinition->getDirectory(), '/');
+            $imageParameters = [
+                'path'      => 'data/media/' . $media->basePath(),
+                'filename'  => $media->filename(),
+                'savingDir' => 'data/media/img/'. \trim($imageDefinition->getDirectory(), '/') . '/' . $media->basePath(),
+                'width'     => $imageDefinition->getWidth(),
+                'height'    => $imageDefinition->getHeight(),
+                'fit'       => $imageDefinition->getFit()
+            ];
 
-            mkdir('data/media/img/'. $directory . '/' . $media->basePath(), 0777, true);
-            $image = $imageManager->make('data/media/' . $media->basePath() . $media->filename());
-
-            if ($fit === true) {
-                $image->fit($width, $height, function($constraint) {
-                    $constraint->upsize();
-                });
-            } else {
-                $image->resize($width, $height, function($constraint) use ($width, $height) {
-                    if ($width === null || $height === null) {
-                        $constraint->aspectRatio();
-                        $constraint->upsize();
-                    }
-                });
-            }
-
-            $image->save('data/media/img/' . $directory . '/' . $media->basePath() . $media->filename());
-            $image->destroy();
+            $imageProcessor = new ImageProcessor($imageParameters, $this->mediaConfig);
+            $imageProcessor->process();
         }
     }
 
