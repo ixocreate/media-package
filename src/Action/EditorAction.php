@@ -1,16 +1,18 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: afriedrich
- * Date: 16.05.18
- * Time: 16:45
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
  */
+declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action;
 
-
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Media\Editor\EditorHandler;
+use KiwiSuite\Media\Processor\EditorProcessor;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
@@ -21,7 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class EditorAction implements MiddlewareInterface
+final class EditorAction implements MiddlewareInterface
 {
     /**
      * @var MediaRepository
@@ -70,11 +72,10 @@ class EditorAction implements MiddlewareInterface
         $requestParameters = $this->provideRequestParameters();
         $mediaParameters = $this->provideMediaParameters();
         $imageDefinitionParameters = $this->provideImageDefinitionParameters();
-        $mediaConfig = $this->mediaConfig;
 
-        $editorHandler = new EditorHandler($requestParameters, $mediaParameters, $imageDefinitionParameters, $mediaConfig);
-        $editorHandler->handle();
-//        return new ApiSuccessResponse();
+        $editorProcessor = new EditorProcessor($requestParameters, $mediaParameters, $imageDefinitionParameters);
+        $editorProcessor->process();
+        return new ApiSuccessResponse();
     }
 
     /**
@@ -83,8 +84,8 @@ class EditorAction implements MiddlewareInterface
     private function provideRequestParameters()
     {
         $requestParameters = [
-            'xPosition' => $this->data['x'],
-            'yPosition' => $this->data['y'],
+            'x'         => $this->data['x'],
+            'y'         => $this->data['y'],
             'width'     => $this->data['width'],
             'height'    => $this->data['height'],
         ];
@@ -115,14 +116,13 @@ class EditorAction implements MiddlewareInterface
     private function provideImageDefinitionParameters()
     {
         $mapping = $this->imageDefinitionMapping->getMapping();
-        $definition = \trim(\ucfirst($this->data['imageDefinition']));
-        $definition = $this->imageDefinitionSubManager->get($mapping[$definition]);
+        $definitionName = \trim(\ucfirst($this->data['imageDefinition']));
+        $definition = $this->imageDefinitionSubManager->get($mapping[$definitionName]);
         $imageDefinitionParameters = [
             'name'      => $definition->getName(),
-            'namespace' => $mapping[$definition->getName()],
-            'fit'       => $definition->getFit(),
+            'directory' => $definition->getDirectory(),
             'width'     => $definition->getWidth(),
-            'height'    => $definition->getHeight()
+            'height'    => $definition->getHeight(),
         ];
         return $imageDefinitionParameters;
     }
