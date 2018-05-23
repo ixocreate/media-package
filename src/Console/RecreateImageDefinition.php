@@ -14,6 +14,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
+use KiwiSuite\Media\Processor\ImageProcessor;
 
 final class RecreateImageDefinition extends Command implements CommandInterface
 {
@@ -128,10 +129,8 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $progressBar->setFormat('verbose');
         $progressBar->start();
 
-        $width = $imageDefinition->getWidth();
-        $height = $imageDefinition->getHeight();
-        $fit = $imageDefinition->getFit();
         $directory = \trim($imageDefinition->getDirectory(), '/');
+
 
         if (!\is_dir(\getcwd() . '/data/media/img/' . $directory)) {
             \mkdir(\getcwd() . '/data/media/img/' . $directory);
@@ -139,27 +138,20 @@ final class RecreateImageDefinition extends Command implements CommandInterface
 
         if (\is_dir(\getcwd() . '/data/media/img/' . $directory)) {
             foreach ($this->mediaRepository->findAll() as $media) {
-                if (!\is_dir(\getcwd() . '/data/media/img/' . $directory . '/' . $media->basePath())) {
-                    \mkdir(\getcwd() . '/data/media/img/' . $directory . '/' . $media->basePath(), 0777, true);
-                }
-                $image = $this->imageManager->make('data/media/' . $media->basePath() . $media->filename());
+                $imageParameters = [
+                    'path'      => 'data/media/' . $media->basePath(),
+                    'filename'  => $media->filename(),
+                    'savingDir' => 'data/media/img/'. $directory . '/' . $media->basePath(),
+                    'width'     => $imageDefinition->getWidth(),
+                    'height'    => $imageDefinition->getHeight(),
+                    'fit'       => $imageDefinition->getFit()
+                ];
 
-                if ($fit === true) {
-                    $image->fit($width, $height, function ($constraint) {
-                        $constraint->upsize();
-                    });
-                } else {
-                    $image->resize($width, $height, function ($constraint) use ($width, $height) {
-                        if ($width === null || $height === null) {
-                            $constraint->aspectRatio();
-                            $constraint->upsize();
-                        }
-                    });
-                }
-                $image->save('data/media/img/' . $directory . '/' . $media->basePath() . $media->filename());
+                $imageProcessor = new ImageProcessor($imageParameters, $this->mediaConfig);
+                $imageProcessor->process();
+
                 $progressBar->setMessage($media->filename(), 'is processed');
                 $progressBar->advance();
-                $image->destroy();
             }
         }
     }
