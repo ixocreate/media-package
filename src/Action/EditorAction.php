@@ -56,7 +56,8 @@ final class EditorAction implements MiddlewareInterface
      * @param ImageDefinitionMapping $imageDefinitionMapping
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
-    public function __construct(MediaRepository $mediaRepository, ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
+    public function __construct(
+        MediaRepository $mediaRepository, ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
