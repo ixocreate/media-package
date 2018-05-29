@@ -17,7 +17,7 @@ use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
-use KiwiSuite\Media\Processor\ImageProcessor;
+use KiwiSuite\Media\Processor\UploadImageProcessor;
 use KiwiSuite\Media\MediaConfig;
 
 final class Image implements DelegatorInterface
@@ -112,7 +112,7 @@ final class Image implements DelegatorInterface
                 'fit'       => $imageDefinition->getFit()
             ];
 
-            $imageProcessor = new ImageProcessor($imageParameters, $this->mediaConfig);
+            $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);
             $imageProcessor->process();
         }
     }
