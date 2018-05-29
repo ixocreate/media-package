@@ -67,7 +67,7 @@ final class EditorAction implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $this->data = json_decode($request->getBody()->getContents(),true);
+        $this->data = \json_decode($request->getBody()->getContents(),true);
 
         $requestParameters = $this->provideRequestParameters();
         $mediaParameters = $this->provideMediaParameters();
@@ -98,8 +98,8 @@ final class EditorAction implements MiddlewareInterface
     private function provideMediaParameters()
     {
         $media = $this->mediaRepository->findBy(['id' => $this->data['id']])[0];
-        $file = getcwd() . '/data/media/' . $media->basePath() . $media->filename();
-        $file = getimagesize($file);
+        $file = \getcwd() . '/data/media/' . $media->basePath() . $media->filename();
+        $file = \getimagesize($file);
         $mediaParameter = [
             'width'     => $file[0],
             'height'    => $file[1],
