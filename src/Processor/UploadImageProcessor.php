@@ -75,7 +75,6 @@ final class UploadImageProcessor
             });
         }
 
-
         $image->save($savingDir . $filename);
         $image->destroy();
     }
