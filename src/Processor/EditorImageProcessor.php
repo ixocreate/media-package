@@ -61,11 +61,13 @@ final class EditorImageProcessor
         $this->image = $this->imageManager->make($path);
     }
 
+    /**
+     * Processes the recieved action
+     * @throws Exception
+     */
     public function process()
     {
-        $this->checkSelectBoxSize();
-        $this->checkCanvas();
-        
+        $this->validateRequest();
         $width = $this->imageDefinitionParameters['width'];
         $height = $this->imageDefinitionParameters['height'];
 
@@ -93,39 +95,53 @@ final class EditorImageProcessor
         );
         $this->image->destroy();
     }
-    
+
+    /**
+     * Validates the incoming request parameters
+     * @throws Exception
+     */
+    private function validateRequest()
+    {
+        $this->checkSelectBoxSize();
+        $this->checkFactor();
+        $this->checkCanvas();
+    }
+
+    /**
+     * @throws Exception
+     */
     private function checkSelectBoxSize()
     {
-        $minSelectBoxSizeWidth = $this->imageDefinitionParameters['width'];
-        $minSelectBoxSizeHeight = $this->imageDefinitionParameters['height'];
-
-        if ($minSelectBoxSizeWidth === null && $minSelectBoxSizeHeight === null) {
+        if ($this->imageDefinitionParameters['width'] === null && $this->imageDefinitionParameters['height'] === null) {
             throw new Exception(
                 "Neither 'width' or 'height' is defined in the ImageDefinition, atleast one needs to be set."
             );
         }
 
-        if ($minSelectBoxSizeWidth === null || $minSelectBoxSizeHeight === null) {
+        if ($this->imageDefinitionParameters['width'] === null || $this->imageDefinitionParameters['height'] === null) {
             $this->checkAutoSelectBoxSize();
-        } else {
-            if ($this->requestParameters['width'] < $minSelectBoxSizeWidth) {
-                $this->requestParameters['width'] = $minSelectBoxSizeWidth;
-            }
-            if ($this->requestParameters['height'] < $minSelectBoxSizeHeight) {
-                $this->requestParameters['height'] = $minSelectBoxSizeHeight;
-            }
+            return;
+        }
+        $this->gaugeMinBoxSize();
+    }
 
-            $currentSelectBoxSizeFactor =
-                \floor(($this->requestParameters['width'] / $this->requestParameters['height']) * 100) / 100;
+    /**
+     * Gauges the allowed minimum select size
+     */
+    private function gaugeMinBoxSize()
+    {
+        if ($this->requestParameters['width'] < $this->imageDefinitionParameters['width']) {
+            $this->requestParameters['width'] = $this->imageDefinitionParameters['width'];
+        }
 
-            $checkfactor = $this->checkFactor();
-
-            if ($currentSelectBoxSizeFactor != $checkfactor) {
-                throw new Exception('Size doesnt conform ImageDefinition factor');
-            }
+        if ($this->requestParameters['height'] < $this->imageDefinitionParameters['height']) {
+            $this->requestParameters['height'] = $this->imageDefinitionParameters['height'];
         }
     }
 
+    /**
+     * Gauges the allowed minimum select size, when null is given in an ImageDefinition
+     */
     private function checkAutoSelectBoxSize()
     {
         if ($this->imageDefinitionParameters['width'] === null) {
@@ -143,6 +159,9 @@ final class EditorImageProcessor
         }
     }
 
+    /**
+     * Gauges the X and Y position
+     */
     private function checkCanvas()
     {
         $positionX = $this->requestParameters['x'];
@@ -165,14 +184,21 @@ final class EditorImageProcessor
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function checkFactor()
     {
-        $factor = null;
-        $factor =
+        $imageDefinitionFactor =
             \floor(
                 ($this->imageDefinitionParameters['width'] / $this->imageDefinitionParameters['height']) * 100
             ) / 100;
-        return $factor;
+        $selectBoxFactor =
+            \floor(($this->requestParameters['width'] / $this->requestParameters['height']) * 100) / 100;
+
+        if ($imageDefinitionFactor != $selectBoxFactor) {
+            throw new Exception('Size doesnt conform ImageDefinition factor');
+        }
 
     }
 
