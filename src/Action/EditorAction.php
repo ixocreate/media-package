@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace KiwiSuite\Media\Action;
 
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Media\Processor\EditorProcessor;
+use KiwiSuite\Media\Processor\EditorImageProcessor;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
@@ -56,8 +56,7 @@ final class EditorAction implements MiddlewareInterface
      * @param ImageDefinitionMapping $imageDefinitionMapping
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
-    public function __construct(
-        MediaRepository $mediaRepository, ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
+    public function __construct(MediaRepository $mediaRepository, ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
@@ -74,7 +73,7 @@ final class EditorAction implements MiddlewareInterface
         $mediaParameters = $this->provideMediaParameters();
         $imageDefinitionParameters = $this->provideImageDefinitionParameters();
 
-        $editorProcessor = new EditorProcessor($requestParameters, $mediaParameters, $imageDefinitionParameters);
+        $editorProcessor = new EditorImageProcessor($requestParameters, $mediaParameters, $imageDefinitionParameters);
         $editorProcessor->process();
         return new ApiSuccessResponse();
     }
