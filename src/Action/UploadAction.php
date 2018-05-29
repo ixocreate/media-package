@@ -65,7 +65,7 @@ final class UploadAction implements MiddlewareInterface
         $this->mediaRepository = $mediaRepository;
         $this->delegatorMapping = $delegators;
         $this->delegatorSubManager = $delegatorSubManager;
-        $this->countDelegators = count($this->delegatorMapping->getMapping());
+        $this->countDelegators = \count($this->delegatorMapping->getMapping());
     }
 
     /**
@@ -92,7 +92,7 @@ final class UploadAction implements MiddlewareInterface
         } while ($exists === true);
 
         \mkdir('data/media/' . $basePath, 0777, true);
-        $filenameParts = pathinfo($upload->getClientFilename());
+        $filenameParts = \pathinfo($upload->getClientFilename());
         $slugify = new Slugify();
         $filename = $slugify->slugify($filenameParts['filename']) . '.' . $filenameParts['extension'];
 
