@@ -14,7 +14,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use KiwiSuite\Media\Processor\ImageProcessor;
+use KiwiSuite\Media\Processor\UploadImageProcessor;
 
 final class RecreateImageDefinition extends Command implements CommandInterface
 {
@@ -38,10 +38,6 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      */
     private $mediaRepository;
 
-    /**
-     * @var ImageManager
-     */
-    private $imageManager;
 
     /**
      * RefactorImageDefinition constructor.
@@ -58,7 +54,6 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $this->imageDefinitionSubManager= $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->mediaRepository = $mediaRepository;
-        $this->imageManager = new ImageManager(['driver' => $this->mediaConfig->getDriver()]);
     }
 
     public function configure()
@@ -109,7 +104,9 @@ final class RecreateImageDefinition extends Command implements CommandInterface
             $count = \count($this->mediaRepository->findAll());
             $progressBar = new ProgressBar($output, $count);
             $this->generateFiles($imageDefinition, $progressBar);
-        } else {
+        }
+
+        if (!isset($inputName)) {
             $count = (\count($this->mediaRepository->findAll())) * (\count($this->imageDefinitionMapping->getMapping()));
             foreach ($this->imageDefinitionMapping->getMapping() as $imageDefinition) {
                 $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
@@ -117,6 +114,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                 $this->generateFiles($imageDefinition, $progressBar);
             }
         }
+
         $progressBar->finish();
     }
 
@@ -131,28 +129,21 @@ final class RecreateImageDefinition extends Command implements CommandInterface
 
         $directory = \trim($imageDefinition->getDirectory(), '/');
 
+        foreach ($this->mediaRepository->findAll() as $media) {
+            $imageParameters = [
+                'path'      => 'data/media/' . $media->basePath(),
+                'filename'  => $media->filename(),
+                'savingDir' => 'data/media/img/'. $directory . '/' . $media->basePath(),
+                'width'     => $imageDefinition->getWidth(),
+                'height'    => $imageDefinition->getHeight(),
+                'fit'       => $imageDefinition->getFit()
+            ];
 
-        if (!\is_dir(\getcwd() . '/data/media/img/' . $directory)) {
-            \mkdir(\getcwd() . '/data/media/img/' . $directory);
-        }
+            $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);
+            $imageProcessor->process();
 
-        if (\is_dir(\getcwd() . '/data/media/img/' . $directory)) {
-            foreach ($this->mediaRepository->findAll() as $media) {
-                $imageParameters = [
-                    'path'      => 'data/media/' . $media->basePath(),
-                    'filename'  => $media->filename(),
-                    'savingDir' => 'data/media/img/'. $directory . '/' . $media->basePath(),
-                    'width'     => $imageDefinition->getWidth(),
-                    'height'    => $imageDefinition->getHeight(),
-                    'fit'       => $imageDefinition->getFit()
-                ];
-
-                $imageProcessor = new ImageProcessor($imageParameters, $this->mediaConfig);
-                $imageProcessor->process();
-
-                $progressBar->setMessage($media->filename(), 'is processed');
-                $progressBar->advance();
-            }
+            $progressBar->setMessage($media->filename(), 'is processed');
+            $progressBar->advance();
         }
     }
 }
