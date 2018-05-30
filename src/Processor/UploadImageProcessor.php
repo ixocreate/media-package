@@ -51,7 +51,6 @@ final class UploadImageProcessor
         if(!\is_dir($savingDir)) {
             \mkdir($savingDir, 0777, true);
         }
-
         $image = $imageManager->make($path . $filename);
         $imageWidth = $image->width();
         $imageHeight = $image->height();
