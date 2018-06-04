@@ -14,6 +14,7 @@ namespace KiwiSuite\Media\Resource;
 
 use KiwiSuite\Admin\Resource\ResourceInterface;
 use KiwiSuite\Admin\Resource\ResourceTrait;
+use KiwiSuite\Admin\Schema\SchemaBuilder;
 use KiwiSuite\Media\Action\IndexAction;
 use KiwiSuite\Media\Repository\MediaRepository;
 
@@ -41,11 +42,9 @@ final class MediaResource implements ResourceInterface
         return IndexAction::class;
     }
 
-    public function schema(): array
+    public function schema(SchemaBuilder $schemaBuilder): void
     {
-        return [
-            'name'       => 'Media',
-            'namePlural' => 'Media',
-        ];
+        $schemaBuilder->setName("Media");
+        $schemaBuilder->setNamePlural("Media");
     }
 }
