@@ -63,7 +63,7 @@ final class Media implements EntityInterface
         return $this->createdAt;
     }
 
-    protected function createDefinitions(): DefinitionCollection
+    protected static function createDefinitions(): DefinitionCollection
     {
         return new DefinitionCollection([
             new Definition('id', UuidType::class, true, true),
