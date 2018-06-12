@@ -12,81 +12,53 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Type;
 
-use KiwiSuite\Entity\Type\Convert\Convert;
-use KiwiSuite\Entity\Type\TypeInterface;
-use KiwiSuite\Media\Entity\Media;
+use Doctrine\DBAL\Types\GuidType;
+use KiwiSuite\Contract\Type\DatabaseTypeInterface;
+use KiwiSuite\Entity\Type\AbstractType;
 use KiwiSuite\Media\Repository\MediaRepository;
 
-final class ImageType implements TypeInterface
+final class ImageType extends AbstractType implements DatabaseTypeInterface
 {
-    /**
-     * @var Media
-     */
-    private $value;
-
-    /**
-     * @var Media
-     */
-    private $model;
-
     /**
      * @var MediaRepository
      */
     private $mediaRepository;
 
-    /**
-     * ImageType constructor.
-     *
-     * @param string          $value
-     * @param MediaRepository $mediaRepository
-     */
-    public function __construct(string $value, MediaRepository $mediaRepository)
+    protected function transform($value)
     {
-        $this->mediaRepository = $mediaRepository;
-        $this->model = $mediaRepository->find($value);
-        if (!empty($this->model)) {
-            $this->value = (string)$this->model->id();
+        $value = $this->mediaRepository->find($value);
+        if (!empty($value)) {
+            return $value;
         }
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function __toString()
     {
-        return $this->value;
+        if (empty($this->value())) {
+            return "";
+        }
+
+        return $this->value()->id();
     }
 
     /**
-     * @param $value
-     * @return mixed
-     */
-    public static function convertToInternalType($value)
-    {
-        if ($value instanceof Media) {
-            return (string)$value->id();
-        }
-
-        if (is_array($value) && array_key_exists("id", $value)) {
-            return (string)$value['id'];
-        }
-
-        return Convert::convertString($value);
-    }
-
-    /**
-     * Specify data which should be serialized to JSON
-     *
-     * @link  http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @return mixed|null|string
      */
     public function jsonSerialize()
     {
-        if (empty($this->model)) {
+        if (empty($this->value())) {
             return null;
         }
-        return $this->model->toPublicArray();
+        return $this->value()->toPublicArray();
+    }
+
+    public function convertToDatabaseValue()
+    {
+        return (string) $this;
+    }
+
+    public static function baseDatabaseType(): string
+    {
+        return GuidType::class;
     }
 }
