@@ -22,7 +22,7 @@ use KiwiSuite\Media\Delegator\DelegatorSubManager;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use KiwiSuite\ServiceManager\ServiceManagerConfigurator;
 
-class Package implements PackageInterface
+final class Package implements PackageInterface
 {
     /**
      * @param ConfiguratorRegistryInterface $configuratorRegistry
