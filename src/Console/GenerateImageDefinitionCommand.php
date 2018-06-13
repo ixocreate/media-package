@@ -102,14 +102,13 @@ EOD;
     public function __construct()
     {
         parent::__construct(self::getCommandName());
-        $this->setDescription('Generate a new ImageDefinition');
     }
 
     public function configure()
     {
         $this
-            ->addArgument('name', InputArgument::REQUIRED, 'Name of the Definition.')
-        ;
+            ->setDescription('Generate a new ImageDefinition')
+            ->addArgument('name', InputArgument::REQUIRED, 'Name of the Definition.');
     }
 
     /**
@@ -120,12 +119,8 @@ EOD;
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if(!\is_dir(\getcwd() . '/src/App/Media')){
-            \mkdir(\getcwd() . '/src/App/Media');
-        }
-
-        if(!\is_dir(\getcwd() . '/src/App/Media/ImageDefinition')){
-            \mkdir(\getcwd() . '/src/App/Media/ImageDefinition');
+        if (!\is_dir(\getcwd() . '/src/App/Media/ImageDefinition')) {
+            \mkdir(\getcwd() . '/src/App/Media/ImageDefinition', 0777, true);
         }
 
         if (\file_exists(\getcwd() .
