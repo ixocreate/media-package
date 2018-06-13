@@ -89,12 +89,13 @@ EOD;
     public function __construct()
     {
         parent::__construct(self::getCommandName());
-        $this->setDescription('Generate a new Delegator');
     }
 
     public function configure()
     {
-        $this->addArgument('name', InputArgument::REQUIRED, 'Name of Delegator');
+        $this
+            ->setDescription('Generate a new Delegator')
+            ->addArgument('name', InputArgument::REQUIRED, 'Name of Delegator');
     }
 
     /**
@@ -105,12 +106,9 @@ EOD;
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if(!\is_dir(\getcwd() . '/src/App/Media')){
-            \mkdir(\getcwd() . '/src/App/Media');
-        }
 
-        if(!\is_dir(\getcwd() . '/src/App/Media/Delegator')){
-            \mkdir(\getcwd() . '/src/App/Media/Delegator');
+        if (!\is_dir(\getcwd() . '/src/App/Media/Delegator')) {
+            \mkdir(\getcwd() . '/src/App/Media/Delegator', 0777, true);
         }
 
         if (\file_exists(\getcwd() .
@@ -127,7 +125,7 @@ EOD;
     }
 
     /**
-     * @param array $sanatizedInput
+     * @param InputInterface $input
      */
     private function generateFile(InputInterface $input): void
     {
