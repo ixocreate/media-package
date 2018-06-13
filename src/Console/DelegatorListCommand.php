@@ -1,4 +1,5 @@
-<?php/**
+<?php
+/**
  * kiwi-suite/media (https://github.com/kiwi-suite/media)
  *
  * @package kiwi-suite/media
