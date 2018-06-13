@@ -31,10 +31,11 @@ final class DelegatorListCommand extends Command implements CommandInterface
     {
         $this->delegatorMapping = $delegatorMapping;
         parent::__construct(self::getCommandName());
-        $this->setDescription('A List of all registered Delegators');
     }
+
     protected function configure()
     {
+        $this->setDescription('A List of all registered Delegators');
     }
 
     /**

@@ -31,12 +31,11 @@ final class ImageDefinitionListCommand extends Command implements CommandInterfa
     {
         $this->imageDefinitionMapping = $imageDefinitionMapping;
         parent::__construct(self::getCommandName());
-        $this->setDescription('A List of all registered ImageDefinitions');
-
     }
 
     protected function configure()
     {
+        $this->setDescription('A List of all registered ImageDefinitions');
     }
 
     /**
