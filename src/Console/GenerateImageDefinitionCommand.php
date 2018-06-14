@@ -8,6 +8,7 @@
  * @license MIT License
  */
 declare(strict_types=1);
+namespace KiwiSuite\Media\Console;
 
 use Symfony\Component\Console\Command\Command;
 use KiwiSuite\Contract\Command\CommandInterface;
