@@ -42,9 +42,11 @@ final class MediaResource implements ResourceInterface
         return IndexAction::class;
     }
 
-    public function schema(SchemaBuilder $schemaBuilder): void
+    public function schema(SchemaBuilder $schemaBuilder): SchemaBuilder
     {
-        $schemaBuilder->setName("Media");
-        $schemaBuilder->setNamePlural("Media");
+        $schemaBuilder = $schemaBuilder->withName("Media");
+        $schemaBuilder = $schemaBuilder->withNamePlural("Media");
+
+        return $schemaBuilder;
     }
 }
