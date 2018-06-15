@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace KiwiSuite\Media\Action;
 
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
+use KiwiSuite\Media\Exceptions\InvalidArgumentException;
 use KiwiSuite\Media\Processor\EditorImageProcessor;
 use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use KiwiSuite\Media\MediaConfig;
 use KiwiSuite\Media\Repository\MediaRepository;
@@ -36,11 +36,6 @@ final class EditorAction implements MiddlewareInterface
     private $mediaConfig;
 
     /**
-     * @var ImageDefinitionMapping
-     */
-    private $imageDefinitionMapping;
-
-    /**
      * @var ImageDefinitionSubManager
      */
     private $imageDefinitionSubManager;
@@ -56,11 +51,14 @@ final class EditorAction implements MiddlewareInterface
      * @param ImageDefinitionMapping $imageDefinitionMapping
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
-    public function __construct(MediaRepository $mediaRepository, ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
+    public function __construct(
+        MediaRepository $mediaRepository,
+        ImageDefinitionSubManager $imageDefinitionSubManager,
+        MediaConfig $mediaConfig
+    )
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
-        $this->imageDefinitionMapping = $imageDefinitionMapping;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
     }
 
@@ -115,9 +113,16 @@ final class EditorAction implements MiddlewareInterface
      */
     private function provideImageDefinitionParameters()
     {
-        $mapping = $this->imageDefinitionMapping->getMapping();
-        $definitionName = \trim(\ucfirst($this->data['imageDefinition']));
-        $definition = $this->imageDefinitionSubManager->get($mapping[$definitionName]);
+        if (!array_key_exists(
+            $this->data['imageDefinition'],
+            $this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices())) {
+            throw new InvalidArgumentException(
+                sprintf('ImageDefinition: %s does not exist', $this->data['imageDefinition'])
+            );
+        }
+
+        $definitionName = $this->data['imageDefinition'];
+        $definition = $this->imageDefinitionSubManager->get($definitionName);
         $imageDefinitionParameters = [
             'name'      => $definition->getName(),
             'directory' => $definition->getDirectory(),
