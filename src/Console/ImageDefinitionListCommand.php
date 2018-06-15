@@ -10,27 +10,27 @@
 declare(strict_types=1);
 namespace KiwiSuite\Media\Console;
 
+use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Symfony\Component\Console\Command\Command;
 use KiwiSuite\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ImageDefinitionListCommand extends Command implements CommandInterface
 {
     /**
-     * @var ImageDefinitionMapping
+     * @var ImageDefinitionSubManager
      */
-    private $imageDefinitionMapping;
+    private $imageDefinitionSubManager;
 
     /**
      * ImageDefinitionListCommand constructor.
-     * @param ImageDefinitionMapping $imageDefinitionMapping
+     * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
-    public function __construct(ImageDefinitionMapping $imageDefinitionMapping)
+    public function __construct(ImageDefinitionSubManager $imageDefinitionSubManager)
     {
-        $this->imageDefinitionMapping = $imageDefinitionMapping;
+        $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         parent::__construct(self::getCommandName());
     }
 
@@ -49,7 +49,7 @@ final class ImageDefinitionListCommand extends Command implements CommandInterfa
         $io = new SymfonyStyle($input, $output);
 
         $data = [];
-        foreach ($this->imageDefinitionMapping->getMapping() as $name => $namespace) {
+        foreach (array_keys($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices()) as $name) {
             $data[] = [
                 $name,
             ];

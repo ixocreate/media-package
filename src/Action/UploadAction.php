@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action;
 
+use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Repository\MediaRepository;
 use Cocur\Slugify\Slugify;
 use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
 use KiwiSuite\CommandBus\CommandBus;
-use KiwiSuite\Media\Delegator\DelegatorMapping;
 use KiwiSuite\Media\Delegator\DelegatorSubManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,18 +29,9 @@ use Zend\Diactoros\UploadedFile;
 final class UploadAction implements MiddlewareInterface
 {
     /**
-     * @var CommandBus
-     */
-    private $commandBus;
-    /**
      * @var MediaRepository
      */
     private $mediaRepository;
-
-    /**
-     * @var DelegatorMapping
-     */
-    private $delegatorMapping;
 
     /**
      * @var DelegatorSubManager
@@ -54,18 +45,14 @@ final class UploadAction implements MiddlewareInterface
 
     /**
      * UploadAction constructor.
-     * @param CommandBus $commandBus
      * @param MediaRepository $mediaRepository
-     * @param DelegatorMapping $delegators
      * @param DelegatorSubManager $delegatorSubManager
      */
-    public function __construct(CommandBus $commandBus, MediaRepository $mediaRepository, DelegatorMapping $delegators, DelegatorSubManager $delegatorSubManager)
+    public function __construct(MediaRepository $mediaRepository, DelegatorSubManager $delegatorSubManager)
     {
-        $this->commandBus = $commandBus;
         $this->mediaRepository = $mediaRepository;
-        $this->delegatorMapping = $delegators;
         $this->delegatorSubManager = $delegatorSubManager;
-        $this->countDelegators = \count($this->delegatorMapping->getMapping());
+        $this->countDelegators = \count($this->delegatorSubManager->getServices());
     }
 
     /**
@@ -110,7 +97,8 @@ final class UploadAction implements MiddlewareInterface
         ]);
 
         $notResponsible = 0;
-        foreach ($this->delegatorMapping->getMapping() as $delegator) {
+        foreach ($this->delegatorSubManager->getServiceManagerConfig()->getNamedServices() as $name => $delegator) {
+            /** @var DelegatorInterface $delegator */
             $delegator = $this->delegatorSubManager->get($delegator);
             if ($delegator->responsible($media) === false) {
                 $notResponsible++;

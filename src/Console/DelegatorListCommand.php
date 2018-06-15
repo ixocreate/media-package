@@ -8,29 +8,30 @@
  * @license MIT License
  */
 declare(strict_types=1);
+
 namespace KiwiSuite\Media\Console;
 
+use KiwiSuite\Media\Delegator\DelegatorSubManager;
 use Symfony\Component\Console\Command\Command;
 use KiwiSuite\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use KiwiSuite\Media\Delegator\DelegatorMapping;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class DelegatorListCommand extends Command implements CommandInterface
 {
     /**
-     * @var DelegatorMapping
+     * @var DelegatorSubManager
      */
-    private $delegatorMapping;
+    private $delegatorSubManager;
 
     /**
      * DelegatorListCommand constructor.
-     * @param DelegatorMapping $delegatorMapping
+     * @param DelegatorSubManager $delegatorSubManager
      */
-    public function __construct(DelegatorMapping $delegatorMapping)
+    public function __construct(DelegatorSubManager $delegatorSubManager)
     {
-        $this->delegatorMapping = $delegatorMapping;
+        $this->delegatorSubManager = $delegatorSubManager;
         parent::__construct(self::getCommandName());
     }
 
@@ -49,7 +50,7 @@ final class DelegatorListCommand extends Command implements CommandInterface
         $io = new SymfonyStyle($input, $output);
 
         $data = [];
-        foreach ($this->delegatorMapping->getMapping() as $name => $namespace) {
+        foreach (array_keys($this->delegatorSubManager->getServiceManagerConfig()->getNamedServices()) as $name) {
             $data[] = [
                 $name,
             ];

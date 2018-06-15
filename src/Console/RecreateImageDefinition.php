@@ -14,7 +14,6 @@ use Symfony\Component\Console\Command\Command;
 use KiwiSuite\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
 use KiwiSuite\Media\MediaConfig;
@@ -24,14 +23,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\Processor\UploadImageProcessor;
+use KiwiSuite\Media\Exceptions\InvalidArgumentException;
 
 final class RecreateImageDefinition extends Command implements CommandInterface
 {
-    /**
-     * @var ImageDefinitionMapping
-     */
-    private $imageDefinitionMapping;
-
     /*
      * @var ImageDefinitionSubManager
      */
@@ -55,11 +50,12 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param MediaConfig $mediaConfig
      * @param MediaRepository $mediaRepository
      */
-    public function __construct(ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig, MediaRepository $mediaRepository)
+    public function __construct(ImageDefinitionSubManager $imageDefinitionSubManager,
+                                MediaConfig $mediaConfig,
+                                MediaRepository $mediaRepository
+    )
     {
         parent::__construct(self::getCommandName());
-        $this->setDescription("Recreates all previous saved files of an ImageDefinition");
-        $this->imageDefinitionMapping = $imageDefinitionMapping;
         $this->imageDefinitionSubManager= $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->mediaRepository = $mediaRepository;
@@ -67,9 +63,9 @@ final class RecreateImageDefinition extends Command implements CommandInterface
 
     public function configure()
     {
-        $this->addArgument(
-          'name', InputArgument::OPTIONAL, 'Name of specific ImageDefinition to be refactored'
-        );
+        $this
+            ->addArgument('name', InputArgument::OPTIONAL, 'Name of specific ImageDefinition to be refactored')
+            ->setDescription("Recreates all previous saved files of an ImageDefinition");
     }
 
     /**
@@ -101,23 +97,29 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     {
         if (!empty($input->getArgument('name'))) {
             $inputName = $input->getArgument('name');
-            $inputName = \trim(\ucfirst($inputName));
-            if (!array_key_exists($inputName, $this->imageDefinitionMapping->getMapping())) {
-                throw new Exception(\sprintf("ImageDefinition '%s' does not exist", $inputName));
+            $inputName = \trim($inputName);
+            if (!in_array(
+                $inputName,
+                array_keys($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices()))) {
+                throw new InvalidArgumentException(\sprintf("ImageDefinition '%s' does not exist", $inputName));
             }
         }
 
         if (isset($inputName)) {
-            $name = $this->imageDefinitionMapping->getMapping()[$inputName];
-            $imageDefinition = $this->imageDefinitionSubManager->get($name);
+            /** @var ImageDefinitionInterface $imageDefinition */
+            $imageDefinition = $this->imageDefinitionSubManager->get($inputName);
             $count = \count($this->mediaRepository->findAll());
             $progressBar = new ProgressBar($output, $count);
             $this->generateFiles($imageDefinition, $progressBar);
         }
 
         if (!isset($inputName)) {
-            $count = (\count($this->mediaRepository->findAll())) * (\count($this->imageDefinitionMapping->getMapping()));
-            foreach ($this->imageDefinitionMapping->getMapping() as $imageDefinition) {
+            $count =
+                (\count($this->mediaRepository->findAll())) *
+                (\count($this->imageDefinitionSubManager->getServices()));
+
+            foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
+                /** @var ImageDefinitionInterface $imageDefinition */
                 $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
                 $progressBar = new ProgressBar($output, $count);
                 $this->generateFiles($imageDefinition, $progressBar);
