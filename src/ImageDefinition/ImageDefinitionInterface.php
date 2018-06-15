@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\ImageDefinition;
 
-interface ImageDefinitionInterface
-{
-    public static function getName (): string;
+use KiwiSuite\Contract\ServiceManager\NamedServiceInterface;
 
+interface ImageDefinitionInterface extends NamedServiceInterface
+{
     public function getWidth(): ?int;
 
     public function getHeight(): ?int;

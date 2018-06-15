@@ -58,32 +58,10 @@ final class ImageDefinitionConfigurator implements ConfiguratorInterface
     }
 
     /**
-     * @return ImageDefinitionMapping
-     */
-    public function getImageDefinitionMapping()
-    {
-        $config = $this->subManagerConfigurator;
-
-        $factories = $config->getServiceManagerConfig()->getFactories();
-
-        $imageDefinitionMapping = [];
-        foreach ($factories as $id => $factory) {
-            if (!\is_subclass_of($id, ImageDefinitionInterface::class, true)) {
-                throw new \InvalidArgumentException(\sprintf("'%s' doesn't implement '%s'", $id, ImageDefinitionInterface::class));
-            }
-            $name = \forward_static_call([$id, 'getName']);
-            $imageDefinitionMapping[$name] = $id;
-        }
-
-        return new ImageDefinitionMapping($imageDefinitionMapping);
-    }
-
-    /**
      * @param ServiceRegistryInterface $serviceRegistry
      */
     public function registerService(ServiceRegistryInterface $serviceRegistry): void
     {
-        $serviceRegistry->add(ImageDefinitionMapping::class, $this->getImageDefinitionMapping());
         $this->subManagerConfigurator->registerService($serviceRegistry);
     }
 }

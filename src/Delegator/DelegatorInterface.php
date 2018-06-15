@@ -11,11 +11,10 @@ declare (strict_types=1);
 
 namespace KiwiSuite\Media\Delegator;
 
+use KiwiSuite\Contract\ServiceManager\NamedServiceInterface;
 use KiwiSuite\Media\Entity\Media;
 
-interface DelegatorInterface
+interface DelegatorInterface extends NamedServiceInterface
 {
-    public static function getName() : string;
-
     public function responsible(Media $media);
 }

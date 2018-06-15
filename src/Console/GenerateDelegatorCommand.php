@@ -50,9 +50,9 @@ final class %s implements DelegatorInterface
     /**
      * @return string
      */
-    public static function getName() : string
+    public static function serviceName(): string
     {
-        return '%s';
+        return "%s";
     }
 
     /**

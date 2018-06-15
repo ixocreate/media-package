@@ -14,6 +14,7 @@ namespace KiwiSuite\Media\Delegator\Delegators;
 use KiwiSuite\Config\Config;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Delegator\DelegatorInterface;
+use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
@@ -43,11 +44,6 @@ final class Image implements DelegatorInterface
     ];
 
     /**
-     * @var ImageDefinitionMapping : ImageDefinitionInterface
-     */
-    private $imageDefinitionMapping;
-
-    /**
      * @var ImageDefinitionSubManager
      */
     private $imageDefinitionSubManager;
@@ -63,9 +59,8 @@ final class Image implements DelegatorInterface
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
      */
-    public function __construct(ImageDefinitionMapping $imageDefinitionMapping, ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
+    public function __construct(ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
     {
-        $this->imageDefinitionMapping = $imageDefinitionMapping;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
     }
@@ -73,11 +68,10 @@ final class Image implements DelegatorInterface
     /**
      * @return string
      */
-    public static function getName() : string
+    public static function serviceName(): string
     {
-        return 'Image';
+        return "Image";
     }
-
 
     public function responsible(Media $media)
     {
@@ -100,7 +94,8 @@ final class Image implements DelegatorInterface
      */
     private function process(Media $media)
     {
-        foreach ($this->imageDefinitionMapping->getMapping() as $imageDefinition) {
+        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
+            /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
 
             $imageParameters = [

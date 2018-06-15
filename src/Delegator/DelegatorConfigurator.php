@@ -59,34 +59,12 @@ final class DelegatorConfigurator implements ConfiguratorInterface
         $this->subManagerConfigurator->addFactory($action, $factory);
     }
 
-    /**
-     * @return DelegatorMapping
-     */
-    public function getDelegatorMapping() : DelegatorMapping
-    {
-        $config = $this->getManagerConfigurator();
-
-        $factories = $config->getServiceManagerConfig()->getFactories();
-
-        $delegatorMapping = [];
-        foreach ($factories as $id => $factory) {
-            if (!\is_subclass_of($id, DelegatorInterface::class, true)) {
-                throw new \InvalidArgumentException(\sprintf("'%s' doesn't implement '%s'", $id, DelegatorInterface::class));
-            }
-
-            $name = \forward_static_call([$id, 'getName']);
-            $delegatorMapping[$name] = $id;
-        }
-
-        return new DelegatorMapping($delegatorMapping);
-    }
 
     /**
      * @param ServiceRegistryInterface $serviceRegistry
      */
     public function registerService(ServiceRegistryInterface $serviceRegistry): void
     {
-        $serviceRegistry->add(DelegatorMapping::class, $this->getDelegatorMapping());
         $this->subManagerConfigurator->registerService($serviceRegistry);
     }
 }
