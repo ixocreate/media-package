@@ -100,4 +100,9 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
     {
         return $elementSubManager->get(ImageElement::class);
     }
+
+    public static function serviceName(): string
+    {
+        return 'image';
+    }
 }
