@@ -17,6 +17,8 @@ use KiwiSuite\Contract\Schema\ElementInterface;
 use KiwiSuite\Contract\Type\DatabaseTypeInterface;
 use KiwiSuite\Contract\Type\SchemaElementInterface;
 use KiwiSuite\Entity\Type\AbstractType;
+use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Media\MediaConfig;
 use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\Elements\ImageElement;
 use KiwiSuite\Schema\ElementSubManager;
@@ -27,14 +29,20 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
      * @var MediaRepository
      */
     private $mediaRepository;
+    /**
+     * @var MediaConfig
+     */
+    private $mediaConfig;
 
     /**
      * ImageType constructor.
      * @param MediaRepository $mediaRepository
+     * @param MediaConfig $mediaConfig
      */
-    public function __construct(MediaRepository $mediaRepository)
+    public function __construct(MediaRepository $mediaRepository, MediaConfig $mediaConfig)
     {
         $this->mediaRepository = $mediaRepository;
+        $this->mediaConfig = $mediaConfig;
     }
 
     /**
@@ -90,6 +98,19 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
     public static function baseDatabaseType(): string
     {
         return GuidType::class;
+    }
+
+    public function getUrl(string $size = null): string
+    {
+        /** @var Media $media */
+        $media = $this->value();
+        if (empty($media)) {
+            return "";
+        }
+        if ($size === null) {
+            return rtrim((string) $this->mediaConfig->getUri(), '/') . '/' . $media->basePath() . $media->filename();
+        }
+        return rtrim((string) $this->mediaConfig->getUri(), '/') . '/img/' . $size . '/' . $media->basePath() . $media->filename();
     }
 
     /**

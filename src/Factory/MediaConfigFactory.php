@@ -40,6 +40,7 @@ final class MediaConfigFactory implements FactoryInterface
             $uri = $uri->withHost($projectUri->getMainUrl()->getHost());
             $uri = $uri->withScheme($projectUri->getMainUrl()->getScheme());
             $uri = $uri->withPort($projectUri->getMainUrl()->getPort());
+            $uri = $uri->withPath(rtrim($projectUri->getMainUrl()->getPath(), '/') . '/' . ltrim($uri->getPath(), '/'));
         }
 
         return new MediaConfig($config->get('media'), $uri);
