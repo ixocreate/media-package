@@ -12,41 +12,66 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Resource;
 
-use KiwiSuite\Admin\Resource\ResourceInterface;
-use KiwiSuite\Admin\Resource\ResourceTrait;
-use KiwiSuite\Admin\Schema\SchemaBuilder;
-use KiwiSuite\Media\Action\IndexAction;
+use KiwiSuite\Admin\Resource\DefaultAdminTrait;
+use KiwiSuite\Contract\Resource\AdminAwareInterface;
+use KiwiSuite\Contract\Schema\BuilderInterface;
+use KiwiSuite\Contract\Schema\SchemaInterface;
 use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Schema\Schema;
 
-final class MediaResource implements ResourceInterface
+final class MediaResource implements AdminAwareInterface
 {
-    use ResourceTrait;
+    use DefaultAdminTrait;
 
-    public static function name(): string
+    public function label(): string
+    {
+        return 'Media';
+    }
+
+    /**
+     * @return null|string
+     */
+    public function indexAction(): ?string
+    {
+        return null;
+    }
+
+    public static function serviceName(): string
     {
         return "media";
     }
 
+    /**
+     * @return string
+     */
     public function repository(): string
     {
         return MediaRepository::class;
     }
 
-    public function icon(): string
+    /**
+     * @param BuilderInterface $builder
+     * @return SchemaInterface
+     */
+    public function createSchema(BuilderInterface $builder): SchemaInterface
     {
-        return "fa";
+        return new Schema();
     }
 
-    public function indexAction(): ?string
+    /**
+     * @param BuilderInterface $builder
+     * @return SchemaInterface
+     */
+    public function updateSchema(BuilderInterface $builder): SchemaInterface
     {
-        return IndexAction::class;
+        return new Schema();
     }
 
-    public function schema(SchemaBuilder $schemaBuilder): SchemaBuilder
+    /**
+     * @return array
+     */
+    public function listSchema(): array
     {
-        $schemaBuilder = $schemaBuilder->withName("Media");
-        $schemaBuilder = $schemaBuilder->withNamePlural("Media");
-
-        return $schemaBuilder;
+        return [];
     }
 }
