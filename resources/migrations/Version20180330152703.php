@@ -11,7 +11,7 @@ use KiwiSuite\CommonTypes\Entity\UuidType;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20180330152703 extends AbstractMigration
+final class Version20180330152703 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
