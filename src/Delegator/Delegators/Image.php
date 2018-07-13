@@ -19,7 +19,7 @@ use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
 use KiwiSuite\Media\Processor\UploadImageProcessor;
-use KiwiSuite\Media\MediaConfig;
+use KiwiSuite\Media\Config\MediaConfig;
 
 final class Image implements DelegatorInterface
 {

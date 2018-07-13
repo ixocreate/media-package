@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace KiwiSuite\Media\Processor;
 
 use Intervention\Image\ImageManager;
-use KiwiSuite\Media\MediaConfig;
+use KiwiSuite\Media\Config\MediaConfig;
 use Intervention\Image\Size;
 use Intervention\Image\Constraint;
 
@@ -55,14 +55,12 @@ final class UploadImageProcessor
         $imageWidth = $image->width();
         $imageHeight = $image->height();
 
-        if ($imageWidth < $width && $imageHeight < $height) {
-            $image->resizeCanvas($width,$height);
-        }
+//        if ($imageWidth < $width && $imageHeight < $height) {
+//            $image->resizeCanvas($width,$height);
+//        }
 
         if ($fit === true) {
-            $image->fit($width, $height, function(Constraint $constraint) {
-                $constraint->upsize();
-            });
+            $image->fit($width, $height);
         }
 
         if ($fit === false) {
