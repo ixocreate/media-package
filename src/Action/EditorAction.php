@@ -16,7 +16,7 @@ use KiwiSuite\Media\Exceptions\InvalidArgumentException;
 use KiwiSuite\Media\Processor\EditorImageProcessor;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
-use KiwiSuite\Media\MediaConfig;
+use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
