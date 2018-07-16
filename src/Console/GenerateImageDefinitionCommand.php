@@ -45,14 +45,16 @@ final class %s implements ImageDefinitionInterface
     private $height = null;
 
     /**
-     * Combine cropping and resizing to format image. 
-     * The method will find the best fitting aspect ratio of your given width and height 
-     * on the current image automatically, 
-     * cut it out and resize it to the given dimension.
      *
      * @var bool
      */
-    private $fit = false;
+    private $crop = true;
+    
+    /**
+    *
+    * @var bool
+    */
+    private $upscale = false;
 
     /**
      * @var string
@@ -86,9 +88,17 @@ final class %s implements ImageDefinitionInterface
     /**
      * @return bool
      */
-    public function getFit(): bool
+    public function getCrop(): bool
     {
-        return $this->fit;
+        return $this->crop;
+    }
+    
+    /**
+    * @return bool
+    */
+    public function getUpscale(): bool
+    {
+        return $this->upscale;
     }
 
     /**

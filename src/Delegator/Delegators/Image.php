@@ -104,7 +104,8 @@ final class Image implements DelegatorInterface
                 'savingDir' => 'data/media/img/'. \trim($imageDefinition->getDirectory(), '/') . '/' . $media->basePath(),
                 'width'     => $imageDefinition->getWidth(),
                 'height'    => $imageDefinition->getHeight(),
-                'fit'       => $imageDefinition->getFit()
+                'crop'      => $imageDefinition->getCrop(),
+                'upscale'   => $imageDefinition->getUpscale()
             ];
 
             $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);

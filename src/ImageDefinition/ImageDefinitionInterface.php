@@ -19,7 +19,9 @@ interface ImageDefinitionInterface extends NamedServiceInterface
 
     public function getHeight(): ?int;
 
-    public function getFit(): bool;
+    public function getCrop(): bool;
+    
+    public function getUpscale(): bool;
 
     public function getDirectory(): string;
 }

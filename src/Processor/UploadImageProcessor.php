@@ -55,20 +55,32 @@ final class UploadImageProcessor
         $imageWidth = $image->width();
         $imageHeight = $image->height();
 
-//        if ($imageWidth < $width && $imageHeight < $height) {
-//            $image->resizeCanvas($width,$height);
-//        }
-
-        if ($fit === true) {
-            $image->fit($width, $height);
+        if ($crop === true && $upscale === false) {
+            if (!($imageWidth < $width && $imageHeight < $height)) {
+                $image->fit($width, $height, function (Constraint $constraint) {
+                    $constraint->upsize();
+                });
+            }
         }
 
-        if ($fit === false) {
+        if ($crop === true && $upscale === true) {
+            $image->fit($width, $height, function (Constraint $constraint) use ($width, $height) {
+            });
+        }
+
+        if ($crop === false && $upscale === true) {
+            $image->resize($width, $height, function (Constraint $constraint) use ($width, $height) {
+               $constraint->aspectRatio();
+            });
+        }
+
+        if ($crop === false && $upscale == false) {
             $image->resize($width, $height, function(Constraint $constraint) use ($width, $height) {
                 if ($width === null || $height === null) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 }
+                $constraint->upsize();
             });
         }
 

@@ -100,7 +100,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
             $inputName = \trim($inputName);
             if (!in_array(
                 $inputName,
-                array_keys($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices()))) {
+                \array_keys($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices()))) {
                 throw new InvalidArgumentException(\sprintf("ImageDefinition '%s' does not exist", $inputName));
             }
         }
@@ -147,7 +147,8 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                 'savingDir' => 'data/media/img/'. $directory . '/' . $media->basePath(),
                 'width'     => $imageDefinition->getWidth(),
                 'height'    => $imageDefinition->getHeight(),
-                'fit'       => $imageDefinition->getFit()
+                'crop'      => $imageDefinition->getCrop(),
+                'upscale'   => $imageDefinition->getUpscale()
             ];
 
             $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);
