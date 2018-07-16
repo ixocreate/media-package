@@ -23,5 +23,12 @@ interface ImageDefinitionInterface extends NamedServiceInterface
     
     public function getUpscale(): bool;
 
+    /**
+     * Adds a canvas to image, if image is smaller than given width & height.
+     * Only recommenden for Thumbnails.
+     * @return bool
+     */
+    public function getCanvas(): bool;
+
     public function getDirectory(): string;
 }

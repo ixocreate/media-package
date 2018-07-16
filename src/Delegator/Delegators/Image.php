@@ -105,7 +105,8 @@ final class Image implements DelegatorInterface
                 'width'     => $imageDefinition->getWidth(),
                 'height'    => $imageDefinition->getHeight(),
                 'crop'      => $imageDefinition->getCrop(),
-                'upscale'   => $imageDefinition->getUpscale()
+                'upscale'   => $imageDefinition->getUpscale(),
+                'canvas'    => $imageDefinition->getCanvas()
             ];
 
             $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);

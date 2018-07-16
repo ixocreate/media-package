@@ -55,6 +55,13 @@ final class %s implements ImageDefinitionInterface
     * @var bool
     */
     private $upscale = false;
+    
+    /**
+    * Adds a canvas to image, if image is smaller than given width & height. 
+    * Only recommended for Thumbnails.
+    * @var bool
+    */
+    private $canvas = false;
 
     /**
      * @var string
@@ -99,6 +106,14 @@ final class %s implements ImageDefinitionInterface
     public function getUpscale(): bool
     {
         return $this->upscale;
+    }
+    
+    /**
+    * @return bool
+    */
+    public function getCanvas(): bool
+    {
+        return $this->canvas;
     }
 
     /**

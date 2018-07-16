@@ -55,8 +55,14 @@ final class UploadImageProcessor
         $imageWidth = $image->width();
         $imageHeight = $image->height();
 
+        if ($canvas === true) {
+            if ($imageWidth < $width && $imageHeight < $height) {
+                $image->resizeCanvas($width,$height);
+            }
+        }
+
         if ($crop === true && $upscale === false) {
-            if (!($imageWidth < $width && $imageHeight < $height)) {
+            if (!($imageWidth < $width || $imageHeight < $height)) {
                 $image->fit($width, $height, function (Constraint $constraint) {
                     $constraint->upsize();
                 });
