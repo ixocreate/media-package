@@ -19,8 +19,17 @@ interface ImageDefinitionInterface extends NamedServiceInterface
 
     public function getHeight(): ?int;
 
+    /**
+     * If Crop is set to true, overhanging Image parts will be cropped away.
+     * @return bool
+     */
     public function getCrop(): bool;
-    
+
+    /**
+     * If Upscale is set to true and the Image width & height is smaller than given width & height, it will be upscaled.
+     * If Upscale is set to false and the Image width & height is smaller than given width & height, it will stay the same.
+     * @return bool
+     */
     public function getUpscale(): bool;
 
     /**
