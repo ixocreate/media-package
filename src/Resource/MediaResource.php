@@ -15,8 +15,10 @@ namespace KiwiSuite\Media\Resource;
 use KiwiSuite\Admin\Resource\DefaultAdminTrait;
 use KiwiSuite\Contract\Resource\AdminAwareInterface;
 use KiwiSuite\Contract\Schema\BuilderInterface;
+use KiwiSuite\Contract\Schema\Listing\ListSchemaInterface;
 use KiwiSuite\Contract\Schema\SchemaInterface;
 use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Schema\Listing\ListSchema;
 use KiwiSuite\Schema\Schema;
 
 final class MediaResource implements AdminAwareInterface
@@ -68,10 +70,10 @@ final class MediaResource implements AdminAwareInterface
     }
 
     /**
-     * @return array
+     * @return ListSchemaInterface
      */
-    public function listSchema(): array
+    public function listSchema(): ListSchemaInterface
     {
-        return [];
+        return (new ListSchema())->withDefaultSorting('createdAt', 'DESC');
     }
 }
