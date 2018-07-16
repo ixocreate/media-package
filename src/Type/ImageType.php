@@ -18,7 +18,7 @@ use KiwiSuite\Contract\Type\DatabaseTypeInterface;
 use KiwiSuite\Contract\Type\SchemaElementInterface;
 use KiwiSuite\Entity\Type\AbstractType;
 use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\MediaConfig;
+use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\Elements\ImageElement;
 use KiwiSuite\Schema\ElementSubManager;
