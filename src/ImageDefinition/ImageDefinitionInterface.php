@@ -26,7 +26,7 @@ interface ImageDefinitionInterface extends NamedServiceInterface
      */
     const MODE_CROP = 'crop';
     /**
-     * Adds a canvas to image, if image is smaller than given width & height.
+     * Adds a canvas to image, if image is smaller than given width & height, else just resizes to given parameters.
      * Needs width & height.
      * Only recommenden for Thumbnails.
      */
