@@ -84,7 +84,7 @@ final class UploadImageProcessor
         if ($definitionWidth === null || $definitionHeight === null) {
             if ($definitionWidth != null) {
                 $imageFactor = $this->checkFactor($imageWidth, $imageHeight);
-                $definitionHeight = $this->getMissingHeight($definitionWidth, $imageFactor);
+                $definitionHeight = $this->getMissingSide($definitionWidth, $imageFactor);
                 $image->resize($definitionWidth,$definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
                    if ($definitionUpscale === false) {
                        $constraint->upsize();
@@ -94,7 +94,7 @@ final class UploadImageProcessor
             }
             if ($definitionHeight != null) {
                 $imageFactor = $this->checkFactor($imageHeight, $imageWidth);
-                $definitionWidth = $this->getMissingWidth($definitionHeight, $imageFactor);
+                $definitionWidth = $this->getMissingSide($definitionHeight, $imageFactor);
                 $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
                    if ($definitionUpscale === false) {
                        $constraint->upsize();
@@ -166,14 +166,9 @@ final class UploadImageProcessor
         return $value1 / $value2;
     }
 
-    private function getMissingHeight($width, $imageFactor)
+    private function getMissingSide($side, $imageFactor)
     {
-        return \round($width / $imageFactor);
-    }
-
-    private function getMissingWidth($height, $imageFactor)
-    {
-        return \round($height * $imageFactor);
+        return \round($side / $imageFactor);
     }
 
 }
