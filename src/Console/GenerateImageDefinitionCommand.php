@@ -35,40 +35,6 @@ use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 final class %s implements ImageDefinitionInterface
 {
     /**
-     * @var int
-     */
-    private $width = null;
-
-    /**
-     * @var int
-     */
-    private $height = null;
-
-    /**
-     *
-     * @var bool
-     */
-    private $crop = true;
-    
-    /**
-    *
-    * @var bool
-    */
-    private $upscale = false;
-    
-    /**
-    * Adds a canvas to image, if image is smaller than given width & height. 
-    * Only recommended for Thumbnails.
-    * @var bool
-    */
-    private $canvas = false;
-
-    /**
-     * @var string
-     */
-    private $directory = '';
-
-    /**
      * @return string
      */
     public static function serviceName(): string
@@ -79,49 +45,41 @@ final class %s implements ImageDefinitionInterface
     /**
      * @return int|null
      */
-    public function getWidth(): ?int
+    public function width(): ?int
     {
-        return $this->width;
+        return null;
     }
 
     /**
      * @return int|null
      */
-    public function getHeight(): ?int
+    public function height(): ?int
     {
-        return $this->height;
+        return null;
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function getCrop(): bool
+    public function mode(): int
     {
-        return $this->crop;
+        return MODE;
     }
     
     /**
     * @return bool
     */
-    public function getUpscale(): bool
+    public function upscale(): bool
     {
-        return $this->upscale;
-    }
-    
-    /**
-    * @return bool
-    */
-    public function getCanvas(): bool
-    {
-        return $this->canvas;
+        return false;
     }
 
     /**
      * @return string
      */
-    public function getDirectory(): string
+    public function directory(): string
     {
-        return $this->directory;
+        return '';
     }
 
 }

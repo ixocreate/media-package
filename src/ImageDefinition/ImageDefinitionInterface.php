@@ -15,29 +15,30 @@ use KiwiSuite\Contract\ServiceManager\NamedServiceInterface;
 
 interface ImageDefinitionInterface extends NamedServiceInterface
 {
-    public function getWidth(): ?int;
-
-    public function getHeight(): ?int;
+    /**
+     * Fits an image into given definiton.
+     */
+    const MODE_FIT_DIMENSION = 'fitDimension';
 
     /**
-     * If Crop is set to true, overhanging Image parts will be cropped away.
-     * @return bool
+     * Cut out a rectangular part of the current image with given width and height.
+     * Needs width & height
      */
-    public function getCrop(): bool;
-
-    /**
-     * If Upscale is set to true and the Image width & height is smaller than given width & height, it will be upscaled.
-     * If Upscale is set to false and the Image width & height is smaller than given width & height, it will stay the same.
-     * @return bool
-     */
-    public function getUpscale(): bool;
-
+    const MODE_CROP = 'crop';
     /**
      * Adds a canvas to image, if image is smaller than given width & height.
+     * Needs width & height.
      * Only recommenden for Thumbnails.
-     * @return bool
      */
-    public function getCanvas(): bool;
+    const MODE_CANVAS = 'canvas';
 
-    public function getDirectory(): string;
+    public function width(): ?int;
+
+    public function height(): ?int;
+
+    public function mode(): string;
+
+    public function upscale(): bool;
+
+    public function directory(): string;
 }

@@ -138,18 +138,17 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $progressBar->setFormat('verbose');
         $progressBar->start();
 
-        $directory = \trim($imageDefinition->getDirectory(), '/');
+        $directory = \trim($imageDefinition->directory(), '/');
 
         foreach ($this->mediaRepository->findAll() as $media) {
             $imageParameters = [
-                'path'      => 'data/media/' . $media->basePath(),
-                'filename'  => $media->filename(),
-                'savingDir' => 'data/media/img/'. $directory . '/' . $media->basePath(),
-                'width'     => $imageDefinition->getWidth(),
-                'height'    => $imageDefinition->getHeight(),
-                'crop'      => $imageDefinition->getCrop(),
-                'upscale'   => $imageDefinition->getUpscale(),
-                'canvas'    => $imageDefinition->getCanvas()
+                'imagePath'      => 'data/media/' . $media->basePath(),
+                'imageFilename'  => $media->filename(),
+                'definitionSavingDir' => 'data/media/img/'. $directory . '/' . $media->basePath(),
+                'definitionWidth'     => $imageDefinition->width(),
+                'definitionHeight'    => $imageDefinition->height(),
+                'definitionMode'      => $imageDefinition->mode(),
+                'definitionUpscale'   => $imageDefinition->upscale()
             ];
 
             $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);

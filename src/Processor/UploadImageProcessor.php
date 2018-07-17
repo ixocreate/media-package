@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Processor;
 
+use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 use KiwiSuite\Media\Config\MediaConfig;
 use Intervention\Image\Size;
@@ -44,54 +45,129 @@ final class UploadImageProcessor
      */
     public function process()
     {
-        \extract($this->imageParameters);
-
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->getDriver()]);
 
-        if(!\is_dir($savingDir)) {
-            \mkdir($savingDir, 0777, true);
+        if(!\is_dir($this->imageParameters['definitionSavingDir'])) {
+            \mkdir($this->imageParameters['definitionSavingDir'], 0777, true);
         }
-        $image = $imageManager->make($path . $filename);
-        $imageWidth = $image->width();
-        $imageHeight = $image->height();
+        $image = $imageManager->make($this->imageParameters['imagePath'] . $this->imageParameters['imageFilename']);
 
-        if ($canvas === true) {
-            if ($imageWidth < $width && $imageHeight < $height) {
-                $image->resizeCanvas($width,$height);
+        $this->imageParameters['imageWidth'] = $image->width();
+        $this->imageParameters['imageHeight'] = $image->height();
+
+        $this->checkMode($image, $this->imageParameters);
+
+        $image->save($this->imageParameters['definitionSavingDir'] . $this->imageParameters['imageFilename']);
+        $image->destroy();
+    }
+
+    private function checkMode(Image $image, array $imageParameters)
+    {
+        switch ($imageParameters['definitionMode']) {
+            case ('fitDimension'):
+                $this->fitDimension($image, $imageParameters);
+                break;
+            case ('crop'):
+                $this->crop($image, $imageParameters);
+                break;
+            case ('canvas'):
+                $this->canvas($image, $imageParameters);
+                break;
+        }
+    }
+
+    private function fitDimension(Image $image, array $imageParameters)
+    {
+        \extract($imageParameters);
+
+
+        if ($definitionWidth === null || $definitionHeight === null) {
+            if ($definitionWidth != null) {
+                $imageFactor = $this->checkFactor($imageWidth, $imageHeight);
+                $definitionHeight = $this->getMissingHeight($definitionWidth, $imageFactor);
+                $image->resize($definitionWidth,$definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                   if ($definitionUpscale === false) {
+                       $constraint->upsize();
+                   }
+                });
+                return;
             }
-        }
-
-        if ($crop === true && $upscale === false) {
-            if (!($imageWidth < $width || $imageHeight < $height)) {
-                $image->fit($width, $height, function (Constraint $constraint) {
-                    $constraint->upsize();
+            if ($definitionHeight != null) {
+                $imageFactor = $this->checkFactor($imageHeight, $imageWidth);
+                $definitionWidth = $this->getMissingWidth($definitionHeight, $imageFactor);
+                $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                   if ($definitionUpscale === false) {
+                       $constraint->upsize();
+                   }
                 });
             }
+            return;
         }
 
-        if ($crop === true && $upscale === true) {
-            $image->fit($width, $height, function (Constraint $constraint) use ($width, $height) {
-            });
+        if ($definitionUpscale === false) {
+            if ($imageWidth < $definitionWidth && $imageHeight < $definitionHeight) {
+                return;
+            }
         }
 
-        if ($crop === false && $upscale === true) {
-            $image->resize($width, $height, function (Constraint $constraint) use ($width, $height) {
-               $constraint->aspectRatio();
-            });
+        if ($imageWidth > $imageHeight) {
+            $imageFactor = $imageWidth / $imageHeight;
+            $newWidth = $definitionWidth;
+            $newHeight = round($newWidth / $imageFactor);
+        } elseif ($imageWidth < $imageHeight) {
+            $imageFactor = $imageHeight / $imageWidth;
+            $newHeight = $definitionHeight;
+            $newWidth = round($newHeight / $imageFactor);
+        } elseif ($imageWidth == $imageHeight) {
+            if ($definitionWidth < $definitionHeight) {
+                $newWidth = $definitionWidth;
+                $newHeight = $definitionWidth;
+            } else {
+                $newWidth = $definitionHeight;
+                $newHeight = $definitionHeight;
+            }
         }
 
-        if ($crop === false && $upscale == false) {
-            $image->resize($width, $height, function(Constraint $constraint) use ($width, $height) {
-                if ($width === null || $height === null) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                }
+        $image->resize($newWidth, $newHeight, function(Constraint $constraint) use ($newWidth, $newHeight, $definitionUpscale)
+        {
+            if ($definitionUpscale === false) {
                 $constraint->upsize();
-            });
-        }
+            }
+        });
 
-        $image->save($savingDir . $filename);
-        $image->destroy();
+    }
+
+    private function crop(Image $image, array $imageParameters)
+    {
+        \extract($imageParameters);
+
+        if ($definitionWidth != null && $definitionHeight != null) {
+            $image->crop($definitionWidth, $definitionHeight);
+        }
+    }
+
+    private function canvas(Image $image, array $imageParameters)
+    {
+        \extract($imageParameters);
+
+        if ($imageWidth < $definitionWidth && $imageHeight < $definitionHeight) {
+            $image->resizeCanvas($definitionWidth, $definitionHeight);
+        }
+    }
+
+    private function checkFactor($value1, $value2)
+    {
+        return $value1 / $value2;
+    }
+
+    private function getMissingHeight($width, $imageFactor)
+    {
+        return \round($width / $imageFactor);
+    }
+
+    private function getMissingWidth($height, $imageFactor)
+    {
+        return \round($height * $imageFactor);
     }
 
 }

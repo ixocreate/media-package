@@ -99,14 +99,13 @@ final class Image implements DelegatorInterface
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
 
             $imageParameters = [
-                'path'      => 'data/media/' . $media->basePath(),
-                'filename'  => $media->filename(),
-                'savingDir' => 'data/media/img/'. \trim($imageDefinition->getDirectory(), '/') . '/' . $media->basePath(),
-                'width'     => $imageDefinition->getWidth(),
-                'height'    => $imageDefinition->getHeight(),
-                'crop'      => $imageDefinition->getCrop(),
-                'upscale'   => $imageDefinition->getUpscale(),
-                'canvas'    => $imageDefinition->getCanvas()
+                'imagePath'      => 'data/media/' . $media->basePath(),
+                'imageFilename'  => $media->filename(),
+                'definitionSavingDir' => 'data/media/img/'. \trim($imageDefinition->directory(), '/') . '/' . $media->basePath(),
+                'definitionWidth'     => $imageDefinition->width(),
+                'definitionHeight'    => $imageDefinition->height(),
+                'definitionMode'      => $imageDefinition->mode(),
+                'definitionUpscale'   => $imageDefinition->upscale()
             ];
 
             $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);
