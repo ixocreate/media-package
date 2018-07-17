@@ -152,7 +152,13 @@ final class UploadImageProcessor
 
         if ($imageWidth < $definitionWidth && $imageHeight < $definitionHeight) {
             $image->resizeCanvas($definitionWidth, $definitionHeight);
+        } else {
+            $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight) {
+                $constraint->upsize();
+                $constraint->aspectRatio();
+            });
         }
+
     }
 
     private function checkFactor($value1, $value2)
