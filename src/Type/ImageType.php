@@ -20,6 +20,7 @@ use KiwiSuite\Entity\Type\AbstractType;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Media\Uri\Uri;
 use KiwiSuite\Schema\Elements\ImageElement;
 use KiwiSuite\Schema\ElementSubManager;
 
@@ -30,19 +31,19 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
      */
     private $mediaRepository;
     /**
-     * @var MediaConfig
+     * @var Uri
      */
-    private $mediaConfig;
+    private $uri;
 
     /**
      * ImageType constructor.
      * @param MediaRepository $mediaRepository
-     * @param MediaConfig $mediaConfig
+     * @param Uri $uri
      */
-    public function __construct(MediaRepository $mediaRepository, MediaConfig $mediaConfig)
+    public function __construct(MediaRepository $mediaRepository, Uri $uri)
     {
         $this->mediaRepository = $mediaRepository;
-        $this->mediaConfig = $mediaConfig;
+        $this->uri = $uri;
     }
 
     /**
@@ -83,7 +84,11 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
         if (empty($this->value())) {
             return null;
         }
-        return $this->value()->toPublicArray();
+        $array = $this->value()->toPublicArray();
+        $array['thumb'] = $this->getUrl('admin-thumb');
+        $array['original'] = $this->getUrl();
+
+        return $array;
     }
 
     public function convertToDatabaseValue()
@@ -104,13 +109,11 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
     {
         /** @var Media $media */
         $media = $this->value();
-        if (empty($media)) {
+        if (empty($media) || !($media instanceof Media)) {
             return "";
         }
-        if ($size === null) {
-            return rtrim((string) $this->mediaConfig->getUri(), '/') . '/' . $media->basePath() . $media->filename();
-        }
-        return rtrim((string) $this->mediaConfig->getUri(), '/') . '/img/' . $size . '/' . $media->basePath() . $media->filename();
+
+        return $this->uri->imageUrl($media, $size);
     }
 
     /**

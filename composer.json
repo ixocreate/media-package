@@ -12,6 +12,7 @@
     "php": "^7.1",
     "intervention/image":"^2.4.1",
     "kiwi-suite/contract": "dev-develop",
+    "symfony/asset": "^4.1",
     "cocur/slugify": "^3.1"
   },
   "require-dev": {
