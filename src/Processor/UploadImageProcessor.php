@@ -142,7 +142,7 @@ final class UploadImageProcessor
         \extract($imageParameters);
 
         if ($definitionWidth != null && $definitionHeight != null) {
-            $image->crop($definitionWidth, $definitionHeight);
+            $image->fit($definitionWidth, $definitionHeight);
         }
     }
 
@@ -153,9 +153,11 @@ final class UploadImageProcessor
         if ($imageWidth < $definitionWidth && $imageHeight < $definitionHeight) {
             $image->resizeCanvas($definitionWidth, $definitionHeight);
         } else {
-            $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight) {
-                $constraint->upsize();
-                $constraint->aspectRatio();
+            $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                if ($definitionUpscale === false) {
+                    $constraint->upsize();
+                    $constraint->aspectRatio();
+                }
             });
         }
 
