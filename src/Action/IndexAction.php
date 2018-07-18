@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action;
 
-use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Admin\Response\ApiListResponse;
+use KiwiSuite\Media\Uri\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -21,27 +21,41 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class IndexAction implements MiddlewareInterface
 {
     /**
-     * @var MediaRepository
+     * @var Uri
      */
-    private $mediaRepository;
+    private $uri;
 
-    public function __construct(MediaRepository $mediaRepository)
+    public function __construct(Uri $uri)
     {
-        $this->mediaRepository = $mediaRepository;
+        $this->uri = $uri;
     }
 
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $media = [];
-        $result = $this->mediaRepository->findBy([], ['createdAt' => 'DESC']);
-        foreach ($result as $item) {
-            $media[] = $item->toPublicArray();
+        $apiListResult = $handler->handle($request);
+
+        if (!($apiListResult instanceof ApiListResponse)) {
+            return $apiListResult;
         }
 
-        return new ApiSuccessResponse($media);
+        $items = $apiListResult->items();
+
+        foreach ($items as $key => $value) {
+            $items[$key]['thumb'] = $this->uri->generateImageUrl($value['basePath'], $value['filename'], 'admin-thumb');
+            $items[$key]['original'] = $this->uri->generateImageUrl($value['basePath'], $value['filename']);
+        }
+
+        return new ApiListResponse(
+            $apiListResult->resource(),
+            $items,
+            $apiListResult->meta()
+        );
     }
 }

@@ -17,6 +17,7 @@ use KiwiSuite\Contract\Resource\AdminAwareInterface;
 use KiwiSuite\Contract\Schema\BuilderInterface;
 use KiwiSuite\Contract\Schema\Listing\ListSchemaInterface;
 use KiwiSuite\Contract\Schema\SchemaInterface;
+use KiwiSuite\Media\Action\IndexAction;
 use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\Listing\ListSchema;
 use KiwiSuite\Schema\Schema;
@@ -35,7 +36,7 @@ final class MediaResource implements AdminAwareInterface
      */
     public function indexAction(): ?string
     {
-        return null;
+        return IndexAction::class;
     }
 
     public static function serviceName(): string
