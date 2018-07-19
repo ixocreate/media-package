@@ -18,7 +18,7 @@ interface ImageDefinitionInterface extends NamedServiceInterface
     /**
      * Fits an image into given definiton.
      */
-    const MODE_FIT_DIMENSION = 'fitDimension';
+    const MODE_FIT = 'fit';
 
     /**
      * Combine cropping and resizing to format image.
@@ -32,6 +32,12 @@ interface ImageDefinitionInterface extends NamedServiceInterface
      * Only recommenden for Thumbnails.
      */
     const MODE_CANVAS = 'canvas';
+
+    /**
+     * Combination of MODE_FIT_CROP & MODE_CANVAS
+     * Needs width & height.
+     */
+    const MODE_CANVAS_FIT_CROP = 'canvasFitCrop';
 
     public function width(): ?int;
 
