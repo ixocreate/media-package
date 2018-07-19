@@ -21,10 +21,11 @@ interface ImageDefinitionInterface extends NamedServiceInterface
     const MODE_FIT_DIMENSION = 'fitDimension';
 
     /**
-     * Cut out a rectangular part of the current image with given width and height.
-     * Needs width & height
+     * Combine cropping and resizing to format image.
+     * The method will find the best fitting aspect ratio of your given width and height on the current image automatically,
+     * cut it out and resize it to the given dimension
      */
-    const MODE_CROP = 'crop';
+    const MODE_FIT_CROP = 'fitCrop';
     /**
      * Adds a canvas to image, if image is smaller than given width & height, else just resizes to given parameters.
      * Needs width & height.
