@@ -64,8 +64,8 @@ final class UploadImageProcessor
     private function checkMode(Image $image, array $imageParameters)
     {
         switch ($imageParameters['definitionMode']) {
-            case ('fitDimension'):
-                $this->fitDimension($image, $imageParameters);
+            case ('fit'):
+                $this->fit($image, $imageParameters);
                 break;
             case ('fitCrop'):
                 $this->fitCrop($image, $imageParameters);
@@ -73,68 +73,23 @@ final class UploadImageProcessor
             case ('canvas'):
                 $this->canvas($image, $imageParameters);
                 break;
+            case ('canvasFitCrop'):
+                $this->canvasFitCrop($image, $imageParameters);
+                break;
         }
     }
 
-    private function fitDimension(Image $image, array $imageParameters)
+    private function fit(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
 
 
-        if ($definitionWidth === null || $definitionHeight === null) {
-            if ($definitionWidth != null) {
-                $imageFactor = $this->checkFactor($imageWidth, $imageHeight);
-                $definitionHeight = $this->getMissingSide($definitionWidth, $imageFactor);
-                $image->resize($definitionWidth,$definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-                   if ($definitionUpscale === false) {
-                       $constraint->upsize();
-                   }
-                });
-                return;
-            }
-            if ($definitionHeight != null) {
-                $imageFactor = $this->checkFactor($imageHeight, $imageWidth);
-                $definitionWidth = $this->getMissingSide($definitionHeight, $imageFactor);
-                $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-                   if ($definitionUpscale === false) {
-                       $constraint->upsize();
-                   }
-                });
-            }
-            return;
-        }
-
-        if ($definitionUpscale === false) {
-            if ($imageWidth < $definitionWidth && $imageHeight < $definitionHeight) {
-                return;
-            }
-        }
-
-        if ($imageWidth > $imageHeight) {
-            $imageFactor = $imageWidth / $imageHeight;
-            $newWidth = $definitionWidth;
-            $newHeight = round($newWidth / $imageFactor);
-        } elseif ($imageWidth < $imageHeight) {
-            $imageFactor = $imageHeight / $imageWidth;
-            $newHeight = $definitionHeight;
-            $newWidth = round($newHeight / $imageFactor);
-        } elseif ($imageWidth == $imageHeight) {
-            if ($definitionWidth < $definitionHeight) {
-                $newWidth = $definitionWidth;
-                $newHeight = $definitionWidth;
-            } else {
-                $newWidth = $definitionHeight;
-                $newHeight = $definitionHeight;
-            }
-        }
-
-        $image->resize($newWidth, $newHeight, function(Constraint $constraint) use ($newWidth, $newHeight, $definitionUpscale)
-        {
+        $image->resize($definitionWidth,$definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
             if ($definitionUpscale === false) {
                 $constraint->upsize();
             }
+            $constraint->aspectRatio();
         });
-
     }
 
     private function fitCrop(Image $image, array $imageParameters)
@@ -167,14 +122,20 @@ final class UploadImageProcessor
 
     }
 
-    private function checkFactor($value1, $value2)
+    private function canvasFitCrop(Image $image, array $imageParameters)
     {
-        return $value1 / $value2;
-    }
+        \extract($imageParameters);
 
-    private function getMissingSide($side, $imageFactor)
-    {
-        return \round($side / $imageFactor);
+        if ($imageWidth >= $definitionWidth && $imageHeight >= $definitionHeight) {
+            $image->fit($definitionWidth, $definitionHeight);
+        } elseif ($imageWidth >= $definitionWidth || $imageHeight >= $definitionHeight) {
+            $image->crop($definitionWidth,$definitionHeight);
+        }
+
+        if (($image->width() != $definitionWidth) || ($image->height() != $definitionHeight)) {
+            $image->resizeCanvas($definitionWidth,$definitionHeight);
+        }
+
     }
 
 }
