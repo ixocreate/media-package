@@ -67,8 +67,8 @@ final class UploadImageProcessor
             case ('fitDimension'):
                 $this->fitDimension($image, $imageParameters);
                 break;
-            case ('crop'):
-                $this->crop($image, $imageParameters);
+            case ('fitCrop'):
+                $this->fitCrop($image, $imageParameters);
                 break;
             case ('canvas'):
                 $this->canvas($image, $imageParameters);
@@ -137,12 +137,16 @@ final class UploadImageProcessor
 
     }
 
-    private function crop(Image $image, array $imageParameters)
+    private function fitCrop(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
 
         if ($definitionWidth != null && $definitionHeight != null) {
-            $image->fit($definitionWidth, $definitionHeight);
+            $image->fit($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                if ($definitionUpscale === false) {
+                    $constraint->upsize();
+                }
+            });
         }
     }
 
@@ -150,15 +154,15 @@ final class UploadImageProcessor
     {
         \extract($imageParameters);
 
-        if ($imageWidth < $definitionWidth && $imageHeight < $definitionHeight) {
-            $image->resizeCanvas($definitionWidth, $definitionHeight);
-        } else {
-            $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-                if ($definitionUpscale === false) {
-                    $constraint->upsize();
-                    $constraint->aspectRatio();
-                }
-            });
+        $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+            if ($definitionUpscale === false) {
+                $constraint->upsize();
+            }
+            $constraint->aspectRatio();
+        });
+
+        if (($image->width() != $definitionWidth) || ($image->height() != $definitionHeight)) {
+            $image->resizeCanvas($definitionWidth,$definitionHeight);
         }
 
     }
