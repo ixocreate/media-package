@@ -92,12 +92,11 @@ final class Image implements DelegatorInterface
     /**
      * @param Media $media
      */
-    private function process(Media $media)
+    public function process(Media $media)
     {
         foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
-
             $imageParameters = [
                 'imagePath'      => 'data/media/' . $media->basePath(),
                 'imageFilename'  => $media->filename(),
@@ -112,5 +111,4 @@ final class Image implements DelegatorInterface
             $imageProcessor->process();
         }
     }
-
 }

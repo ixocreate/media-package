@@ -59,11 +59,11 @@ final class %s implements ImageDefinitionInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function mode(): int
+    public function mode(): string
     {
-        return MODE;
+        return ImageDefinitionInterface::MODE_FIT;
     }
     
     /**
@@ -79,7 +79,7 @@ final class %s implements ImageDefinitionInterface
      */
     public function directory(): string
     {
-        return '';
+        return '%s';
     }
 
 }
@@ -114,14 +114,14 @@ EOD;
 
         if (\file_exists(\getcwd() .
             '/src/App/Media/ImageDefinition/' .
-            \trim(\ucfirst($input->getArgument('name'))) . '.php')) {
+            \trim(($input->getArgument('name'))) . '.php')) {
             throw new \Exception("ImageDefinition file already exists");
         }
 
         $this->generateFile($input);
 
         $output->writeln(
-            \sprintf("<info>ImageDefinition '%s' generated</info>", \trim(\ucfirst($input->getArgument('name'))))
+            \sprintf("<info>ImageDefinition '%s' generated</info>", \trim(($input->getArgument('name'))))
         );
     }
 
@@ -131,10 +131,11 @@ EOD;
     private function generateFile(InputInterface $input): void
     {
         \file_put_contents(
-            \getcwd() . '/src/App/Media/ImageDefinition/' . \trim(\ucfirst($input->getArgument('name'))) . '.php',
+            \getcwd() . '/src/App/Media/ImageDefinition/' . \trim(ucfirst(($input->getArgument('name')))) . '.php',
             \sprintf($this->template,
-                \trim(\ucfirst($input->getArgument('name'))),
-                \trim(\ucfirst($input->getArgument('name')))
+                \trim(ucfirst(($input->getArgument('name')))),
+                \trim(($input->getArgument('name'))),
+                \trim(($input->getArgument('name')))
             )
         );
     }

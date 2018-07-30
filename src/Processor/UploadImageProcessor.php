@@ -48,7 +48,7 @@ final class UploadImageProcessor
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->getDriver()]);
 
         if(!\is_dir($this->imageParameters['definitionSavingDir'])) {
-            \mkdir($this->imageParameters['definitionSavingDir'], 0777, true);
+            \mkdir($this->imageParameters['definitionSavingDir'],0777, true);
         }
         $image = $imageManager->make($this->imageParameters['imagePath'] . $this->imageParameters['imageFilename']);
 
