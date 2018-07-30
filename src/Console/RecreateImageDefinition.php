@@ -65,7 +65,8 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     {
         $this
             ->addArgument('name', InputArgument::OPTIONAL, 'Name of specific ImageDefinition to be refactored')
-            ->setDescription("Recreates all previous saved files of an ImageDefinition");
+            ->setDescription("Recreates all files or creates only missing files of an ImageDefinition")
+            ->addOption('missing','m',null,'Only missing files will be created');
     }
 
     /**
@@ -77,9 +78,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('Refactor ImageDefinition');
-        $this->refactor($input, $output);
-        $io->newLine();
-        $io->success('All Files have been refactored');
+        $this->refactor($input, $output, $io);
     }
 
     /**
@@ -91,9 +90,13 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     }
 
     /**
-     * Refactors all Images to the new given parameters of an existing ImageDefinition.
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param SymfonyStyle $io
+     *
+     * Refactors all or missing Images to the new given parameters of an existing ImageDefinition.
      */
-    private function refactor(InputInterface $input,OutputInterface $output)
+    private function refactor(InputInterface $input,OutputInterface $output, SymfonyStyle $io)
     {
         if (!empty($input->getArgument('name'))) {
             $inputName = $input->getArgument('name');
@@ -108,39 +111,79 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         if (isset($inputName)) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($inputName);
-            $count = \count($this->mediaRepository->findAll());
-            $progressBar = new ProgressBar($output, $count);
-            $this->generateFiles($imageDefinition, $progressBar);
+            if ($input->getOption('missing')) {
+                $this->generateFiles($imageDefinition, $output, $io, true);
+                return;
+            }
+            $this->generateFiles($imageDefinition, $output, $io);
         }
 
         if (!isset($inputName)) {
-            $count =
-                (\count($this->mediaRepository->findAll())) *
-                (\count($this->imageDefinitionSubManager->getServices()));
-
             foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
                 /** @var ImageDefinitionInterface $imageDefinition */
                 $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
-                $progressBar = new ProgressBar($output, $count);
-                $this->generateFiles($imageDefinition, $progressBar);
+                if ($input->getOption('missing')) {
+                    $this->generateFiles($imageDefinition, $output, $io, true);
+                    continue;
+                }
+                $this->generateFiles($imageDefinition, $output, $io);
             }
         }
 
-        $progressBar->finish();
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param ImageDefinitionInterface $imageDefinition
+     * @param $count
+     * @return ProgressBar
+     */
+    private function customProgressBar(OutputInterface $output, ImageDefinitionInterface $imageDefinition, $count)
+    {
+        $progressBar = new ProgressBar($output, $count);
+        ProgressBar::setFormatDefinition('custom','%message% -- %current%/%max% [%bar%] -- %percent:3s%%');
+        $progressBar->setFormat('custom');
+        $progressBar->setProgressCharacter("\xF0\x9F\x8D\xBA");
+        $progressBar->setMessage('ImageDefinition: ' . $imageDefinition::serviceName());
+        return $progressBar;
     }
 
     /**
      * @param ImageDefinitionInterface $imageDefinition
-     * @param ProgressBar $progressBar
+     * @param OutputInterface $output
+     * @param SymfonyStyle $io
+     * @param bool $missing
+     * If $missing = true, only missing Images will be recreated.
+     * If $missing = false, all Images will be recreated
      */
-    private function generateFiles(ImageDefinitionInterface $imageDefinition, ProgressBar $progressBar)
+    private function generateFiles(ImageDefinitionInterface $imageDefinition, OutputInterface $output, SymfonyStyle $io, $missing = false)
     {
-        $progressBar->setFormat('verbose');
-        $progressBar->start();
-
         $directory = \trim($imageDefinition->directory(), '/');
 
-        foreach ($this->mediaRepository->findAll() as $media) {
+        if ($missing === true) {
+            foreach ($this->mediaRepository->findAll() as $media) {
+                $filePath = $media->basePath() . $media->filename();
+                if (!file_exists(getcwd() . '/data/media/img/' . $directory . '/' . $filePath)) {
+                    $mediaRepository [] = $media;
+                }
+            }
+            if (empty($mediaRepository)) {
+                $io->writeln(sprintf('There are no missing Images in ImageDefinition: %s', $imageDefinition::serviceName()));
+                return;
+            }
+            $count = \count($mediaRepository);
+            $progressBar = $this->customProgressBar($output,$imageDefinition,$count);
+        }
+
+        if ($missing === false) {
+            $count = \count($this->mediaRepository->findAll());
+            $mediaRepository = $this->mediaRepository->findAll();
+            $progressBar = $this->customProgressBar($output, $imageDefinition, $count);
+        }
+
+        $progressBar->start();
+
+        foreach ($mediaRepository as $media) {
             $imageParameters = [
                 'imagePath'      => 'data/media/' . $media->basePath(),
                 'imageFilename'  => $media->filename(),
@@ -153,9 +196,10 @@ final class RecreateImageDefinition extends Command implements CommandInterface
 
             $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);
             $imageProcessor->process();
-
-            $progressBar->setMessage($media->filename(), 'is processed');
             $progressBar->advance();
         }
+        $progressBar->finish();
+        $io->newLine();
+        $io->writeln(sprintf('Finished'));
     }
 }
