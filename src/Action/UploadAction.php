@@ -104,10 +104,7 @@ final class UploadAction implements MiddlewareInterface
                 $notResponsible++;
             }
         }
-
-        if ($notResponsible === $this->countDelegators) {
-            return new ApiErrorResponse('File-Type not supported');
-        }
+        
 
         $this->mediaRepository->save($media);
 
