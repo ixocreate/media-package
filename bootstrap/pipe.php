@@ -9,7 +9,7 @@ use KiwiSuite\ApplicationHttp\Pipe\GroupPipeConfigurator;
 use KiwiSuite\ApplicationHttp\Pipe\PipeConfigurator;
 use KiwiSuite\Media\Action\UploadAction;
 
-$pipe->segmentPipe(AdminConfig::class, 10000)(function(PipeConfigurator $pipe) {
+$pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
     $pipe->segment('/api')( function(PipeConfigurator $pipe) {
 
         $pipe->group("admin.authorized")(function (GroupPipeConfigurator $group) {
