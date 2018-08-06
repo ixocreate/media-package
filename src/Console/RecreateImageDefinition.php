@@ -10,6 +10,7 @@
 declare(strict_types=1);
 namespace KiwiSuite\Media\Console;
 
+use KiwiSuite\Media\Delegator\Delegators\Image;
 use Symfony\Component\Console\Command\Command;
 use KiwiSuite\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,24 +42,31 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @var MediaRepository
      */
     private $mediaRepository;
+    /**
+     * @var Image
+     */
+    private $imageDelegator;
 
 
     /**
      * RefactorImageDefinition constructor.
-     * @param ImageDefinitionMapping $imageDefinitionMapping
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
      * @param MediaRepository $mediaRepository
+     * @param Image $imageDelegator
      */
-    public function __construct(ImageDefinitionSubManager $imageDefinitionSubManager,
-                                MediaConfig $mediaConfig,
-                                MediaRepository $mediaRepository
+    public function __construct(
+        ImageDefinitionSubManager $imageDefinitionSubManager,
+        MediaConfig $mediaConfig,
+        MediaRepository $mediaRepository,
+        Image $imageDelegator
     )
     {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager= $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->mediaRepository = $mediaRepository;
+        $this->imageDelegator = $imageDelegator;
     }
 
     public function configure()
@@ -184,6 +192,9 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $progressBar->start();
 
         foreach ($mediaRepository as $media) {
+            if (!$this->imageDelegator->isResponsible($media)) {
+                continue;
+            }
             $imageParameters = [
                 'imagePath'      => 'data/media/' . $media->basePath(),
                 'imageFilename'  => $media->filename(),

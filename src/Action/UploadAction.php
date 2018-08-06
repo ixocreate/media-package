@@ -100,9 +100,13 @@ final class UploadAction implements MiddlewareInterface
         foreach ($this->delegatorSubManager->getServiceManagerConfig()->getNamedServices() as $name => $delegator) {
             /** @var DelegatorInterface $delegator */
             $delegator = $this->delegatorSubManager->get($delegator);
-            if ($delegator->responsible($media) === false) {
+            if (!$delegator->isResponsible($media)) {
                 $notResponsible++;
+
+                continue;
             }
+
+            $delegator->process($media);
         }
         
 

@@ -73,7 +73,7 @@ final class Image implements DelegatorInterface
         return "Image";
     }
 
-    public function responsible(Media $media)
+    public function isResponsible(Media $media): bool
     {
         $pathInfo = \pathinfo($media->filename());
         $extension = $pathInfo['extension'];
@@ -83,16 +83,14 @@ final class Image implements DelegatorInterface
             (!\in_array($extension, $this->allowedFileExtensions))) {
             $responsible = false;
         }
-        if ($responsible === true) {
-            $this->process($media);
-        }
+
         return $responsible;
     }
 
     /**
      * @param Media $media
      */
-    public function process(Media $media)
+    public function process(Media $media): void
     {
         foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
             /** @var ImageDefinitionInterface $imageDefinition */

@@ -16,5 +16,14 @@ use KiwiSuite\Media\Entity\Media;
 
 interface DelegatorInterface extends NamedServiceInterface
 {
-    public function responsible(Media $media);
+    /**
+     * @param Media $media
+     * @return bool
+     */
+    public function isResponsible(Media $media): bool;
+
+    /**
+     * @param Media $media
+     */
+    public function process(Media $media): void;
 }
