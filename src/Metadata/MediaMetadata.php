@@ -48,12 +48,28 @@ final class MediaMetadata extends AbstractMetadata
             $builder->createField('size', Type::INTEGER)
         )->build();
 
+        $this->setFieldBuilder('public',
+            $builder->createField('public', Type::BOOLEAN)
+        )->build();
+
+        $this->setFieldBuilder('hash',
+            $builder->createField('hash', Type::STRING)
+        )->build();
+
         $this->setFieldBuilder('createdAt',
             $builder->createField('createdAt', DateTimeType::class)
         )->build();
 
+        $this->setFieldBuilder('updatedAt',
+            $builder->createField('updatedAt', DateTimeType::class)
+        )->build();
+
+        $this->setFieldBuilder('deletedAt',
+            $builder->createField('deletedAt', DateTimeType::class)
+        )->build();
+
     }
-    
+
     public function id(): FieldBuilder
     {
         return $this->getField('id');
@@ -79,10 +95,29 @@ final class MediaMetadata extends AbstractMetadata
         return $this->getField('size');
     }
 
+    public function public(): FieldBuilder
+    {
+        return $this->getField('public');
+    }
+
+    public function hash(): FieldBuilder
+    {
+        return $this->getField('hash');
+    }
+
     public function createdAt(): FieldBuilder
     {
         return $this->getField('createdAt');
     }
 
+    public function updatedAt(): FieldBuilder
+    {
+        return $this->getField('updatedAt');
+    }
+
+    public function deletedAt(): FieldBuilder
+    {
+        return $this->getField('deletedAt');
+    }
 }
 

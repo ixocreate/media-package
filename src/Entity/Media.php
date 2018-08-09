@@ -31,7 +31,11 @@ final class Media implements EntityInterface
     private $filename;
     private $mimeType;
     private $size;
+    private $public;
+    private $hash;
     private $createdAt;
+    private $updatedAt;
+    private $deletedAt;
 
     public function id(): UuidType
     {
@@ -58,9 +62,29 @@ final class Media implements EntityInterface
         return $this->size;
     }
 
+    public function public(): bool
+    {
+        return $this->public;
+    }
+
+    public function hash(): string
+    {
+        return $this->hash;
+    }
+
     public function createdAt(): DateTimeType
     {
         return $this->createdAt;
+    }
+
+    public function updatedAt(): DateTimeType
+    {
+        return $this->updatedAt;
+    }
+
+    public function deletedAt(): DateTimeType
+    {
+        return $this->deletedAt;
     }
 
     protected static function createDefinitions(): DefinitionCollection
@@ -71,7 +95,11 @@ final class Media implements EntityInterface
             new Definition('filename', TypeInterface::TYPE_STRING, true, true),
             new Definition('mimeType', TypeInterface::TYPE_STRING, true, true),
             new Definition('size', TypeInterface::TYPE_INT, true, true),
+            new Definition('public', TypeInterface::TYPE_BOOL, true, true),
+            new Definition('hash', TypeInterface::TYPE_STRING, true, true),
             new Definition('createdAt', DateTimeType::class, true, true),
+            new Definition('updatedAt', DateTimeType::class, true, true),
+            new Definition('deletedAt', DateTimeType::clas, true, true)
         ]);
     }
 }
