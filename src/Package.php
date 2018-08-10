@@ -17,6 +17,7 @@ use KiwiSuite\Contract\Application\ServiceRegistryInterface;
 use KiwiSuite\Contract\ServiceManager\ServiceManagerInterface;
 use KiwiSuite\Media\BootstrapItem\DelegatorBootstrapItem;
 use KiwiSuite\Media\BootstrapItem\ImageDefinitionBootstrapItem;
+use KiwiSuite\Media\BootstrapItem\MediaBootstrapItem;
 use KiwiSuite\Media\Delegator\DelegatorConfigurator;
 use KiwiSuite\Media\Delegator\DelegatorSubManager;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
@@ -77,8 +78,9 @@ final class Package implements PackageInterface
     public function getBootstrapItems(): ?array
     {
         return [
-          DelegatorBootstrapItem::class,
-          ImageDefinitionBootstrapItem::class
+            DelegatorBootstrapItem::class,
+            ImageDefinitionBootstrapItem::class,
+            MediaBootstrapItem::class
         ];
     }
 

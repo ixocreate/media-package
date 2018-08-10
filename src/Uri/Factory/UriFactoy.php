@@ -23,7 +23,7 @@ final class UriFactoy implements FactoryInterface
         $packages = new Packages();
 
         $urlPackage = new UrlPackage(
-            (string) $container->get(MediaConfig::class)->getUri(),
+            (string) $container->get(MediaConfig::class)->uri(),
             new EmptyVersionStrategy()
         );
         $packages->setDefaultPackage($urlPackage);

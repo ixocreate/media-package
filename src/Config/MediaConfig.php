@@ -18,9 +18,14 @@ use Psr\Http\Message\UriInterface;
 final class MediaConfig
 {
     /**
-     * @var array
+     * @var string 
      */
-    private $config;
+    private $driver;
+
+    /**
+     * @var MediaProjectConfig
+     */
+    private $mediaProjectConfig;
 
     /**
      * @var UriInterface
@@ -32,15 +37,17 @@ final class MediaConfig
      * @param array $config
      * @param UriInterface $uri
      */
-    public function __construct(array $config, UriInterface $uri)
+    public function __construct(string $driver, UriInterface $uri, MediaProjectConfig $mediaProjectConfig)
     {
-        $this->config = $config;
+        $this->driver = $driver;
         $this->uri = $uri;
+        $this->mediaProjectConfig = $mediaProjectConfig;
         $this->assertDriver();
     }
 
     /**
      * @return UriInterface
+     * @deprecated
      */
     public function getUri(): UriInterface
     {
@@ -49,10 +56,75 @@ final class MediaConfig
 
     /**
      * @return string
+     * @deprecated 
      */
     public function getDriver(): string
     {
-        return $this->config['driver'];
+        return $this->driver;
+    }
+
+    /**
+     * @return UriInterface
+     */
+    public function uri(): UriInterface
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @return string
+     */
+    public function driver(): string
+    {
+        return $this->driver;
+    }
+
+    /**
+     * @return array
+     */
+    public function whitelist(): array
+    {
+        return $this->mediaProjectConfig->whitelist();
+    }
+
+    /**
+     * @return array
+     */
+    public function imageWhitelist(): array
+    {
+        return $this->mediaProjectConfig->imageWhitelist();
+    }
+
+    /**
+     * @return array
+     */
+    public function videoWhitelist(): array
+    {
+        return $this->mediaProjectConfig->videoWhitelist();
+    }
+
+    /**
+     * @return array
+     */
+    public function audioWhitelist(): array
+    {
+        return $this->mediaProjectConfig->audioWhitelist();
+    }
+
+    /**
+     * @return array
+     */
+    public function textWhitelist(): array
+    {
+        return $this->mediaProjectConfig->textWhitelist();
+    }
+
+    /**
+     * @return array
+     */
+    public function applicationWhitelist(): array
+    {
+        return $this->mediaProjectConfig->applicationWhitelist();
     }
 
     /**
@@ -63,11 +135,11 @@ final class MediaConfig
     {
         $allowedConfigParameter = ['automatic', 'gd', 'imagick'];
 
-        if (empty($this->config['driver'])) {
-            $this->config['driver'] = 'automatic';
+        if (empty($driver)) {
+            $this->driver = 'automatic';
         }
-        if (in_array($this->config['driver'], $allowedConfigParameter)) {
-            switch ($this->config['driver']):
+        if (in_array($this->driver, $allowedConfigParameter)) {
+            switch ($this->driver):
                 case 'gd':
                     if (extension_loaded('gd') === false) {
                         throw new InvalidExtensionException("PHP Extension 'gd' could not be found");
@@ -79,9 +151,9 @@ final class MediaConfig
                     }
                     break;
                 case 'automatic':
-                    $this->config['driver'] = 'imagick';
+                    $this->driver = 'imagick';
                     if (extension_loaded('imagick') === false) {
-                        $this->config['driver'] = 'gd';
+                        $this->driver = 'gd';
                         if (extension_loaded('gd') === false) {
                             throw new InvalidExtensionException("Neither 'gd' or 'imagick' PHP Extension could be found");
                         }
@@ -89,7 +161,7 @@ final class MediaConfig
                     break;
             endswitch;
         } else {
-            throw new InvalidConfigException(sprintf("Given media config driver: '%s', is not valid", $this->config['driver']));
+            throw new InvalidConfigException(sprintf("Given media config driver: '%s', is not valid", $this->driver));
         }
     }
 }
