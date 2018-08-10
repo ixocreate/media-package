@@ -13,6 +13,7 @@ namespace KiwiSuite\Media\Delegator;
 
 use KiwiSuite\Contract\ServiceManager\NamedServiceInterface;
 use KiwiSuite\Media\Entity\Media;
+use Zend\Diactoros\UploadedFile;
 
 interface DelegatorInterface extends NamedServiceInterface
 {

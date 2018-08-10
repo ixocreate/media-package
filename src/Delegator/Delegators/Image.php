@@ -20,6 +20,7 @@ use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
 use KiwiSuite\Media\Processor\UploadImageProcessor;
 use KiwiSuite\Media\Config\MediaConfig;
+use Zend\Diactoros\UploadedFile;
 
 final class Image implements DelegatorInterface
 {
@@ -73,17 +74,19 @@ final class Image implements DelegatorInterface
         return "Image";
     }
 
+    /**
+     * @param Media $media
+     * @return bool
+     */
     public function isResponsible(Media $media): bool
     {
         $pathInfo = \pathinfo($media->filename());
         $extension = $pathInfo['extension'];
         $responsible = true;
-
         if ((!\in_array($media->mimeType(), $this->allowedMimeTypes)) &&
             (!\in_array($extension, $this->allowedFileExtensions))) {
             $responsible = false;
         }
-
         return $responsible;
     }
 

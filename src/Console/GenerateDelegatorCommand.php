@@ -59,18 +59,14 @@ final class %s implements DelegatorInterface
      * @param Media $media
      * @return bool
      */
-    public function responsible(Media $media)
+    public function isResponsible(Media $media): bool
     {
         $pathInfo = \pathinfo($media->filename());
         $extension = $pathInfo['extension'];
         $responsible = true;
-
         if ((!\in_array($media->mimeType(), $this->allowedMimeTypes)) &&
             (!\in_array($extension, $this->allowedFileExtensions))) {
             $responsible = false;
-        }
-        if ($responsible === true) {
-            $this->process($media);
         }
         return $responsible;
     }
