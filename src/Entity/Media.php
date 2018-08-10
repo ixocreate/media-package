@@ -31,7 +31,7 @@ final class Media implements EntityInterface
     private $filename;
     private $mimeType;
     private $size;
-    private $public;
+    private $publicStatus;
     private $hash;
     private $createdAt;
     private $updatedAt;
@@ -62,9 +62,9 @@ final class Media implements EntityInterface
         return $this->size;
     }
 
-    public function public(): bool
+    public function publicStatus(): bool
     {
-        return $this->public;
+        return $this->publicStatus;
     }
 
     public function hash(): string
@@ -90,16 +90,16 @@ final class Media implements EntityInterface
     protected static function createDefinitions(): DefinitionCollection
     {
         return new DefinitionCollection([
-            new Definition('id', UuidType::class, true, true),
-            new Definition('basePath', TypeInterface::TYPE_STRING, true, true),
-            new Definition('filename', TypeInterface::TYPE_STRING, true, true),
-            new Definition('mimeType', TypeInterface::TYPE_STRING, true, true),
-            new Definition('size', TypeInterface::TYPE_INT, true, true),
-            new Definition('public', TypeInterface::TYPE_BOOL, true, true),
-            new Definition('hash', TypeInterface::TYPE_STRING, true, true),
-            new Definition('createdAt', DateTimeType::class, true, true),
-            new Definition('updatedAt', DateTimeType::class, true, true),
-            new Definition('deletedAt', DateTimeType::clas, true, true)
+            new Definition('id', UuidType::class, false, true),
+            new Definition('basePath', TypeInterface::TYPE_STRING, false, true),
+            new Definition('filename', TypeInterface::TYPE_STRING, false, true),
+            new Definition('mimeType', TypeInterface::TYPE_STRING, false, true),
+            new Definition('size', TypeInterface::TYPE_INT, false, true),
+            new Definition('publicStatus', TypeInterface::TYPE_BOOL, false, true),
+            new Definition('hash', TypeInterface::TYPE_STRING, false, true),
+            new Definition('createdAt', DateTimeType::class, false, true),
+            new Definition('updatedAt', DateTimeType::class, false, true),
+            new Definition('deletedAt', DateTimeType::class, true, true)
         ]);
     }
 }

@@ -48,8 +48,8 @@ final class MediaMetadata extends AbstractMetadata
             $builder->createField('size', Type::INTEGER)
         )->build();
 
-        $this->setFieldBuilder('public',
-            $builder->createField('public', Type::BOOLEAN)
+        $this->setFieldBuilder('publicStatus',
+            $builder->createField('publicStatus', Type::BOOLEAN)
         )->build();
 
         $this->setFieldBuilder('hash',
@@ -95,9 +95,9 @@ final class MediaMetadata extends AbstractMetadata
         return $this->getField('size');
     }
 
-    public function public(): FieldBuilder
+    public function publicStatus(): FieldBuilder
     {
-        return $this->getField('public');
+        return $this->getField('publicStatus');
     }
 
     public function hash(): FieldBuilder
