@@ -7,3 +7,5 @@ use KiwiSuite\ApplicationHttp\Middleware\MiddlewareConfigurator;
 $middleware->addAction(\KiwiSuite\Media\Action\UploadAction::class);
 $middleware->addAction(\KiwiSuite\Media\Action\IndexAction::class);
 $middleware->addAction(\KiwiSuite\Media\Action\EditorAction::class);
+$middleware->addAction(\KiwiSuite\Media\Action\Media\DetailAction::class);
+$middleware->addAction(\KiwiSuite\Media\Action\Media\UpdateAction::class);
