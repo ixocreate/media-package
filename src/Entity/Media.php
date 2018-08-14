@@ -95,7 +95,7 @@ final class Media implements EntityInterface
             new Definition('filename', TypeInterface::TYPE_STRING, false, true),
             new Definition('mimeType', TypeInterface::TYPE_STRING, false, true),
             new Definition('size', TypeInterface::TYPE_INT, false, true),
-            new Definition('publicStatus', TypeInterface::TYPE_BOOL, false, true),
+            new Definition('publicStatus', 'bool', false, true),
             new Definition('hash', TypeInterface::TYPE_STRING, false, true),
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
