@@ -46,7 +46,6 @@ final class IndexAction implements MiddlewareInterface
         }
 
         $items = $apiListResult->items();
-
         foreach ($items as $key => $value) {
             $items[$key]['thumb'] = $this->uri->generateImageUrl($value['basePath'], $value['filename'], 'admin-thumb');
             $items[$key]['original'] = $this->uri->generateImageUrl($value['basePath'], $value['filename']);
