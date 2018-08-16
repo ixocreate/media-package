@@ -61,6 +61,10 @@ final class UploadImageProcessor
         $image->destroy();
     }
 
+    /**
+     * @param Image $image
+     * @param array $imageParameters
+     */
     private function checkMode(Image $image, array $imageParameters)
     {
         switch ($imageParameters['definitionMode']) {
@@ -79,6 +83,10 @@ final class UploadImageProcessor
         }
     }
 
+    /**
+     * @param Image $image
+     * @param array $imageParameters
+     */
     private function fit(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
@@ -92,6 +100,10 @@ final class UploadImageProcessor
         });
     }
 
+    /**
+     * @param Image $image
+     * @param array $imageParameters
+     */
     private function fitCrop(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
@@ -105,6 +117,10 @@ final class UploadImageProcessor
         }
     }
 
+    /**
+     * @param Image $image
+     * @param array $imageParameters
+     */
     private function canvas(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
@@ -122,6 +138,10 @@ final class UploadImageProcessor
 
     }
 
+    /**
+     * @param Image $image
+     * @param array $imageParameters
+     */
     private function canvasFitCrop(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
