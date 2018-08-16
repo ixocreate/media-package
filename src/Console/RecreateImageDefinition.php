@@ -47,6 +47,11 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      */
     private $imageDelegator;
 
+    /**
+     * @var string
+     */
+    private $imagePath = '/data/media/img/';
+
 
     /**
      * RefactorImageDefinition constructor.
@@ -72,9 +77,11 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     public function configure()
     {
         $this
+            ->setDescription("Recreates files of an ImageDefinition")
             ->addArgument('name', InputArgument::OPTIONAL, 'Name of specific ImageDefinition to be refactored')
-            ->setDescription("Recreates all files or creates only missing files of an ImageDefinition")
-            ->addOption('missing','m',null,'Only missing files will be created');
+            ->addOption('all',null,null,'All ImageDefinitions will be refactored')
+            ->addOption('missing','m',null,'Only missing files will be created')
+            ->addOption('changed', 'c', null, 'Only files of changed ImageDefinitions will be created');
     }
 
     /**
@@ -86,7 +93,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('Refactor ImageDefinition');
-        $this->refactor($input, $output, $io);
+        $this->processInput($input, $output, $io);
     }
 
     /**
@@ -101,12 +108,18 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param SymfonyStyle $io
-     *
-     * Refactors all or missing Images to the new given parameters of an existing ImageDefinition.
      */
-    private function refactor(InputInterface $input,OutputInterface $output, SymfonyStyle $io)
+    private function processInput(InputInterface $input,OutputInterface $output, SymfonyStyle $io)
     {
-        if (!empty($input->getArgument('name'))) {
+        if ($input->getOption('all') && empty($input->getArgument('name'))) {
+            foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
+                /** @var ImageDefinitionInterface $imageDefinition */
+                $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
+                $this->generateFiles($imageDefinition, $input, $output, $io);
+            }
+        }
+
+        if (!$input->getOption('all') && !empty($input->getArgument('name'))) {
             $inputName = $input->getArgument('name');
             $inputName = \trim($inputName);
             if (!in_array(
@@ -115,29 +128,19 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                 throw new InvalidArgumentException(\sprintf("ImageDefinition '%s' does not exist", $inputName));
             }
         }
-
         if (isset($inputName)) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($inputName);
-            if ($input->getOption('missing')) {
-                $this->generateFiles($imageDefinition, $output, $io, true);
-                return;
-            }
-            $this->generateFiles($imageDefinition, $output, $io);
+            $this->generateFiles($imageDefinition, $input, $output, $io);
         }
 
-        if (!isset($inputName)) {
-            foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
-                /** @var ImageDefinitionInterface $imageDefinition */
-                $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
-                if ($input->getOption('missing')) {
-                    $this->generateFiles($imageDefinition, $output, $io, true);
-                    continue;
-                }
-                $this->generateFiles($imageDefinition, $output, $io);
-            }
+        if (!$input->getOption('all') && empty($input->getArgument('name'))) {
+            $io->writeln('Please enter Option "--all" or enter a valid ImageDefinition name');
         }
 
+        if ($input->getOption('all') && !empty($input->getArgument('name'))) {
+            $io->writeln('You only can either use "--all" or specifiy a valid ImageDefinition name');
+        }
     }
 
     /**
@@ -164,31 +167,103 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * If $missing = true, only missing Images will be recreated.
      * If $missing = false, all Images will be recreated
      */
-    private function generateFiles(ImageDefinitionInterface $imageDefinition, OutputInterface $output, SymfonyStyle $io, $missing = false)
+    private function generateFiles(ImageDefinitionInterface $imageDefinition, InputInterface $input, OutputInterface $output, SymfonyStyle $io)
     {
-        $directory = \trim($imageDefinition->directory(), '/');
-
-        if ($missing === true) {
-            foreach ($this->mediaRepository->findAll() as $media) {
-                $filePath = $media->basePath() . $media->filename();
-                if (!file_exists(getcwd() . '/data/media/img/' . $directory . '/' . $filePath)) {
-                    $mediaRepository [] = $media;
-                }
-            }
+        if ($input->getOption('missing')) {
+            $mediaRepository = $this->handleMissing($imageDefinition, $input, $io);
             if (empty($mediaRepository)) {
                 $io->writeln(sprintf('There are no missing Images in ImageDefinition: %s', $imageDefinition::serviceName()));
                 return;
             }
             $count = \count($mediaRepository);
             $progressBar = $this->customProgressBar($output,$imageDefinition,$count);
+            if ($input->getOption('changed')) {
+                $this->handleChanges($imageDefinition, $mediaRepository, $io, $progressBar);
+            }
         }
 
-        if ($missing === false) {
-            $count = \count($this->mediaRepository->findAll());
+        if (!$input->getOption('missing')) {
             $mediaRepository = $this->mediaRepository->findAll();
+            $count = \count($this->mediaRepository->findAll());
             $progressBar = $this->customProgressBar($output, $imageDefinition, $count);
+            if ($input->getOption('changed')) {
+                $this->handleChanges($imageDefinition, $mediaRepository, $io, $progressBar);
+            }
         }
 
+        $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+    }
+
+    /**
+     * @param ImageDefinitionInterface $imageDefinition
+     * @param InputInterface $input
+     * @param SymfonyStyle $io
+     * @return array
+     */
+    private function handleMissing(ImageDefinitionInterface $imageDefinition, InputInterface $input, SymfonyStyle $io)
+    {
+        $mediaRepository = [];
+        foreach ($this->mediaRepository->findAll() as $media) {
+            $filePath = $media->basePath() . $media->filename();
+            if (!file_exists(getcwd() . $this->imagePath . $imageDefinition->directory() . '/' . $filePath)) {
+                $mediaRepository [] = $media;
+            }
+        }
+        return $mediaRepository;
+    }
+
+    /**
+     * @param ImageDefinitionInterface $imageDefinition
+     * @param $mediaRepository
+     * @param SymfonyStyle $io
+     * @param ProgressBar $progressBar
+     */
+    private function handleChanges(ImageDefinitionInterface $imageDefinition, $mediaRepository, SymfonyStyle $io, ProgressBar $progressBar)
+    {
+        $jsonFile = getcwd() . $this->imagePath . $imageDefinition->directory() .'/'. $imageDefinition->directory() .'.json';
+
+        if (file_exists($jsonFile)) {
+            $content = file_get_contents($jsonFile);
+            $json = json_decode($content, true);
+
+            if (
+                $json['width']  != $imageDefinition->width() ||
+                $json['height'] != $imageDefinition->height() ||
+                $json['mode']   != $imageDefinition->mode() ||
+                $json['upscale']!= $imageDefinition->upscale()
+            )
+            {
+                $json['width'] = $imageDefinition->width();
+                $json['height'] = $imageDefinition->height();
+                $json['mode'] = $imageDefinition->mode();
+                $json['upscale'] = $imageDefinition->upscale();
+                $newJson = json_encode($json);
+                file_put_contents($jsonFile, $newJson);
+                $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+            }
+        }
+
+        if (!file_exists($jsonFile)) {
+            $json['serviceName'] = $imageDefinition::serviceName();
+            $json['width'] = $imageDefinition->width();
+            $json['height'] = $imageDefinition->height();
+            $json['mode'] = $imageDefinition->mode();
+            $json['upscale'] = $imageDefinition->upscale();
+            $json['directory'] = $imageDefinition->directory();
+            $newJson = json_encode($json);
+            file_put_contents($jsonFile, $newJson);
+            $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+        }
+    }
+
+    /**
+     * @param ImageDefinitionInterface $imageDefinition
+     * @param $mediaRepository
+     * @param SymfonyStyle $io
+     * @param ProgressBar $progressBar
+     */
+    private function processImages(ImageDefinitionInterface $imageDefinition, $mediaRepository, SymfonyStyle $io, ProgressBar $progressBar)
+    {
         $progressBar->start();
 
         foreach ($mediaRepository as $media) {
@@ -198,7 +273,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
             $imageParameters = [
                 'imagePath'      => 'data/media/' . $media->basePath(),
                 'imageFilename'  => $media->filename(),
-                'definitionSavingDir' => 'data/media/img/'. $directory . '/' . $media->basePath(),
+                'definitionSavingDir' => 'data/media/img/'. $imageDefinition->directory() . '/' . $media->basePath(),
                 'definitionWidth'     => $imageDefinition->width(),
                 'definitionHeight'    => $imageDefinition->height(),
                 'definitionMode'      => $imageDefinition->mode(),
@@ -213,4 +288,5 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $io->newLine();
         $io->writeln(sprintf('Finished'));
     }
+
 }
