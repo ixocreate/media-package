@@ -88,20 +88,6 @@ EOD;
     /**
      * @var string
      */
-    private $jsonTemplate = <<<'EOL'
-{
-    "serviceName": "%s",
-    "width": "%s",
-    "height": "%s",
-    "mode": "%s",
-    "upscale": "%s",
-    "directory": "%s"
-}
-EOL;
-
-    /**
-     * @var string
-     */
     private $definitionPath = '/src/App/Media/ImageDefinition/';
 
     /**
@@ -208,10 +194,10 @@ EOL;
 
         $width = $input->getArgument('width');
         settype($width, 'integer');
-        if ($width === 0){$width = 'null';}
+        if($width === 0){$width = null;}
         $height = $input->getArgument('height');
         settype($height,'integer');
-        if($height === 0){$height = 'null';}
+        if($height === 0){$height = null;}
         $clearedInput['width'] = $width;
         $clearedInput['height'] = $height;
         $clearedInput['mode'] = $input->getArgument('mode');
@@ -225,13 +211,17 @@ EOL;
      */
     private function generatePHP($clearedInput)
     {
+        $width = $clearedInput['width'];
+        if ($width === null) {$width = 'null';}
+        $height = $clearedInput['height'];
+        if ($height === null) {$height = 'null';}
         \file_put_contents(
             \getcwd() . $this->definitionPath . \ucfirst($clearedInput['serviceName']) . '.php',
             \sprintf($this->phpTemplate,
                 \ucfirst($clearedInput['serviceName']),
-                \trim($clearedInput['serviceName']),
-                $clearedInput['width'],
-                $clearedInput['height'],
+                \trim($this->CamelCaseToDashSeparated($clearedInput['serviceName'])),
+                $width,
+                $height,
                 $clearedInput['mode'],
                 $clearedInput['upscale'],
                 $this->CamelCaseToDashSeparated($clearedInput['serviceName'])
@@ -244,16 +234,19 @@ EOL;
      */
     private function generateJson($clearedInput)
     {
+        $data = [
+            'serviceName' => \trim($this->CamelCaseToDashSeparated($clearedInput['serviceName'])),
+            'width' => $clearedInput['width'],
+            'height' => $clearedInput['height'],
+            'mode'  => $clearedInput['mode'],
+            'upscale' => $clearedInput['upscale'],
+            'directory' => $this->CamelCaseToDashSeparated($clearedInput['serviceName'])
+        ];
+        $jsonEncode = json_encode($data);
+
         \file_put_contents(\getcwd() . $this->imagePath . '/' .$this->CamelCaseToDashSeparated($clearedInput['serviceName'])
             . '/' . \trim($this->CamelCaseToDashSeparated($clearedInput['serviceName'])) . '.json',
-            \sprintf($this->jsonTemplate,
-                $clearedInput['serviceName'],
-                $clearedInput['width'],
-                $clearedInput['height'],
-                $clearedInput['mode'],
-                $clearedInput['upscale'],
-                $this->CamelCaseToDashSeparated($clearedInput['serviceName'])
-            )
+        $jsonEncode
         );
     }
 
