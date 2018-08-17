@@ -161,11 +161,9 @@ final class RecreateImageDefinition extends Command implements CommandInterface
 
     /**
      * @param ImageDefinitionInterface $imageDefinition
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @param SymfonyStyle $io
-     * @param bool $missing
-     * If $missing = true, only missing Images will be recreated.
-     * If $missing = false, all Images will be recreated
      */
     private function generateFiles(ImageDefinitionInterface $imageDefinition, InputInterface $input, OutputInterface $output, SymfonyStyle $io)
     {
@@ -179,6 +177,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
             $progressBar = $this->customProgressBar($output,$imageDefinition,$count);
             if ($input->getOption('changed')) {
                 $this->handleChanges($imageDefinition, $mediaRepository, $io, $progressBar);
+                return;
             }
         }
 
@@ -188,10 +187,11 @@ final class RecreateImageDefinition extends Command implements CommandInterface
             $progressBar = $this->customProgressBar($output, $imageDefinition, $count);
             if ($input->getOption('changed')) {
                 $this->handleChanges($imageDefinition, $mediaRepository, $io, $progressBar);
+                return;
             }
         }
 
-        $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+        return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
     }
 
     /**
@@ -220,11 +220,11 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      */
     private function handleChanges(ImageDefinitionInterface $imageDefinition, $mediaRepository, SymfonyStyle $io, ProgressBar $progressBar)
     {
-        $jsonFile = getcwd() . $this->imagePath . $imageDefinition->directory() .'/'. $imageDefinition->directory() .'.json';
+        $jsonFile = \getcwd() . $this->imagePath . $imageDefinition->directory() .'/'. $imageDefinition->directory() .'.json';
 
-        if (file_exists($jsonFile)) {
-            $content = file_get_contents($jsonFile);
-            $json = json_decode($content, true);
+        if (\file_exists($jsonFile)) {
+            $content = \file_get_contents($jsonFile);
+            $json = \json_decode($content, true);
 
             if (
                 $json['width']  != $imageDefinition->width() ||
@@ -238,22 +238,23 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                 $json['mode'] = $imageDefinition->mode();
                 $json['upscale'] = $imageDefinition->upscale();
                 $newJson = json_encode($json);
-                file_put_contents($jsonFile, $newJson);
-                $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+                \file_put_contents($jsonFile, $newJson);
+                return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
             }
         }
 
-        if (!file_exists($jsonFile)) {
+        if (!\file_exists($jsonFile)) {
             $json['serviceName'] = $imageDefinition::serviceName();
             $json['width'] = $imageDefinition->width();
             $json['height'] = $imageDefinition->height();
             $json['mode'] = $imageDefinition->mode();
             $json['upscale'] = $imageDefinition->upscale();
             $json['directory'] = $imageDefinition->directory();
-            $newJson = json_encode($json);
-            file_put_contents($jsonFile, $newJson);
-            $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+            $newJson = \json_encode($json);
+            \file_put_contents($jsonFile, $newJson);
+            return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
         }
+        return $io->writeln('No changes have been made in ImageDefinition: ' . $imageDefinition::serviceName());
     }
 
     /**
