@@ -15,3 +15,4 @@ $media->setImageWhiteliste([
 $media->setTextWhitelist([
    'txt' =>  'text/plain'
 ]);
+$media->setPublicStatus(false);
