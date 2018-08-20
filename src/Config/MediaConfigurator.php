@@ -17,12 +17,28 @@ class MediaConfigurator implements ConfiguratorInterface
         'application' => [],
     ];
 
+    private $publicStatus = false;
+
     /**
      * @return array
      */
     public function whitelist(): array
     {
         return $this->whitelist;
+    }
+
+    /**
+     * @return bool
+     */
+    public function publicStatus(): bool
+    {
+        return $this->publicStatus;
+    }
+
+    
+    public function setPublicStatus(bool $bool): void
+    {
+        $this->publicStatus = $bool;
     }
 
     /**

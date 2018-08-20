@@ -20,6 +20,8 @@ class MediaProjectConfig implements SerializableServiceInterface
         'text' => [],
         'application' => [],
     ];
+    
+    private $publicStatus;
 
     /**
      * MediaProjectConfig constructor.
@@ -28,6 +30,7 @@ class MediaProjectConfig implements SerializableServiceInterface
     public function __construct(MediaConfigurator $mediaConfigurator)
     {
         $this->whitelist = $mediaConfigurator->whitelist();
+        $this->publicStatus = $mediaConfigurator->publicStatus();
     }
 
     /**
@@ -36,6 +39,14 @@ class MediaProjectConfig implements SerializableServiceInterface
     public function whitelist(): array
     {
         return $this->whitelist;
+    }
+
+    /**
+     * @return bool
+     */
+    public function publicStatus(): bool
+    {
+        return $this->publicStatus;
     }
 
     /**

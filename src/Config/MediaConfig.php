@@ -88,6 +88,14 @@ final class MediaConfig
     }
 
     /**
+     * @return bool
+     */
+    public function publicStatus(): bool
+    {
+        return $this->mediaProjectConfig->publicStatus();
+    }
+
+    /**
      * @return array
      */
     public function imageWhitelist(): array
