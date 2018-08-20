@@ -18,7 +18,7 @@ use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use Exception;
 
 
-final class EditorImageProcessor
+final class EditorImageProcessor implements ProcessorInterface
 {
     /**
      * @var array
@@ -59,6 +59,11 @@ final class EditorImageProcessor
         $this->imageManager = new ImageManager(['driver' => $mediaParameters['driver']]);
         $path = \getcwd() . '/data/media/' .  $mediaParameters['basePath'] . $mediaParameters['filename'];
         $this->image = $this->imageManager->make($path);
+    }
+
+    public static function serviceName(): string
+    {
+        return 'EditorImageProcessor';
     }
 
     /**
