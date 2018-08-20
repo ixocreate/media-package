@@ -18,7 +18,7 @@ use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use Intervention\Image\ImageManager;
-use KiwiSuite\Media\Processor\UploadImageProcessor;
+use KiwiSuite\Media\Processor\ImageProcessor;
 use KiwiSuite\Media\Config\MediaConfig;
 use Zend\Diactoros\UploadedFile;
 
@@ -98,17 +98,8 @@ final class Image implements DelegatorInterface
         foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
-            $imageParameters = [
-                'imagePath'      => 'data/media/' . $media->basePath(),
-                'imageFilename'  => $media->filename(),
-                'definitionSavingDir' => 'data/media/img/'. \trim($imageDefinition->directory(), '/') . '/' . $media->basePath(),
-                'definitionWidth'     => $imageDefinition->width(),
-                'definitionHeight'    => $imageDefinition->height(),
-                'definitionMode'      => $imageDefinition->mode(),
-                'definitionUpscale'   => $imageDefinition->upscale()
-            ];
 
-            $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);
+            $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig);
             $imageProcessor->process();
         }
     }

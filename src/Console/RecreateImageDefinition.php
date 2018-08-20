@@ -23,7 +23,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use KiwiSuite\Media\Processor\UploadImageProcessor;
+use KiwiSuite\Media\Processor\ImageProcessor;
 use KiwiSuite\Media\Exceptions\InvalidArgumentException;
 
 final class RecreateImageDefinition extends Command implements CommandInterface
@@ -206,6 +206,9 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         foreach ($this->mediaRepository->findAll() as $media) {
             $filePath = $media->basePath() . $media->filename();
             if (!file_exists(getcwd() . $this->imagePath . $imageDefinition->directory() . '/' . $filePath)) {
+                if (!$this->imageDelegator->isResponsible($media)) {
+                    continue;
+                }
                 $mediaRepository [] = $media;
             }
         }
@@ -271,17 +274,8 @@ final class RecreateImageDefinition extends Command implements CommandInterface
             if (!$this->imageDelegator->isResponsible($media)) {
                 continue;
             }
-            $imageParameters = [
-                'imagePath'      => 'data/media/' . $media->basePath(),
-                'imageFilename'  => $media->filename(),
-                'definitionSavingDir' => 'data/media/img/'. $imageDefinition->directory() . '/' . $media->basePath(),
-                'definitionWidth'     => $imageDefinition->width(),
-                'definitionHeight'    => $imageDefinition->height(),
-                'definitionMode'      => $imageDefinition->mode(),
-                'definitionUpscale'   => $imageDefinition->upscale()
-            ];
 
-            $imageProcessor = new UploadImageProcessor($imageParameters, $this->mediaConfig);
+            $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig);
             $imageProcessor->process();
             $progressBar->advance();
         }
