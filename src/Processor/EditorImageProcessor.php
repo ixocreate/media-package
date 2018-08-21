@@ -115,7 +115,7 @@ final class EditorImageProcessor implements ProcessorInterface
             $constraint->upsize();
         });
 
-        $image->save(\getcwd(). '/data/media/img/' . $this->imageDefinition::serviceName() . '/' . $this->media->basePath() .'2'. $this->media->filename());
+        $image->save(\getcwd(). '/data/media/img/' . $this->imageDefinition::serviceName() . '/' . $this->media->basePath() . $this->media->filename());
         $image->destroy();
     }
 
