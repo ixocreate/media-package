@@ -27,6 +27,7 @@ final class Version20180330152703 extends AbstractMigration
         $table->addColumn('updatedAt', DateTimeType::class);
         $table->addColumn('deletedAt', DateTimeType::class)->setNotnull(false);
         $table->setPrimaryKey(["id"]);
+        $table->addUniqueIndex(["hash"]);
     }
 
     public function down(Schema $schema)
