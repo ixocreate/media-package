@@ -11,12 +11,15 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action\Image;
 
+
+use Assert\Assertion;
+use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Media\Exceptions\InvalidArgumentException;
-use KiwiSuite\Media\Processor\EditorImageProcessor;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use KiwiSuite\Media\Config\MediaConfig;
+use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
+use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
+use KiwiSuite\Media\Processor\EditorImageProcessor;
 use KiwiSuite\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,11 +28,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class EditorAction implements MiddlewareInterface
 {
-    /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
-
     /**
      * @var MediaConfig
      */
@@ -41,96 +39,66 @@ final class EditorAction implements MiddlewareInterface
     private $imageDefinitionSubManager;
 
     /**
-     * @var array
+     * @var MediaRepository
      */
-    private $data;
+    private $mediaRepository;
 
     /**
-     * EditorAction constructor.
+     * NewEditorAction constructor.
      * @param MediaRepository $mediaRepository
-     * @param ImageDefinitionMapping $imageDefinitionMapping
+     * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
-    public function __construct(
-        MediaRepository $mediaRepository,
-        ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaConfig $mediaConfig
-    )
+    public function __construct(MediaRepository $mediaRepository, MediaConfig $mediaConfig, ImageDefinitionSubManager $imageDefinitionSubManager)
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
     }
 
-
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     * @throws \Assert\AssertionFailedException
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $this->data = \json_decode($request->getBody()->getContents(),true);
+        if (!Assertion::isJsonString($request->getBody()->getContents())) {
+            return new ApiErrorResponse('data need to be Json');
+        }
 
-        $requestParameters = $this->provideRequestParameters();
-        $mediaParameters = $this->provideMediaParameters();
-        $imageDefinitionParameters = $this->provideImageDefinitionParameters();
+        if (empty($request->getBody()->getContents())) {
+            return new ApiErrorResponse('no parameters passed to editor');
+        }
 
-        $editorProcessor = new EditorImageProcessor($requestParameters, $mediaParameters, $imageDefinitionParameters);
-        $editorProcessor->process();
+        $requestData = json_decode($request->getBody()->getContents(), true);
+
+        $media = $this->media($requestData);
+        $imageDefinition = $this->imageDefinition($requestData);
+
+        (new EditorImageProcessor($requestData, $imageDefinition, $media, $this->mediaConfig))->process();
+
         return new ApiSuccessResponse();
     }
 
     /**
-     * @return array
+     * @param array $requestData
+     * @return ImageDefinitionInterface
      */
-    private function provideRequestParameters()
+    private function imageDefinition(array $requestData): ImageDefinitionInterface
     {
-        $requestParameters = [
-            'x'         => $this->data['x'],
-            'y'         => $this->data['y'],
-            'width'     => $this->data['width'],
-            'height'    => $this->data['height'],
-        ];
-        return $requestParameters;
+        $imageDefinition = $this->imageDefinitionSubManager->get(lcfirst($requestData['imageDefinition']));
+
+        return $imageDefinition;
     }
 
     /**
-     * @return array
+     * @param array $requestData
+     * @return Media
      */
-    private function provideMediaParameters()
+    private function media(array $requestData): Media
     {
-        $media = $this->mediaRepository->findBy(['id' => $this->data['id']])[0];
-        $file = \getcwd() . '/data/media/' . $media->basePath() . $media->filename();
-        $file = \getimagesize($file);
-        $mediaParameter = [
-            'width'     => $file[0],
-            'height'    => $file[1],
-            'basePath'  => $media->basePath(),
-            'filename'  => $media->filename(),
-            'driver'    => $this->mediaConfig->getDriver(),
-        ];
-        return $mediaParameter;
+        return $this->mediaRepository->find(['id' => $requestData['id']]);
     }
-
-    /**
-     * @return array
-     */
-    private function provideImageDefinitionParameters()
-    {
-        if (!array_key_exists(
-            $this->data['imageDefinition'],
-            $this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices())) {
-            throw new InvalidArgumentException(
-                sprintf('ImageDefinition: %s does not exist', $this->data['imageDefinition'])
-            );
-        }
-
-        $definitionName = $this->data['imageDefinition'];
-        $definition = $this->imageDefinitionSubManager->get($definitionName);
-        $imageDefinitionParameters = [
-            'name'      => $definition->getName(),
-            'directory' => $definition->getDirectory(),
-            'width'     => $definition->getWidth(),
-            'height'    => $definition->getHeight(),
-        ];
-        return $imageDefinitionParameters;
-    }
-
-
 }

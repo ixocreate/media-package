@@ -11,201 +11,146 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Processor;
 
+
 use Intervention\Image\ImageManager;
-use Intervention\Image\Size;
+use Intervention\Image\Point;
+use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use Exception;
-
+use KiwiSuite\Media\Repository\MediaRepository;
+use Psr\Http\Message\ServerRequestInterface;
+use Intervention\Image\Size;
 
 final class EditorImageProcessor implements ProcessorInterface
 {
     /**
-     * @var array
+     * @var Media
      */
-    private $requestParameters = [];
+    private $media;
+
+    /**
+     * @var MediaConfig
+     */
+    private $mediaConfig;
 
     /**
      * @var array
      */
-    private $imageDefinitionParameters = [];
+    private $requestData;
 
     /**
-     * @var array
+     * @var ImageDefinitionInterface
      */
-    private $mediaParameters = [];
+    private $imageDefinition;
 
     /**
-     * @var ImageManager
+     * @var Size
      */
-    private $imageManager;
+    private $mediaSize;
 
     /**
-     * @var \Intervention\Image\Image
+     * @var Size
      */
-    private $image;
+    private $imageDefinitionSize;
 
     /**
-     * EditorHandler constructor.
-     * @param array $requestParameters
-     * @param array $mediaParameters
-     * @param array $imageDefinitionParameters
+     * @var Size
      */
-    public function __construct(array $requestParameters, array $mediaParameters, array $imageDefinitionParameters)
+    private $requestDataSize;
+
+    /**
+     * NewEditorImageProcessor constructor.
+     * @param array $requestData
+     * @param ImageDefinitionInterface $imageDefinition
+     * @param Media $media
+     * @param MediaConfig $mediaConfig
+     */
+    public function __construct(array $requestData, ImageDefinitionInterface $imageDefinition, Media $media, MediaConfig $mediaConfig)
     {
-        $this->requestParameters = $requestParameters;
-        $this->mediaParameters = $mediaParameters;
-        $this->imageDefinitionParameters = $imageDefinitionParameters;
-        $this->imageManager = new ImageManager(['driver' => $mediaParameters['driver']]);
-        $path = \getcwd() . '/data/media/' .  $mediaParameters['basePath'] . $mediaParameters['filename'];
-        $this->image = $this->imageManager->make($path);
+        $this->imageDefinition = $imageDefinition;
+        $this->mediaConfig = $mediaConfig;
+        $this->media = $media;
+
+        $mediaImageSize = \getimagesize(getcwd() . '/data/media/' . $media->basePath() . $media->filename());
+        $this->mediaSize = new Size($mediaImageSize[0], $mediaImageSize[1]);
+
+        $requestDataPoint = new Point($requestData['x'], $requestData['y']);
+        $this->requestDataSize = new Size($requestData['width'], $requestData['height'], $requestDataPoint);
+
     }
 
+    /**
+     * @return string
+     */
     public static function serviceName(): string
     {
-        return 'EditorImageProcessor';
+       return 'NewEditorImageProcessor';
     }
 
     /**
-     * Processes the recieved action
-     * @throws Exception
+     *
      */
     public function process()
     {
-        $this->validateRequest();
-        $width = $this->imageDefinitionParameters['width'];
-        $height = $this->imageDefinitionParameters['height'];
+        $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
+        $image = $imageManager->make(getcwd() . '/data/media/' . $this->media->basePath() . $this->media->filename());
 
-        $this->image->crop(
-            $this->requestParameters['width'],
-            $this->requestParameters['height'],
-            $this->requestParameters['x'],
-            $this->requestParameters['y']
-        );
+        $this->gaugeMinimalRequestDataSize();
+        $this->gaugeCanvasSize();
 
-        $this->image->resize($width, $height, function($constraint) use ($width, $height) {
-            if ($width === null || $height === null) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            }
+        $image->crop($this->requestDataSize->width, $this->requestDataSize->height, $this->requestDataSize->pivot->x, $this->requestDataSize->pivot->y);
+
+        $width = $this->imageDefinition->width();
+        $height = $this->imageDefinition->height();
+
+        if ($width === null) {
+            $width = $this->requestDataSize->width;
+        }
+        if ($height === null) {
+            $height = $this->requestDataSize->height;
+        }
+
+        $image->resize($width, $height, function($constraint) use ($width, $height) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
         });
 
-        $this->image->save(
-            \getcwd() .
-            '/data/media/img/' .
-            $this->imageDefinitionParameters['directory'] .
-            '/' .
-            $this->mediaParameters['basePath'] .
-            $this->mediaParameters['filename']
-        );
-        $this->image->destroy();
+        $image->save(\getcwd(). '/data/media/img/' . $this->imageDefinition::serviceName() . '/' . $this->media->basePath() .'2'. $this->media->filename());
+        $image->destroy();
     }
 
     /**
-     * Validates the incoming request parameters
-     * @throws Exception
+     * Gauges Request Parameters to minimum Size of ImageDefinition
      */
-    private function validateRequest()
+    private function gaugeMinimalRequestDataSize()
     {
-        $this->checkSelectBoxSize();
-        $this->checkFactor();
-        $this->checkCanvas();
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function checkSelectBoxSize()
-    {
-        if ($this->imageDefinitionParameters['width'] === null && $this->imageDefinitionParameters['height'] === null) {
-            throw new Exception(
-                "Neither 'width' or 'height' is defined in the ImageDefinition, atleast one needs to be set."
-            );
+        if ($this->requestDataSize->width < $this->imageDefinition->width()) {
+            $this->requestDataSize->width = $this->imageDefinition->width();
         }
-
-        if ($this->imageDefinitionParameters['width'] === null || $this->imageDefinitionParameters['height'] === null) {
-            $this->checkAutoSelectBoxSize();
-            return;
-        }
-        $this->gaugeMinBoxSize();
-    }
-
-    /**
-     * Gauges the allowed minimum select size
-     */
-    private function gaugeMinBoxSize()
-    {
-        if ($this->requestParameters['width'] < $this->imageDefinitionParameters['width']) {
-            $this->requestParameters['width'] = $this->imageDefinitionParameters['width'];
-        }
-
-        if ($this->requestParameters['height'] < $this->imageDefinitionParameters['height']) {
-            $this->requestParameters['height'] = $this->imageDefinitionParameters['height'];
+        if ($this->requestDataSize->height < $this->imageDefinition->height()) {
+            $this->requestDataSize->height = $this->imageDefinition->height();
         }
     }
 
     /**
-     * Gauges the allowed minimum select size, when null is given in an ImageDefinition
+     * Gauges X and Y Position
      */
-    private function checkAutoSelectBoxSize()
+    private function gaugeCanvasSize()
     {
-        if ($this->imageDefinitionParameters['width'] === null) {
-            $minSize = $this->imageDefinitionParameters['height'];
-            if ($this->requestParameters['height'] < $minSize) {
-                $this->requestParameters['height'] = $minSize;
-            }
+        if (($this->requestDataSize->pivot->x + $this->imageDefinition->width()) > $this->mediaSize->width) {
+            $diff = ($this->requestDataSize->pivot->x + $this->imageDefinition->width()) - $this->mediaSize->width;
+            $this->requestDataSize->pivot->setX($this->requestDataSize->pivot->x - $diff);
         }
 
-        if ($this->imageDefinitionParameters['height'] === null) {
-            $minSize = $this->imageDefinitionParameters['width'];
-            if ($this->requestParameters['width'] < $minSize) {
-                $this->requestParameters['width'] = $minSize;
-            }
+        if (($this->requestDataSize->pivot->y + $this->imageDefinition->height()) > $this->mediaSize->height) {
+            $diff = ($this->requestDataSize->pivot->y + $this->imageDefinition->height()) - $this->mediaSize->height;
+            $this->requestDataSize->pivot->setY($this->requestDataSize->pivot->y - $diff);
         }
     }
 
-    /**
-     * Gauges the X and Y position
-     */
-    private function checkCanvas()
+    private function zoom()
     {
-        $positionX = $this->requestParameters['x'];
-        $positionY = $this->requestParameters['y'];
-
-        $maxWidth = $this->mediaParameters['width'];
-        $maxHeight = $this->mediaParameters['height'];
-
-        $width = $this->requestParameters['width'];
-        $height = $this->requestParameters['height'];
-
-        if (($positionX + $width) > $maxWidth) {
-            $diff = ($positionX + $width) - $maxWidth;
-            $this->requestParameters['x'] = $positionX - $diff;
-        }
-
-        if (($positionY + $height) > $maxHeight) {
-            $diff = ($positionY + $height) - $maxHeight;
-            $this->requestParameters['y'] = $positionY - $diff;
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function checkFactor()
-    {
-        $imageDefinitionFactor =
-            \floor(
-                ($this->imageDefinitionParameters['width'] / $this->imageDefinitionParameters['height']) * 100
-            ) / 100;
-        $selectBoxFactor =
-            \floor(($this->requestParameters['width'] / $this->requestParameters['height']) * 100) / 100;
-
-        if ($imageDefinitionFactor != $selectBoxFactor) {
-            throw new Exception('Size doesnt conform ImageDefinition factor');
-        }
 
     }
-
 
 }
