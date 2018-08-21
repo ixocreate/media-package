@@ -1,33 +1,25 @@
 <?php
-/**
- * kiwi-suite/admin (https://github.com/kiwi-suite/media)
- *
- * @package   kiwi-suite/media
- * @see       https://github.com/kiwi-suite/media
- * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
- * @license   MIT License
- */
 
 declare(strict_types=1);
-
 namespace KiwiSuite\Media\Type;
 
-use Doctrine\DBAL\Types\StringType;
-use KiwiSuite\Contract\Schema\ElementInterface;
+
 use KiwiSuite\Contract\Type\DatabaseTypeInterface;
 use KiwiSuite\Contract\Type\SchemaElementInterface;
 use KiwiSuite\Entity\Type\AbstractType;
+use Doctrine\DBAL\Types\GuidType;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Schema\Elements\ImageElement;
+use Doctrine\DBAL\Types\StringType;
 use KiwiSuite\Schema\ElementSubManager;
+use KiwiSuite\Contract\Schema\ElementInterface;
 
-final class ImageType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+final class ApplicationType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {
     /**
      * @var array
      */
-    private $imageWhitelist;
+    private $applicationWhitelist;
 
     /**
      * ImageType constructor.
@@ -36,7 +28,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
      */
     public function __construct(MediaConfig $mediaConfig)
     {
-        $this->imageWhitelist = $mediaConfig->imageWhitelist();
+        $this->applicationWhitelist = $mediaConfig->applicationWhitelist();
     }
 
     /**
@@ -49,8 +41,8 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
         $pathInfo = pathinfo($value);
         $extension = $pathInfo['extension'];
 
-        if (!\array_key_exists($extension, $this->imageWhitelist) && !\in_array($mimeType, $this->imageWhitelist)) {
-            return new \Exception('invalid image format');
+        if (!\array_key_exists($extension, $this->applicationWhitelist) && !\in_array($mimeType, $this->applicationWhitelist)) {
+            return new \Exception('invalid application format');
         }
         return $value;
     }
@@ -76,11 +68,11 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
      */
     public function schemaElement(ElementSubManager $elementSubManager): ElementInterface
     {
-        return $elementSubManager->get(ImageElement::class);
+        return $elementSubManager->get(ApplicationElement::class);
     }
 
     public static function serviceName(): string
     {
-        return 'image';
+        return 'application';
     }
 }

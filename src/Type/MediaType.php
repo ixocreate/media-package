@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: afriedrich
- * Date: 14.08.18
- * Time: 11:05
- */
+declare(strict_types=1);
 
 namespace KiwiSuite\Media\Type;
 
@@ -12,12 +7,15 @@ namespace KiwiSuite\Media\Type;
 use KiwiSuite\Contract\Type\DatabaseTypeInterface;
 use KiwiSuite\Contract\Type\SchemaElementInterface;
 use KiwiSuite\Entity\Type\AbstractType;
-use KiwiSuite\Media\Repository\MediaRepository;
-use KiwiSuite\Media\Uri\Uri;
 use Doctrine\DBAL\Types\GuidType;
-use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Schema\Elements\MediaElement;
+use KiwiSuite\Contract\Schema\ElementInterface;
+use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Schema\ElementSubManager;
 
-final class DocumentType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+
+
+final class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {
     /**
      * @var MediaRepository
@@ -69,6 +67,21 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
         return (string) $this->value()->id();
     }
 
+    /**
+     * @return mixed|null|string
+     */
+    public function jsonSerialize()
+    {
+        if (empty($this->value())) {
+            return null;
+        }
+        $array = $this->value()->toPublicArray();
+        $array['thumb'] = $this->getUrl('admin-thumb');
+        $array['original'] = $this->getUrl();
+
+        return $array;
+    }
+
     public function convertToDatabaseValue()
     {
         if (empty($this->value())) {
@@ -91,7 +104,7 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
             return "";
         }
 
-        return $this->uri->url($media);
+        return $this->uri->imageUrl($media, $size);
     }
 
     /**
@@ -100,11 +113,11 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
      */
     public function schemaElement(ElementSubManager $elementSubManager): ElementInterface
     {
-        return $elementSubManager->get(ImageElement::class);
+        return $elementSubManager->get(MediaElement::class);
     }
 
     public static function serviceName(): string
     {
-        return 'document';
+        return 'media';
     }
 }
