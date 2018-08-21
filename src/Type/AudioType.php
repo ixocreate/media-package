@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
 declare(strict_types=1);
 namespace KiwiSuite\Media\Type;
 
@@ -11,10 +18,11 @@ use Doctrine\DBAL\Types\GuidType;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Config\MediaConfig;
 use Doctrine\DBAL\Types\StringType;
+use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\ElementSubManager;
 use KiwiSuite\Contract\Schema\ElementInterface;
 
-final class AudioType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+final class AudioType extends MediaType implements DatabaseTypeInterface, SchemaElementInterface
 {
     /**
      * @var array
@@ -22,13 +30,33 @@ final class AudioType extends AbstractType implements DatabaseTypeInterface, Sch
     private $audioWhitelist;
 
     /**
-     * ImageType constructor.
-     * @param MediaRepository $mediaRepository
-     * @param Uri $uri
+     * @var MediaRepository
      */
-    public function __construct(MediaConfig $mediaConfig)
+    private $mediaRepository;
+
+    /**
+     * AudioType constructor.
+     * @param MediaConfig $mediaConfig
+     * @param MediaRepository $mediaRepository
+     */
+    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository)
     {
         $this->audioWhitelist = $mediaConfig->audioWhitelist();
+        $this->mediaRepository = $mediaRepository;
+    }
+
+    /**
+     * @param Media $media
+     * @throws  \Exception
+     */
+    protected function validateType(Media $media)
+    {
+        $extension = \pathinfo($media->filename(), PATHINFO_EXTENSION);
+
+        if (!\in_array($media->mimeType(), $this->audioWhitelist) || !\array_key_exists($extension, $this->audioWhitelist)) {
+            throw new \Exception('not a valid AudioType');
+        }
+        return $media;
     }
 
     /**
@@ -37,29 +65,20 @@ final class AudioType extends AbstractType implements DatabaseTypeInterface, Sch
      */
     protected function transform($value)
     {
-        $mimeType = mime_content_type($value);
-        $pathInfo = pathinfo($value);
-        $extension = $pathInfo['extension'];
+        if (is_array($value)) {
+            if (empty($value['id'])) {
+                return null;
+            }
 
-        if (!\array_key_exists($extension, $this->audioWhitelist) && !\in_array($mimeType, $this->audioWhitelist)) {
-            return new \Exception('invalid audio format');
+            $value = $value['id'];
         }
-        return $value;
-    }
+        $value = $this->mediaRepository->find($value);
 
-    public function __toString()
-    {
-        return (string) $this->value();
-    }
+        if (!empty($value)) {
+            return $this->validateType($value);
+        }
 
-    public function convertToDatabaseValue()
-    {
-        return (string) $this->value();
-    }
-
-    public static function baseDatabaseType(): string
-    {
-        return StringType::class;
+        return null;
     }
 
     /**

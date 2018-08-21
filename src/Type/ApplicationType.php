@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
 declare(strict_types=1);
 namespace KiwiSuite\Media\Type;
 
@@ -11,10 +18,11 @@ use Doctrine\DBAL\Types\GuidType;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Config\MediaConfig;
 use Doctrine\DBAL\Types\StringType;
+use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\ElementSubManager;
 use KiwiSuite\Contract\Schema\ElementInterface;
 
-final class ApplicationType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+final class ApplicationType extends MediaType implements DatabaseTypeInterface, SchemaElementInterface
 {
     /**
      * @var array
@@ -22,13 +30,33 @@ final class ApplicationType extends AbstractType implements DatabaseTypeInterfac
     private $applicationWhitelist;
 
     /**
-     * ImageType constructor.
-     * @param MediaRepository $mediaRepository
-     * @param Uri $uri
+     * @var MediaRepository
      */
-    public function __construct(MediaConfig $mediaConfig)
+    private $mediaRepository;
+
+    /**
+     * ApplicationType constructor.
+     * @param MediaConfig $mediaConfig
+     * @param MediaRepository $mediaRepository
+     */
+    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository)
     {
         $this->applicationWhitelist = $mediaConfig->applicationWhitelist();
+        $this->mediaRepository = $mediaRepository;
+    }
+
+    /**
+     * @param Media $media
+     * @throws  \Exception
+     */
+    protected function validateType(Media $media)
+    {
+        $extension = \pathinfo($media->filename(), PATHINFO_EXTENSION);
+
+        if (!\in_array($media->mimeType(), $this->applicationWhitelist) || !\array_key_exists($extension, $this->applicationWhitelist)) {
+            throw new \Exception('not a valid ImageType');
+        }
+        return $media;
     }
 
     /**
@@ -37,29 +65,19 @@ final class ApplicationType extends AbstractType implements DatabaseTypeInterfac
      */
     protected function transform($value)
     {
-        $mimeType = mime_content_type($value);
-        $pathInfo = pathinfo($value);
-        $extension = $pathInfo['extension'];
+        if (is_array($value)) {
+            if (empty($value['id'])) {
+                return null;
+            }
 
-        if (!\array_key_exists($extension, $this->applicationWhitelist) && !\in_array($mimeType, $this->applicationWhitelist)) {
-            return new \Exception('invalid application format');
+            $value = $value['id'];
         }
-        return $value;
-    }
+        $value = $this->mediaRepository->find($value);
 
-    public function __toString()
-    {
-        return (string) $this->value();
-    }
-
-    public function convertToDatabaseValue()
-    {
-        return (string) $this->value();
-    }
-
-    public static function baseDatabaseType(): string
-    {
-        return StringType::class;
+        if (!empty($value)) {
+            return $this->validateType($value);
+        }
+        return null;
     }
 
     /**

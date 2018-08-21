@@ -8,6 +8,7 @@ use KiwiSuite\Contract\Type\DatabaseTypeInterface;
 use KiwiSuite\Contract\Type\SchemaElementInterface;
 use KiwiSuite\Entity\Type\AbstractType;
 use Doctrine\DBAL\Types\GuidType;
+use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Schema\Elements\MediaElement;
 use KiwiSuite\Contract\Schema\ElementInterface;
 use KiwiSuite\Media\Repository\MediaRepository;
@@ -15,7 +16,7 @@ use KiwiSuite\Schema\ElementSubManager;
 
 
 
-final class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+abstract class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {
     /**
      * @var MediaRepository
@@ -51,6 +52,7 @@ final class MediaType extends AbstractType implements DatabaseTypeInterface, Sch
             $value = $value['id'];
         }
         $value = $this->mediaRepository->find($value);
+
         if (!empty($value)) {
             return $value;
         }
