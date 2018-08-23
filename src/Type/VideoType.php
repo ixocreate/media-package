@@ -21,6 +21,7 @@ use Doctrine\DBAL\Types\StringType;
 use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\ElementSubManager;
 use KiwiSuite\Contract\Schema\ElementInterface;
+use KiwiSuite\Schema\Elements\VideoElement;
 
 final class VideoType extends MediaType implements DatabaseTypeInterface, SchemaElementInterface
 {
