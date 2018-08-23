@@ -1,4 +1,12 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action\Media;
@@ -46,18 +54,24 @@ final class ChangePublicStatusAction implements MiddlewareInterface
         if ($media === null) {
             return new ApiErrorResponse('given media Id does not exist');
         }
+
         $publicStatus = $request->getAttribute('publicStatus');
-        settype($publicStatus,'boolean');
+        if ($publicStatus === 'false') {
+            $publicStatus = (bool) false;
+        }
+        if ($publicStatus === 'true') {
+            $publicStatus = (bool) true;
+        }
 
         if ($publicStatus === $media->publicStatus()) {
             return new ApiErrorResponse('the publicStatus is already set to '.$publicStatus);
         }
 
-        $media->with('publicStatus',$publicStatus);
-        $media->with('updatedAt', new \DateTime());
+        $media = $media->with('publicStatus',$publicStatus);
+        $media = $media->with('updatedAt', new \DateTime());
 
         $this->mediaRepository->save($media);
 
-        return new ApiSuccessResponse('yay');
+        return new ApiSuccessResponse();
     }
 }
