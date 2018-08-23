@@ -134,7 +134,7 @@ final class UploadAction implements MiddlewareInterface
      * @return string
      * @throws \Exception
      */
-    private function createDir()
+    private function createDir(): string
     {
         do {
             $basePath = \implode('/', str_split(bin2hex(random_bytes(3)), 2)) . '/';
