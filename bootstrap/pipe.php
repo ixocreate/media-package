@@ -7,6 +7,8 @@ namespace KiwiSuite\Media;
 use KiwiSuite\Admin\Config\AdminConfig;
 use KiwiSuite\ApplicationHttp\Pipe\GroupPipeConfigurator;
 use KiwiSuite\ApplicationHttp\Pipe\PipeConfigurator;
+use KiwiSuite\Media\Action\Media\ChangePublicStatusAction;
+use KiwiSuite\Media\Action\Media\DeleteAction;
 use KiwiSuite\Media\Action\UploadAction;
 
 $pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
@@ -14,6 +16,8 @@ $pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
 
         $pipe->group("admin.authorized")(function (GroupPipeConfigurator $group) {
             $group->post('/media/upload', UploadAction::class, 'admin.api.media.upload');
+            $group->patch('/media/public/{id}/{publicStatus}', ChangePublicStatusAction::class, 'admin.api.media.publicStatus');
+            $group->delete('/media/{id}', DeleteAction::class, 'admin.api.media.delete');
         });
     });
 });
