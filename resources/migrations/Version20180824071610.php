@@ -16,6 +16,7 @@ final class Version20180824071610 extends AbstractMigration
     {
         $table = $schema->getTable('media_media');
         $table->addColumn('hash', Type::STRING);
+        $table->addColumn('publicStatus',Type::BOOLEAN);
         $table->addColumn('updatedAt', DateTimeType::class);
         $table->addColumn('deletedAt', DateTimeType::class)->setNotnull(false);
     }

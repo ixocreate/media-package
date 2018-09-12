@@ -21,7 +21,6 @@ final class Version20180330152703 extends AbstractMigration
         $table->addColumn('filename', Type::STRING);
         $table->addColumn('mimeType', Type::STRING);
         $table->addColumn('size', Type::INTEGER);
-        $table->addColumn('publicStatus',Type::BOOLEAN);
         $table->addColumn('createdAt', DateTimeType::class);
         $table->setPrimaryKey(["id"]);
     }
