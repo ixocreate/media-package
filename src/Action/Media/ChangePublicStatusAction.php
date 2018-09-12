@@ -55,16 +55,18 @@ final class ChangePublicStatusAction implements MiddlewareInterface
             return new ApiErrorResponse('given media Id does not exist');
         }
 
-        $publicStatus = $request->getAttribute('publicStatus');
-        if ($publicStatus === 'false') {
-            $publicStatus = (bool) false;
-        }
-        if ($publicStatus === 'true') {
-            $publicStatus = (bool) true;
+        if (!$this->mediaConfig->publicStatus()) {
+            return new ApiErrorResponse('the publicStatus feature must be enabled');
         }
 
-        if ($publicStatus === $media->publicStatus()) {
-            return new ApiErrorResponse('the publicStatus is already set to '.$publicStatus);
+        $publicStatus = $media->publicStatus();
+
+        if ($media->publicStatus()) {
+            $publicStatus = (bool) false;
+        }
+
+        if (!$media->publicStatus()) {
+            $publicStatus = (bool) true;
         }
 
         $media = $media->with('publicStatus',$publicStatus);
