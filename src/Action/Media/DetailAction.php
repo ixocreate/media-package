@@ -9,36 +9,47 @@ use KiwiSuite\Contract\Resource\AdminAwareInterface;
 use KiwiSuite\Contract\Resource\ResourceInterface;
 use KiwiSuite\Database\Repository\Factory\RepositorySubManager;
 use KiwiSuite\Entity\Entity\EntityInterface;
+use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\Builder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use KiwiSuite\Media\Entity\Media;
+use Zend\Diactoros\Response\JsonResponse;
 
 final class DetailAction implements MiddlewareInterface
 {
-    private $builder;
+    private $mediaRepository;
 
-    private $repositorySubManager;
-
-    public function __construct(Builder $builder, RepositorySubManager $repositorySubManager)
+    public function __construct(MediaRepository $mediaRepository)
     {
-        $this->builder = $builder;
-        $this->repositorySubManager = $repositorySubManager;
+        $this->mediaRepository = $mediaRepository;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var AdminAwareInterface $resource */
-        $resource = $request->getAttribute(ResourceInterface::class);
+        /** @var Media $media */
+        $media = $this->mediaRepository->findOneBy(['id' => $request->getAttribute('id')]);
 
-        /** @var RepositorySubManager $repository */
-        $repository = $this->repositorySubManager->get($resource->repository());
+        if ($media === null) {
+            return new ApiErrorResponse('given media Id does not exist');
+        }
 
-        /** @var EntityInterface $entity */
-        $entity = $repository->find($request->getAttribute("id"));
+        $details = [
+            'id' => $media->id(),
+            'filename' => $media->filename(),
+            'basePath' => $media->basePath(),
+            'mimeType' => $media->mimeType(),
+            'size' => $media->size(),
+            'publicStatus' => $media->publicStatus(),
+            'createdAt' => $media->createdAt(),
+            'updatedAt' => $media->updatedAt(),
+        ];
 
-        return new ApiDetailResponse($resource,$entity->toPublicArray(),$resource->updateSchema($this->builder),[]);
+        json_encode($details);
+
+        return new JsonResponse($details);
     }
 
 }
