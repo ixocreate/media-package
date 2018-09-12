@@ -19,6 +19,7 @@ use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Config\MediaConfig;
 use Doctrine\DBAL\Types\StringType;
 use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Media\Uri\Uri;
 use KiwiSuite\Schema\ElementSubManager;
 use KiwiSuite\Contract\Schema\ElementInterface;
 use KiwiSuite\Schema\Elements\ApplicationElement;
@@ -31,19 +32,14 @@ final class ApplicationType extends MediaType implements DatabaseTypeInterface, 
     private $applicationWhitelist;
 
     /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
-
-    /**
      * ApplicationType constructor.
      * @param MediaConfig $mediaConfig
      * @param MediaRepository $mediaRepository
      */
-    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository)
+    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository, Uri $uri)
     {
         $this->applicationWhitelist = $mediaConfig->applicationWhitelist();
-        $this->mediaRepository = $mediaRepository;
+        parent::__construct($mediaRepository, $uri);
     }
 
     /**

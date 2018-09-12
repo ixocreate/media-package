@@ -20,6 +20,7 @@ use KiwiSuite\Entity\Type\AbstractType;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Media\Uri\Uri;
 use KiwiSuite\Schema\Elements\ImageElement;
 use KiwiSuite\Schema\ElementSubManager;
 
@@ -31,19 +32,14 @@ final class ImageType extends MediaType implements DatabaseTypeInterface, Schema
     private $imageWhitelist;
 
     /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
-
-    /**
      * ImageType constructor.
      * @param MediaRepository $mediaRepository
      * @param Uri $uri
      */
-    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository)
+    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository, Uri $uri)
     {
         $this->imageWhitelist = $mediaConfig->imageWhitelist();
-        $this->mediaRepository = $mediaRepository;
+        parent::__construct($mediaRepository, $uri);
     }
 
     /**

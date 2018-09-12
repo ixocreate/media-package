@@ -19,6 +19,7 @@ use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Config\MediaConfig;
 use Doctrine\DBAL\Types\StringType;
 use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Media\Uri\Uri;
 use KiwiSuite\Schema\ElementSubManager;
 use KiwiSuite\Contract\Schema\ElementInterface;
 use KiwiSuite\Schema\Elements\AudioElement;
@@ -31,19 +32,14 @@ final class AudioType extends MediaType implements DatabaseTypeInterface, Schema
     private $audioWhitelist;
 
     /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
-
-    /**
      * AudioType constructor.
      * @param MediaConfig $mediaConfig
      * @param MediaRepository $mediaRepository
      */
-    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository)
+    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository, Uri $uri)
     {
         $this->audioWhitelist = $mediaConfig->audioWhitelist();
-        $this->mediaRepository = $mediaRepository;
+        parent::__construct($mediaRepository, $uri);
     }
 
     /**

@@ -13,6 +13,7 @@ use KiwiSuite\Schema\Elements\MediaElement;
 use KiwiSuite\Contract\Schema\ElementInterface;
 use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\ElementSubManager;
+use KiwiSuite\Media\Uri\Uri;
 
 
 
@@ -21,11 +22,11 @@ abstract class MediaType extends AbstractType implements DatabaseTypeInterface, 
     /**
      * @var MediaRepository
      */
-    private $mediaRepository;
+    protected $mediaRepository;
     /**
      * @var Uri
      */
-    private $uri;
+    protected $uri;
 
     /**
      * ImageType constructor.
