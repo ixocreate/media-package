@@ -65,11 +65,11 @@ final class EditorAction implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!Assertion::isJsonString($request->getBody()->getContents())) {
-            return new ApiErrorResponse('data need to be Json');
+            return new ApiErrorResponse('data_need_to_be_json');
         }
 
         if (empty($request->getBody()->getContents())) {
-            return new ApiErrorResponse('no parameters passed to editor');
+            return new ApiErrorResponse('no_parameters_passed_to_editor');
         }
 
         $requestData = json_decode($request->getBody()->getContents(), true);
