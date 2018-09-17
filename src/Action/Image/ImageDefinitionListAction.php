@@ -40,16 +40,19 @@ final class ImageDefinitionListAction implements MiddlewareInterface
             'height' => []
         ];
 
+        $result = [];
+
         foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name) {
             $imageDefinition = $this->imageDefinitionSubManager->get($name);
             /** @var $imageDefinition ImageDefinitionInterface */
             $list['name'] = $imageDefinition::serviceName();
             $list['width'] = $imageDefinition->width();
             $list['height'] = $imageDefinition->height();
+            $result[] = $list;
         }
 
-        json_encode($list);
+        json_encode($result);
 
-        return new JsonResponse($list);
+        return new JsonResponse($result);
     }
 }
