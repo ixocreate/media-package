@@ -17,7 +17,7 @@ use KiwiSuite\Media\Uri\Uri;
 
 
 
-abstract class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {
     /**
      * @var MediaRepository
