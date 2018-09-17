@@ -11,16 +11,13 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Entity;
 
+use KiwiSuite\Contract\Type\TypeInterface;
 use KiwiSuite\Entity\Entity\Definition;
 use KiwiSuite\Entity\Entity\DefinitionCollection;
 use KiwiSuite\Entity\Entity\EntityInterface;
 use KiwiSuite\Entity\Entity\EntityTrait;
 use KiwiSuite\CommonTypes\Entity\UuidType;
-use Doctrine\DBAL\Types\StringType;
-use Doctrine\DBAL\Types\IntegerType;
 use KiwiSuite\CommonTypes\Entity\DateTimeType;
-use KiwiSuite\Entity\Type\Type;
-use KiwiSuite\Entity\Type\TypeInterface;
 
 final class Media implements EntityInterface
 {
@@ -96,10 +93,10 @@ final class Media implements EntityInterface
             new Definition('mimeType', TypeInterface::TYPE_STRING, false, true),
             new Definition('size', TypeInterface::TYPE_INT, false, true),
             new Definition('publicStatus', 'bool', false, true),
-            new Definition('hash', TypeInterface::TYPE_STRING, false, true),
+            new Definition('hash', TypeInterface::TYPE_STRING, false, false),
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
-            new Definition('deletedAt', DateTimeType::class, true, true)
+            new Definition('deletedAt', DateTimeType::class, true, false)
         ]);
     }
 }
