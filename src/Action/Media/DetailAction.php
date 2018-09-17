@@ -3,53 +3,61 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action\Media;
 
-use KiwiSuite\Admin\Response\ApiDetailResponse;
+use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Contract\Resource\AdminAwareInterface;
-use KiwiSuite\Contract\Resource\ResourceInterface;
-use KiwiSuite\Database\Repository\Factory\RepositorySubManager;
-use KiwiSuite\Entity\Entity\EntityInterface;
+use KiwiSuite\Entity\Type\Type;
+use KiwiSuite\Media\Delegator\Delegators\Image;
 use KiwiSuite\Media\Repository\MediaRepository;
-use KiwiSuite\Schema\Builder;
+use KiwiSuite\Media\Type\MediaType;
+use KiwiSuite\Media\Uri\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use KiwiSuite\Media\Entity\Media;
-use Zend\Diactoros\Response\JsonResponse;
 
 final class DetailAction implements MiddlewareInterface
 {
     private $mediaRepository;
+    /**
+     * @var Uri
+     */
+    private $uri;
+    /**
+     * @var Image
+     */
+    private $imageDelegator;
 
-    public function __construct(MediaRepository $mediaRepository)
+    public function __construct(MediaRepository $mediaRepository, Uri $uri, Image $imageDelegator)
     {
         $this->mediaRepository = $mediaRepository;
+        $this->uri = $uri;
+        $this->imageDelegator = $imageDelegator;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var Media $media */
-        $media = $this->mediaRepository->findOneBy(['id' => $request->getAttribute('id')]);
+        /** @var MediaType $media */
+        $media = Type::create($request->getAttribute("id"), MediaType::class);
 
-        if ($media === null) {
+        if (empty($media->value())) {
             return new ApiErrorResponse('given media Id does not exist');
         }
 
-        $details = [
-            'id' => $media->id(),
-            'filename' => $media->filename(),
-            'basePath' => $media->basePath(),
-            'mimeType' => $media->mimeType(),
-            'size' => $media->size(),
-            'publicStatus' => $media->publicStatus(),
-            'createdAt' => $media->createdAt(),
-            'updatedAt' => $media->updatedAt(),
+        if (!empty($media->value()->deletedAt())) {
+            return new ApiErrorResponse('given media Id does not exist');
+        }
+
+        $isCropable = $this->imageDelegator->isResponsible($media->value());
+        $result = [
+            'media' => $media->jsonSerialize(),
+            'isCropable' => $isCropable,
         ];
 
-        json_encode($details);
+        if ($isCropable === true) {
 
-        return new JsonResponse($details);
+        }
+
+        return new ApiSuccessResponse($result);
     }
 
 }
