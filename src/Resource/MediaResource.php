@@ -56,7 +56,7 @@ final class MediaResource implements AdminAwareInterface
      */
     public function detailAction(): ?string
     {
-        return DetailAction::class;
+        return null;
     }
     /**
      * @param BuilderInterface $builder
