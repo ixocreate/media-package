@@ -61,5 +61,6 @@ final class IndexAction implements MiddlewareInterface
             $items,
             $apiListResult->meta()
         );
+
     }
 }
