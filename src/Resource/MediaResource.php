@@ -7,11 +7,8 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license   MIT License
  */
-
 declare(strict_types=1);
-
 namespace KiwiSuite\Media\Resource;
-
 use KiwiSuite\Admin\Resource\DefaultAdminTrait;
 use KiwiSuite\Contract\Resource\AdminAwareInterface;
 use KiwiSuite\Contract\Schema\BuilderInterface;
@@ -29,16 +26,13 @@ use KiwiSuite\Schema\Elements\ImageElement;
 use KiwiSuite\Schema\Listing\ListElement;
 use KiwiSuite\Schema\Listing\ListSchema;
 use KiwiSuite\Schema\Schema;
-
 final class MediaResource implements AdminAwareInterface
 {
     use DefaultAdminTrait;
-
     public function label(): string
     {
         return 'Media';
     }
-
     /**
      * @return null|string
      */
@@ -46,12 +40,10 @@ final class MediaResource implements AdminAwareInterface
     {
         return IndexAction::class;
     }
-
     public static function serviceName(): string
     {
         return "media";
     }
-
     /**
      * @return string
      */
@@ -59,7 +51,6 @@ final class MediaResource implements AdminAwareInterface
     {
         return MediaRepository::class;
     }
-
     /**
      * @return null|string
      */
@@ -67,7 +58,6 @@ final class MediaResource implements AdminAwareInterface
     {
         return DetailAction::class;
     }
-
     /**
      * @param BuilderInterface $builder
      * @return SchemaInterface
@@ -76,7 +66,6 @@ final class MediaResource implements AdminAwareInterface
     {
         return new Schema();
     }
-
     /**
      * @param BuilderInterface $builder
      * @return SchemaInterface
@@ -88,17 +77,14 @@ final class MediaResource implements AdminAwareInterface
         $element = $builder->create(CheckboxElement::class, 'publicStatus');
         $element = $element->withLabel('Declare Public?');
         $schema = $schema->withAddedElement($element);
-
         $schema = $schema->remove('filename');
         $schema = $schema->remove('hash');
         $schema = $schema->remove('deletedAt');
         $schema = $schema->remove('size');
         $schema = $schema->remove('mimeType');
         $schema = $schema->remove('basePath');
-
         return $schema;
     }
-
     /**
      * @return ListSchemaInterface
      */
