@@ -17,7 +17,6 @@ use KiwiSuite\Media\Action\UploadAction;
 $pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
     $pipe->segment('/api')( function(PipeConfigurator $pipe) {
         $pipe->get('/media/imageDefinition/list', ImageDefinitionListAction::class, 'admin.api.media.imageDefinition.list');
-        $pipe->get('/media/imageDefinition/detail/{imageDefinition}', ImageDefinitionDetailAction::class, 'admin.api.media.imageDefinition.detail');
 
         $pipe->group("admin.authorized")(function (GroupPipeConfigurator $group) {
             $group->post('/media/upload', UploadAction::class, 'admin.api.media.upload');
