@@ -34,11 +34,18 @@ final class ImageDefinitionListAction implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $list = [];
+        $list = [
+            'name' => [],
+            'width' => [],
+            'height' => []
+        ];
 
-        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $imageDefinition) {
+        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name) {
+            $imageDefinition = $this->imageDefinitionSubManager->get($name);
             /** @var $imageDefinition ImageDefinitionInterface */
-            $list[] = $imageDefinition::serviceName();
+            $list['name'] = $imageDefinition::serviceName();
+            $list['width'] = $imageDefinition->width();
+            $list['height'] = $imageDefinition->height();
         }
 
         json_encode($list);
