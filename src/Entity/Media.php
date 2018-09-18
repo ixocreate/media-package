@@ -79,7 +79,7 @@ final class Media implements EntityInterface
         return $this->updatedAt;
     }
 
-    public function deletedAt(): DateTimeType
+    public function deletedAt(): ?DateTimeType
     {
         return $this->deletedAt;
     }
