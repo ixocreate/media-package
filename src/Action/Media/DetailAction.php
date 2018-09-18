@@ -58,7 +58,8 @@ final class DetailAction implements MiddlewareInterface
         }
 
 
-        $isCropable = false;
+        $isCropable = $this->imageDelegator->isResponsible($media->value());
+        
         $result = [
             'media' => $media->jsonSerialize(),
             'isCropable' => $isCropable,
@@ -72,17 +73,13 @@ final class DetailAction implements MiddlewareInterface
                 $isCropable = $this->checkCropable($media->value(),$imageDefinition);
                 $definitions[] = ['name' => $imageDefinition::serviceName(), 'isCropable' => $isCropable, 'cropParameter' => $this->dummyData];
             }
-            $result = [
-                'media' => $media->jsonSerialize(),
-                'definitions' => $definitions
-            ];
+            $result['definitions'] = $definitions;
         }
 
 
 //        if ($isCropable === true) {
 //
 //        }
-
 
         return new ApiSuccessResponse($result);
     }
