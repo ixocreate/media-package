@@ -34,6 +34,13 @@ final class DetailAction implements MiddlewareInterface
      */
     private $imageDefinitionSubManager;
 
+    private $dummyData = [
+        'x1' => 0,
+        'y1' => 0,
+        'x2' => 100,
+        'y2' => 100
+    ];
+
 
     public function __construct(Uri $uri, Image $imageDelegator, ImageDefinitionSubManager $imageDefinitionSubManager)
     {
@@ -63,7 +70,7 @@ final class DetailAction implements MiddlewareInterface
             foreach($this->imageDefinitionSubManager->getServices() as $name) {
                 $imageDefinition = $this->imageDefinitionSubManager->get($name);
                 $isCropable = $this->checkCropable($media->value(),$imageDefinition);
-                $definitions[] = ['name' => $imageDefinition::serviceName(), 'isCropable' => $isCropable];
+                $definitions[] = ['name' => $imageDefinition::serviceName(), 'isCropable' => $isCropable, 'cropParameter' => $this->dummyData];
             }
             $result = [
                 'media' => $media->jsonSerialize(),
