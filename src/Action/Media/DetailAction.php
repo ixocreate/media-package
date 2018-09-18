@@ -40,14 +40,15 @@ final class DetailAction implements MiddlewareInterface
         $media = Type::create($request->getAttribute("id"), MediaType::class);
 
         if (empty($media->value())) {
-            return new ApiErrorResponse('given media Id does not exist');
+            return new ApiErrorResponse('given_media_Id_does_not_exist');
         }
 
         if (!empty($media->value()->deletedAt())) {
-            return new ApiErrorResponse('given media Id does not exist');
+            return new ApiErrorResponse('file_already_deleted');
         }
 
         $isCropable = $this->imageDelegator->isResponsible($media->value());
+
         $result = [
             'media' => $media->jsonSerialize(),
             'isCropable' => $isCropable,
