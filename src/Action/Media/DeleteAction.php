@@ -14,8 +14,10 @@ namespace KiwiSuite\Media\Action\Media;
 
 use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
+use KiwiSuite\Media\Entity\MediaCrop;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
+use KiwiSuite\Media\Repository\MediaCropRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -32,17 +34,25 @@ final class DeleteAction implements MiddlewareInterface
     private $mediaRepository;
 
     /**
+     * @var MediaCropRepository
+     */
+    private $mediaCropRepository;
+
+    /**
      * @var ImageDefinitionSubManager
      */
     private $imageDefinitionSubManager;
 
     /**
-     * ChangePublicStatusAction constructor.
+     * DeleteAction constructor.
      * @param MediaRepository $mediaRepository
+     * @param MediaCropRepository $mediaCropRepository
+     * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
-    public function __construct(MediaRepository $mediaRepository, ImageDefinitionSubManager $imageDefinitionSubManager)
+    public function __construct(MediaRepository $mediaRepository, MediaCropRepository $mediaCropRepository,ImageDefinitionSubManager $imageDefinitionSubManager)
     {
         $this->mediaRepository = $mediaRepository;
+        $this->mediaCropRepository = $mediaCropRepository;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
     }
 
@@ -56,14 +66,18 @@ final class DeleteAction implements MiddlewareInterface
         /** @var Media $media */
         $media = $this->mediaRepository->findOneBy(['id' => $request->getAttribute('id')]);
 
-        if ($media === null) {
+        if (empty($media)) {
             return new ApiErrorResponse('given media Id does not exist');
         }
 
-        $this->deleteFromStore($media);
+        /** @var MediaCrop $mediaCrop */
+        $mediaCrop = $this->mediaCropRepository->findBy(['mediaId' => $media->id()]);
 
+        $this->deleteFromStore($media);
+        foreach ($mediaCrop as $entry) {
+            $this->mediaCropRepository->remove($entry);
+        }
         $this->mediaRepository->remove($media);
-        $this->mediaRepository->flush($media);
 
         return new ApiSuccessResponse();
     }
