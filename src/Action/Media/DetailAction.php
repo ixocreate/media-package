@@ -8,8 +8,10 @@ use KiwiSuite\Admin\Response\ApiSuccessResponse;
 use KiwiSuite\Entity\Type\Type;
 use KiwiSuite\Media\Delegator\Delegators\Image;
 use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Media\Entity\MediaCrop;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
+use KiwiSuite\Media\Repository\MediaCropRepository;
 use KiwiSuite\Media\Type\MediaType;
 use KiwiSuite\Media\Uri\Uri;
 use Psr\Http\Message\ResponseInterface;
@@ -34,21 +36,36 @@ final class DetailAction implements MiddlewareInterface
      */
     private $imageDefinitionSubManager;
 
-    private $dummyData = [
-        'x1' => 0,
-        'y1' => 0,
-        'x2' => 100,
-        'y2' => 100
-    ];
+    /**
+     * @var MediaCropRepository
+     */
+    private $mediaCropRepository;
 
-
-    public function __construct(Uri $uri, Image $imageDelegator, ImageDefinitionSubManager $imageDefinitionSubManager)
+    /**
+     * DetailAction constructor.
+     * @param Uri $uri
+     * @param Image $imageDelegator
+     * @param ImageDefinitionSubManager $imageDefinitionSubManager
+     * @param MediaCropRepository $mediaCropRepository
+     */
+    public function __construct(
+        Uri $uri,
+        Image $imageDelegator,
+        ImageDefinitionSubManager $imageDefinitionSubManager,
+        MediaCropRepository $mediaCropRepository
+    )
     {
         $this->uri = $uri;
         $this->imageDelegator = $imageDelegator;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
+        $this->mediaCropRepository = $mediaCropRepository;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var MediaType $media */
@@ -59,56 +76,82 @@ final class DetailAction implements MiddlewareInterface
 
 
         $isCropable = $this->imageDelegator->isResponsible($media->value());
-        
+
         $result = [
             'media' => $media->jsonSerialize(),
             'isCropable' => $isCropable,
         ];
 
-        $definitions = [];
+        $media = $media->value();
 
-        if ($this->imageDelegator->isResponsible($media->value())) {
-            foreach($this->imageDefinitionSubManager->getServices() as $name) {
-                $imageDefinition = $this->imageDefinitionSubManager->get($name);
-                $isCropable = $this->checkCropable($media->value(),$imageDefinition);
-                $definitions[] = ['name' => $imageDefinition::serviceName(), 'isCropable' => $isCropable, 'cropParameter' => $this->dummyData];
-            }
+        $mediaCropArray = $this->mediaCropRepository->findBy(['mediaId' => ($media->id())]);
+
+        if ($isCropable) {
+            $definitions = $this->determineDefinitions($media,$mediaCropArray);
             $result['definitions'] = $definitions;
         }
-
-
-//        if ($isCropable === true) {
-//
-//        }
 
         return new ApiSuccessResponse($result);
     }
 
-    private function checkCropable(Media $media, ImageDefinitionInterface $imageDefinition): bool
+    /**
+     * @param Media $media
+     * @param ImageDefinitionInterface $imageDefinition
+     * @return bool
+     */
+    private function checkValidSize(Media $media, ImageDefinitionInterface $imageDefinition): bool
     {
         $state = false;
 
-        $size = \getimagesize(getcwd(). '/data/media/' . $media->basePath() . $media->filename());
+        $size = \getimagesize(\getcwd(). '/data/media/' . $media->basePath() . $media->filename());
+        $width = $size[0];
+        $height = $size[1];
 
-        if ($size[0] = $size[1]) {
-            if ($size[0] >= $imageDefinition->width() && $size[0] >= $imageDefinition->height()) {
+        if ($width === $height) {
+            if ($width >= $imageDefinition->width() && $width >= $imageDefinition->height()) {
                 $state = true;
             }
         }
 
-        if ($size[0] > $size[1]) {
-            if ($size[0] >= $imageDefinition->width()) {
-                $state = true;
-            }
+        if ($width >= $imageDefinition->width() && $height >= $imageDefinition->height()) {
+            $state = true;
         }
-
-        if ($size[1] > $size[0]) {
-            if ($size[1] >= $imageDefinition->height()) {
-                $state = true;
-            }
-        }
+//        if ($width > $height) {
+//            if ($width >= $imageDefinition->width()) {
+//                $state = true;
+//            }
+//        }
+//
+//        if ($height > $width) {
+//            if ($height >= $imageDefinition->height()) {
+//                $state = true;
+//            }
+//        }
 
         return $state;
+    }
+
+    /**
+     * @param Media $media
+     * @param array $mediaCropArray
+     * @return array
+     */
+    private function determineDefinitions(Media $media, array $mediaCropArray)
+    {
+        $definitions = [];
+
+        foreach($this->imageDefinitionSubManager->getServices() as $key => $name) {
+            $imageDefinition = $this->imageDefinitionSubManager->get($name);
+            $validSize = $this->checkValidSize($media, $imageDefinition);
+            $definitions[] = ['name' => $imageDefinition::serviceName(), 'isCropable' => $validSize, 'cropParameter' => ''];
+
+            foreach ($mediaCropArray as $mediaCrop) {
+                if ($mediaCrop->cropParameters() != null && $imageDefinition::serviceName() === $mediaCrop->imageDefinition()) {
+                    $definitions[$key]['cropParameter'] = $mediaCrop->cropParameters();
+                }
+            }
+        }
+        return $definitions;
     }
 
 }
