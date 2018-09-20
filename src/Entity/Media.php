@@ -32,7 +32,6 @@ final class Media implements EntityInterface
     private $hash;
     private $createdAt;
     private $updatedAt;
-    private $deletedAt;
 
     public function id(): UuidType
     {
@@ -79,11 +78,6 @@ final class Media implements EntityInterface
         return $this->updatedAt;
     }
 
-    public function deletedAt(): ?DateTimeType
-    {
-        return $this->deletedAt;
-    }
-
     protected static function createDefinitions(): DefinitionCollection
     {
         return new DefinitionCollection([
@@ -96,7 +90,6 @@ final class Media implements EntityInterface
             new Definition('hash', TypeInterface::TYPE_STRING, false, false),
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
-            new Definition('deletedAt', DateTimeType::class, true, false)
         ]);
     }
 }
