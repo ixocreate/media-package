@@ -42,15 +42,23 @@ final class ImageProcessor implements ProcessorInterface
     private $mediaConfig;
 
     /**
-     * ImageProcessor constructor.
-     * @param array $imageParameters
-     * @param MediaConfig $mediaConfig
+     * @var Image
      */
-    public function __construct(Media $media,ImageDefinitionInterface $imageDefinition, MediaConfig $mediaConfig)
+    private $image;
+
+    /**
+     * ImageProcessor constructor.
+     * @param Media $media
+     * @param ImageDefinitionInterface $imageDefinition
+     * @param MediaConfig $mediaConfig
+     * @param Image|null $image
+     */
+    public function __construct(Media $media,ImageDefinitionInterface $imageDefinition, MediaConfig $mediaConfig, Image $image = null)
     {
         $this->media = $media;
         $this->imageDefinition = $imageDefinition;
         $this->mediaConfig = $mediaConfig;
+        $this->image = $image;
         $this->setParameters();
     }
 
@@ -86,7 +94,7 @@ final class ImageProcessor implements ProcessorInterface
         if(!\is_dir($this->imageParameters['definitionSavingDir'])) {
             \mkdir($this->imageParameters['definitionSavingDir'],0777, true);
         }
-        $image = $imageManager->make($this->imageParameters['imagePath'] . $this->imageParameters['imageFilename']);
+        $image = ($this->image != null) ? $this->image : $imageManager->make($this->imageParameters['imagePath'] . $this->imageParameters['imageFilename']);
 
         $this->imageParameters['imageWidth'] = $image->width();
         $this->imageParameters['imageHeight'] = $image->height();

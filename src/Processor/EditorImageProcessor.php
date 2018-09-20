@@ -34,11 +34,6 @@ final class EditorImageProcessor implements ProcessorInterface
     private $mediaConfig;
 
     /**
-     * @var array
-     */
-    private $requestData;
-
-    /**
      * @var ImageDefinitionInterface
      */
     private $imageDefinition;
@@ -49,14 +44,19 @@ final class EditorImageProcessor implements ProcessorInterface
     private $mediaSize;
 
     /**
-     * @var Size
+     * @var array
      */
-    private $imageDefinitionSize;
+    private $requestData;
 
     /**
-     * @var Size
+     * @var mixed
      */
-    private $requestDataSize;
+    private $requestWidth;
+
+    /**
+     * @var mixed
+     */
+    private $requestHeight;
 
     /**
      * NewEditorImageProcessor constructor.
@@ -70,12 +70,13 @@ final class EditorImageProcessor implements ProcessorInterface
         $this->imageDefinition = $imageDefinition;
         $this->mediaConfig = $mediaConfig;
         $this->media = $media;
+        $this->requestData = $requestData;
 
         $mediaImageSize = \getimagesize(getcwd() . '/data/media/' . $media->basePath() . $media->filename());
         $this->mediaSize = new Size($mediaImageSize[0], $mediaImageSize[1]);
 
-        $requestDataPoint = new Point($requestData['x'], $requestData['y']);
-        $this->requestDataSize = new Size($requestData['width'], $requestData['height'], $requestDataPoint);
+        $this->requestWidth = $requestData['x2'] - $requestData['x1'];
+        $this->requestHeight = $requestData['y2'] - $requestData['y1'];
 
     }
 
@@ -98,25 +99,9 @@ final class EditorImageProcessor implements ProcessorInterface
         $this->gaugeMinimalRequestDataSize();
         $this->gaugeCanvasSize();
 
-        $image->crop($this->requestDataSize->width, $this->requestDataSize->height, $this->requestDataSize->pivot->x, $this->requestDataSize->pivot->y);
+        $image->crop($this->requestWidth, $this->requestHeight, $this->requestData['x1'], $this->requestData['y1']);
 
-        $width = $this->imageDefinition->width();
-        $height = $this->imageDefinition->height();
-
-        if ($width === null) {
-            $width = $this->requestDataSize->width;
-        }
-        if ($height === null) {
-            $height = $this->requestDataSize->height;
-        }
-
-        $image->resize($width, $height, function($constraint) use ($width, $height) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        $image->save(\getcwd(). '/data/media/img/' . $this->imageDefinition::serviceName() . '/' . $this->media->basePath() . $this->media->filename());
-        $image->destroy();
+        (new ImageProcessor($this->media, $this->imageDefinition, $this->mediaConfig, $image))->process();
     }
 
     /**
@@ -124,12 +109,11 @@ final class EditorImageProcessor implements ProcessorInterface
      */
     private function gaugeMinimalRequestDataSize()
     {
-        if ($this->requestDataSize->width < $this->imageDefinition->width()) {
-            $this->requestDataSize->width = $this->imageDefinition->width();
-        }
-        if ($this->requestDataSize->height < $this->imageDefinition->height()) {
-            $this->requestDataSize->height = $this->imageDefinition->height();
-        }
+        $this->requestWidth =
+            ($this->requestWidth < $this->imageDefinition->width()) ? $this->imageDefinition->width() : $this->requestWidth;
+        $this->requestHeight =
+            ($this->requestHeight < $this->imageDefinition->height()) ? $this->imageDefinition->height() : $this->requestHeight;
+
     }
 
     /**
@@ -137,20 +121,21 @@ final class EditorImageProcessor implements ProcessorInterface
      */
     private function gaugeCanvasSize()
     {
-        if (($this->requestDataSize->pivot->x + $this->imageDefinition->width()) > $this->mediaSize->width) {
-            $diff = ($this->requestDataSize->pivot->x + $this->imageDefinition->width()) - $this->mediaSize->width;
-            $this->requestDataSize->pivot->setX($this->requestDataSize->pivot->x - $diff);
+
+        if (($this->requestData['x1'] + $this->requestWidth) > $this->mediaSize->width) {
+            $diff = ($this->requestData['x1'] + $this->requestWidth) - $this->mediaSize->width;
+            $this->requestData['x1'] = $this->requestData['x1'] - $diff;
         }
 
-        if (($this->requestDataSize->pivot->y + $this->imageDefinition->height()) > $this->mediaSize->height) {
-            $diff = ($this->requestDataSize->pivot->y + $this->imageDefinition->height()) - $this->mediaSize->height;
-            $this->requestDataSize->pivot->setY($this->requestDataSize->pivot->y - $diff);
+        if (($this->requestData['y1'] + $this->requestHeight) > $this->mediaSize->height) {
+            $diff = ($this->requestData['y1'] + $this->requestHeight) - $this->mediaSize->height;
+            $this->requestData['y1'] = $this->requestData['y1'] - $diff;
         }
     }
 
     private function zoom()
     {
-
+        //TODO
     }
 
 }
