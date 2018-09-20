@@ -7,6 +7,7 @@ namespace KiwiSuite\Media;
 use KiwiSuite\Admin\Config\AdminConfig;
 use KiwiSuite\ApplicationHttp\Pipe\GroupPipeConfigurator;
 use KiwiSuite\ApplicationHttp\Pipe\PipeConfigurator;
+use KiwiSuite\Media\Action\Image\EditorAction;
 use KiwiSuite\Media\Action\Image\ImageDefinitionDetailAction;
 use KiwiSuite\Media\Action\Image\ImageDefinitionListAction;
 use KiwiSuite\Media\Action\Media\ChangePublicStatusAction;
@@ -20,6 +21,7 @@ $pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
 
         $pipe->group("admin.authorized")(function (GroupPipeConfigurator $group) {
             $group->get('/media/{id}', DetailAction::class, 'admin.api.media.detail');
+            $group->post('/media/editor', EditorAction::class, 'admin.api.media.editor');
             $group->post('/media/upload', UploadAction::class, 'admin.api.media.upload');
             $group->post('/media/filter', FilterAction::class, 'admin.api.media.filter');
             $group->patch('/media/public/{id}', ChangePublicStatusAction::class, 'admin.api.media.publicStatus');
