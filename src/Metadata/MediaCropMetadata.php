@@ -15,45 +15,31 @@ use Doctrine\DBAL\Types\Type;
 use KiwiSuite\Database\ORM\Metadata\AbstractMetadata;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 use KiwiSuite\CommonTypes\Entity\UuidType;
-use Doctrine\DBAL\Types\StringType;
-use Doctrine\DBAL\Types\IntegerType;
 use KiwiSuite\CommonTypes\Entity\DateTimeType;
 
-final class MediaMetadata extends AbstractMetadata
+final class MediaCropMetadata extends AbstractMetadata
 {
 
     protected function buildMetadata(): void
     {
         $builder = $this->getBuilder();
-        $builder->setTable('media_media');
+        $builder->setTable('media_media_crop');
 
         $this->setFieldBuilder('id',
             $builder->createField('id', UuidType::class)
                 ->makePrimaryKey()
         )->build();
 
-        $this->setFieldBuilder('basePath',
-            $builder->createField('basePath', Type::STRING)
+        $this->setFieldBuilder('mediaId',
+            $builder->createField('mediaId',UuidType::class)
         )->build();
 
-        $this->setFieldBuilder('filename',
-            $builder->createField('filename', Type::STRING)
+        $this->setFieldBuilder('imageDefinition',
+            $builder->createField('imageDefinition', Type::STRING)
         )->build();
 
-        $this->setFieldBuilder('mimeType',
-            $builder->createField('mimeType', Type::STRING)
-        )->build();
-
-        $this->setFieldBuilder('size',
-            $builder->createField('size', Type::INTEGER)
-        )->build();
-
-        $this->setFieldBuilder('publicStatus',
-            $builder->createField('publicStatus', Type::BOOLEAN)
-        )->build();
-
-        $this->setFieldBuilder('hash',
-            $builder->createField('hash', Type::STRING)
+        $this->setFieldBuilder('cropParameters',
+            $builder->createField('cropParameters', Type::JSON)
         )->build();
 
         $this->setFieldBuilder('createdAt',
@@ -71,34 +57,19 @@ final class MediaMetadata extends AbstractMetadata
         return $this->getField('id');
     }
 
-    public function basePath(): FieldBuilder
+    public function mediaId(): FieldBuilder
     {
-        return $this->getField('basePath');
+        return $this->getField('mediaId');
     }
 
-    public function filename(): FieldBuilder
+    public function imageDefinition(): FieldBuilder
     {
-        return $this->getField('filename');
+        return $this->getField('imageDefinition');
     }
 
-    public function mimeType(): FieldBuilder
+    public function cropParameters(): FieldBuilder
     {
-        return $this->getField('mimeType');
-    }
-
-    public function size(): FieldBuilder
-    {
-        return $this->getField('size');
-    }
-
-    public function publicStatus(): FieldBuilder
-    {
-        return $this->getField('publicStatus');
-    }
-
-    public function hash(): FieldBuilder
-    {
-        return $this->getField('hash');
+        return $this->getField('cropParameters');
     }
 
     public function createdAt(): FieldBuilder
