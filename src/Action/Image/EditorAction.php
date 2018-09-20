@@ -15,16 +15,20 @@ namespace KiwiSuite\Media\Action\Image;
 use Assert\Assertion;
 use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
+use KiwiSuite\Entity\Entity\EntityInterface;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Media\Entity\MediaCrop;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use KiwiSuite\Media\Processor\EditorImageProcessor;
+use KiwiSuite\Media\Repository\MediaCropRepository;
 use KiwiSuite\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Ramsey\Uuid\Uuid;
 
 final class EditorAction implements MiddlewareInterface
 {
@@ -44,16 +48,28 @@ final class EditorAction implements MiddlewareInterface
     private $mediaRepository;
 
     /**
-     * NewEditorAction constructor.
+     * @var MediaCropRepository
+     */
+    private $mediaCropRepository;
+
+    /**
+     * EditorAction constructor.
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
+     * @param MediaCropRepository $mediaCropRepository
      */
-    public function __construct(MediaRepository $mediaRepository, MediaConfig $mediaConfig, ImageDefinitionSubManager $imageDefinitionSubManager)
+    public function __construct(
+        MediaRepository $mediaRepository,
+        MediaConfig $mediaConfig,
+        ImageDefinitionSubManager $imageDefinitionSubManager,
+        MediaCropRepository $mediaCropRepository
+    )
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
+        $this->mediaCropRepository = $mediaCropRepository;
     }
 
     /**
@@ -61,6 +77,7 @@ final class EditorAction implements MiddlewareInterface
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      * @throws \Assert\AssertionFailedException
+     * @throws \Exception
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -72,12 +89,43 @@ final class EditorAction implements MiddlewareInterface
             return new ApiErrorResponse('no_parameters_passed_to_editor');
         }
 
-        $requestData = json_decode($request->getBody()->getContents(), true);
+        $requestData = \json_decode($request->getBody()->getContents(), true);
 
         $media = $this->media($requestData);
         $imageDefinition = $this->imageDefinition($requestData);
 
-        (new EditorImageProcessor($requestData, $imageDefinition, $media, $this->mediaConfig))->process();
+        $entity = null;
+
+        if (!empty($this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]))) {
+            /** @var EntityInterface $entity */
+            $entity = $this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+
+            if ($entity::getDefinitions()->has('updatedAt')) {
+                $entity = $entity->with('updatedAt', new \DateTime());
+            }
+
+            if ($entity::getDefinitions()->has('cropParameters')) {
+                $entity = $entity->with('cropParameters', $requestData['crop']);
+            }
+
+        }
+
+        if (empty($this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]))) {
+
+            $entity = new MediaCrop([
+                'id' => Uuid::uuid4(),
+                'mediaId' => $media->id(),
+                'imageDefinition' => $imageDefinition::serviceName(),
+                'cropParameters' => $requestData['crop'],
+                'createdAt' => new \DateTimeImmutable(),
+                'updatedAt' => new \DateTimeImmutable(),
+            ]);
+
+        }
+
+        (new EditorImageProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig))->process();
+
+        $this->mediaCropRepository->save($entity);
 
         return new ApiSuccessResponse();
     }
@@ -88,9 +136,8 @@ final class EditorAction implements MiddlewareInterface
      */
     private function imageDefinition(array $requestData): ImageDefinitionInterface
     {
-        $imageDefinition = $this->imageDefinitionSubManager->get(lcfirst($requestData['imageDefinition']));
-
-        return $imageDefinition;
+        //TODO EXIST CHECK
+        return $this->imageDefinitionSubManager->get($requestData['imageDefinition']);
     }
 
     /**
@@ -99,6 +146,7 @@ final class EditorAction implements MiddlewareInterface
      */
     private function media(array $requestData): Media
     {
-        return $this->mediaRepository->find(['id' => $requestData['id']]);
+        //TODO EXIST CHECK
+        return $this->mediaRepository->find($requestData['id']);
     }
 }
