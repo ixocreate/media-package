@@ -12,14 +12,12 @@ declare(strict_types=1);
 namespace KiwiSuite\Media\Action;
 
 use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Config\MediaConfigurator;
 use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Repository\MediaRepository;
 use Cocur\Slugify\Slugify;
 use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\CommandBus\CommandBus;
 use KiwiSuite\Media\Delegator\DelegatorSubManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -61,8 +59,7 @@ final class UploadAction implements MiddlewareInterface
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Exception
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
