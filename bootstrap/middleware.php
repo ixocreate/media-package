@@ -11,4 +11,3 @@ $middleware->addAction(\KiwiSuite\Media\Action\UploadAction::class);
 $middleware->addAction(\KiwiSuite\Media\Action\Media\ChangePublicStatusAction::class);
 $middleware->addAction(\KiwiSuite\Media\Action\Media\DeleteAction::class);
 $middleware->addAction(\KiwiSuite\Media\Action\Media\FilterAction::class);
-$middleware->addAction(\KiwiSuite\Media\Action\Media\DetailAction::class);
