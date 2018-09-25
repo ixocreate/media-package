@@ -69,14 +69,9 @@ final class DeleteAction implements MiddlewareInterface
         if (empty($media)) {
             return new ApiErrorResponse('given media Id does not exist');
         }
-
-        /** @var MediaCrop $mediaCrop */
-        $mediaCrop = $this->mediaCropRepository->findBy(['mediaId' => $media->id()]);
-
+        
         $this->deleteFromStore($media);
-        foreach ($mediaCrop as $entry) {
-            $this->mediaCropRepository->remove($entry);
-        }
+
         $this->mediaRepository->remove($media);
 
         return new ApiSuccessResponse();
@@ -89,10 +84,12 @@ final class DeleteAction implements MiddlewareInterface
     {
         $path = $media->basePath() . $media->filename();
 
-        unlink(getcwd() . '/data/media/'. $path);
+        \unlink(getcwd() . '/data/media/'. $path);
 
         foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $namedService => $namespace) {
-            unlink(getcwd() . '/data/media/img/' . $namedService . '/' . $path);
+            if (file_exists(\getcwd() . '/data/media/img/' . $namedService . '/' . $path)) {
+                \unlink(\getcwd() . '/data/media/img/' . $namedService . '/' . $path);
+            }
         }
     }
 
