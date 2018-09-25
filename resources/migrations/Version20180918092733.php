@@ -23,7 +23,7 @@ final class Version20180918092733 extends AbstractMigration
         $table->addColumn('createdAt', DateTimeType::class);
         $table->addColumn('updatedAt', DateTimeType::class);
         $table->setPrimaryKey(['id']);
-
+        $table->addForeignKeyConstraint('media_media',['mediaId'],['id'], ['onDelete' => 'CASCADE']);
     }
 
     public function down(Schema $schema) : void
