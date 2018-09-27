@@ -12,10 +12,21 @@ $media->setImageWhiteliste([
    'gif' => 'image/gif',
    'png' => 'image/png' 
 ]);
-$media->setTextWhitelist([
-   'txt' =>  'text/plain'
+$media->setVideoWhitelist([
+    'mpg' => 'video/mpeg',
+    'mp4' => 'video/mp4',
+    'quicktime' => 'video/quicktime',
+    'lsf' => 'video/x-la-asf',
+    'asf' => 'video/x-ms-asf',
+    'avi' => 'video/x-msvideo',
+    'wav' => 'video/x-wav',
 ]);
-$media->setApplicationWhitelist([
+$media->setAudioWhitelist([
+    'snd' => 'audio/basic',
+    'mid' => 'audio/mid',
+    'mpeg' => 'audio/mp3',
+]);
+$media->setDocumentWhitelist([
     'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'doc' => 'application/msword',
     'dot' => 'application/msword',

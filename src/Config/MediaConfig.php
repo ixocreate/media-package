@@ -122,17 +122,9 @@ final class MediaConfig
     /**
      * @return array
      */
-    public function textWhitelist(): array
+    public function documentWhitelist(): array
     {
-        return $this->mediaProjectConfig->textWhitelist();
-    }
-
-    /**
-     * @return array
-     */
-    public function applicationWhitelist(): array
-    {
-        return $this->mediaProjectConfig->applicationWhitelist();
+        return $this->mediaProjectConfig->documentWhitelist();
     }
 
     /**

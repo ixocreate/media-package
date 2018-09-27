@@ -76,17 +76,9 @@ class MediaProjectConfig implements SerializableServiceInterface
     /**
      * @return array
      */
-    public function textWhitelist(): array
+    public function documentWhitelist(): array
     {
-        return $this->whitelist['text'];
-    }
-
-    /**
-     * @return array
-     */
-    public function applicationWhitelist(): array
-    {
-        return $this->whitelist['application'];
+        return $this->whitelist['document'];
     }
 
     /**

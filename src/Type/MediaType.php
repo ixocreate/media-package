@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Type;
 
-
 use KiwiSuite\Contract\Type\DatabaseTypeInterface;
 use KiwiSuite\Contract\Type\SchemaElementInterface;
 use KiwiSuite\Entity\Type\AbstractType;
@@ -14,8 +13,6 @@ use KiwiSuite\Contract\Schema\ElementInterface;
 use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Schema\ElementSubManager;
 use KiwiSuite\Media\Uri\Uri;
-
-
 
 class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {
@@ -79,7 +76,6 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
             return null;
         }
         $array = $this->value()->toPublicArray();
-        $array['thumb'] = $this->getUrl('admin-thumb');
         $array['original'] = $this->getUrl();
 
         return $array;
@@ -99,7 +95,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
         return GuidType::class;
     }
 
-    public function getUrl(string $size = null): string
+    public function getUrl(): string
     {
         /** @var Media $media */
         $media = $this->value();
@@ -107,7 +103,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
             return "";
         }
 
-        return $this->uri->imageUrl($media, $size);
+        return $this->uri->imageUrl($media);
     }
 
     /**

@@ -8,80 +8,121 @@
  * @license MIT License
  */
 declare(strict_types=1);
+
 namespace KiwiSuite\Media\Type;
 
-
+use Doctrine\DBAL\Types\GuidType;
+use KiwiSuite\Contract\Schema\ElementInterface;
 use KiwiSuite\Contract\Type\DatabaseTypeInterface;
 use KiwiSuite\Contract\Type\SchemaElementInterface;
+use KiwiSuite\Contract\Type\TypeInterface;
 use KiwiSuite\Entity\Type\AbstractType;
-use Doctrine\DBAL\Types\GuidType;
-use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Entity\Type\Type;
 use KiwiSuite\Media\Config\MediaConfig;
-use Doctrine\DBAL\Types\StringType;
-use KiwiSuite\Media\Repository\MediaRepository;
+use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Uri\Uri;
-use KiwiSuite\Schema\ElementSubManager;
-use KiwiSuite\Contract\Schema\ElementInterface;
 use KiwiSuite\Schema\Elements\AudioElement;
+use KiwiSuite\Schema\ElementSubManager;
 
-final class AudioType extends MediaType implements DatabaseTypeInterface, SchemaElementInterface
+final class AudioType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {
     /**
-     * @var array
+     * @var MediaType
      */
-    private $audioWhitelist;
-
+    private $mediaType;
     /**
-     * AudioType constructor.
-     * @param MediaConfig $mediaConfig
-     * @param MediaRepository $mediaRepository
+     * @var Uri
      */
-    public function __construct(MediaConfig $mediaConfig, MediaRepository $mediaRepository, Uri $uri)
-    {
-        $this->audioWhitelist = $mediaConfig->audioWhitelist();
-        parent::__construct($mediaRepository, $uri);
-    }
-
+    private $uri;
     /**
-     * @param Media $media
-     * @throws  \Exception
+     * @var MediaConfig
      */
-    protected function validateType(Media $media)
-    {
-        $extension = \pathinfo($media->filename(), PATHINFO_EXTENSION);
+    private $mediaConfig;
 
-        if (!\in_array($media->mimeType(), $this->audioWhitelist) || !\array_key_exists($extension, $this->audioWhitelist)) {
-            throw new \Exception('not a valid AudioType');
-        }
-        return $media;
+    public function __construct(Uri $uri, MediaConfig $mediaConfig)
+    {
+        $this->uri = $uri;
+        $this->mediaConfig = $mediaConfig;
     }
 
     /**
      * @param $value
-     * @return mixed|null|object
+     * @param array $options
+     * @return TypeInterface
      */
-    protected function transform($value)
+    public function create($value, array $options = []): TypeInterface
     {
-        if (is_array($value)) {
-            if (empty($value['id'])) {
-                return null;
-            }
+        $type = clone $this;
+        $mediaType = Type::create($value, MediaType::class);
 
-            $value = $value['id'];
-        }
-        $value = $this->mediaRepository->find($value);
-
-        if (!empty($value)) {
-            return $this->validateType($value);
+        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), array_values($this->mediaConfig->audioWhitelist()))) {
+            $type->mediaType = $mediaType;
         }
 
-        return null;
+        return $type;
     }
 
     /**
-     * @param ElementSubManager $elementSubManager
-     * @return ElementInterface
+     * @return mixed
      */
+    public function value()
+    {
+        if (empty($this->mediaType->value())) {
+            return null;
+        }
+
+        return $this->mediaType->value();
+    }
+
+    public function __toString()
+    {
+        if (empty($this->value())) {
+            return "";
+        }
+
+        return (string) $this->value()->id();
+    }
+
+    /**
+     * @return mixed|null|string
+     */
+    public function jsonSerialize()
+    {
+        if (empty($this->value())) {
+            return null;
+        }
+
+        $array = $this->mediaType->jsonSerialize();
+        $array['thumb'] = $this->getUrl('admin-thumb');
+
+        return $array;
+    }
+
+    public function getUrl(?string $imageDefinition = null): string
+    {
+        /** @var Media $media */
+        $media = $this->value();
+        if (empty($media) || !($media instanceof Media)) {
+            return "";
+        }
+
+        return $this->uri->imageUrl($media, $imageDefinition);
+    }
+
+    public function convertToDatabaseValue()
+    {
+        if (empty($this->value())) {
+            return null;
+        }
+
+        return $this->mediaType->convertToDatabaseValue();
+    }
+
+    public static function baseDatabaseType(): string
+    {
+        return GuidType::class;
+    }
+
     public function schemaElement(ElementSubManager $elementSubManager): ElementInterface
     {
         return $elementSubManager->get(AudioElement::class);

@@ -21,11 +21,10 @@ use KiwiSuite\Entity\Type\Type;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Uri\Uri;
-use KiwiSuite\Schema\Elements\AudioElement;
-use KiwiSuite\Schema\Elements\VideoElement;
+use KiwiSuite\Schema\Elements\DocumentElement;
 use KiwiSuite\Schema\ElementSubManager;
 
-final class VideoType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+final class DocumentType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {
     /**
      * @var MediaType
@@ -56,7 +55,7 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Sch
         $type = clone $this;
         $mediaType = Type::create($value, MediaType::class);
 
-        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), array_values($this->mediaConfig->videoWhitelist()))) {
+        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), array_values($this->mediaConfig->documentWhitelist()))) {
             $type->mediaType = $mediaType;
         }
 
@@ -126,11 +125,11 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Sch
 
     public function schemaElement(ElementSubManager $elementSubManager): ElementInterface
     {
-        return $elementSubManager->get(VideoElement::class);
+        return $elementSubManager->get(DocumentElement::class);
     }
 
     public static function serviceName(): string
     {
-        return 'video';
+        return 'document';
     }
 }

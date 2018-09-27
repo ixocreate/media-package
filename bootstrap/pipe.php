@@ -14,12 +14,14 @@ use KiwiSuite\Media\Action\Media\ChangePublicStatusAction;
 use KiwiSuite\Media\Action\Media\DeleteAction;
 use KiwiSuite\Media\Action\Media\DetailAction;
 use KiwiSuite\Media\Action\Media\FilterAction;
+use KiwiSuite\Media\Action\Media\IndexAction;
 use KiwiSuite\Media\Action\UploadAction;
 
 $pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
     $pipe->segment('/api')( function(PipeConfigurator $pipe) {
 
         $pipe->group("admin.authorized")(function (GroupPipeConfigurator $group) {
+            $group->get('/media', IndexAction::class, 'admin.api.media.index');
             $group->get('/media/{id}', DetailAction::class, 'admin.api.media.detail');
             $group->post('/media/editor', EditorAction::class, 'admin.api.media.editor');
             $group->post('/media/upload', UploadAction::class, 'admin.api.media.upload');

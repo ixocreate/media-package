@@ -14,7 +14,7 @@ class MediaConfigurator implements ConfiguratorInterface
         'video' => [],
         'audio' => [],
         'text' => [],
-        'application' => [],
+        'document' => [],
     ];
 
     private $publicStatus = false;
@@ -72,18 +72,9 @@ class MediaConfigurator implements ConfiguratorInterface
      * @param array $whitelist
      * Array needs to be defined as ['extension' => 'mimeType']
      */
-    public function setTextWhitelist(array $whitelist): void
+    public function setDocumentWhitelist(array $whitelist): void
     {
-        $this->whitelist['text'] = $whitelist;
-    }
-
-    /**
-     * @param array $whitelist
-     * Array needs to be defined as ['extension' => 'mimeType']
-     */
-    public function setApplicationWhitelist(array $whitelist): void
-    {
-        $this->whitelist['application'] = $whitelist;
+        $this->whitelist['document'] = $whitelist;
     }
     
     public function registerService(ServiceRegistryInterface $serviceRegistry): void
