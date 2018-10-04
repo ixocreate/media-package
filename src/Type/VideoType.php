@@ -68,6 +68,10 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Sch
      */
     public function value()
     {
+        if (empty($this->mediaType)) {
+            return null;
+        }
+        
         if (empty($this->mediaType->value())) {
             return null;
         }

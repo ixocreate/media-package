@@ -67,6 +67,10 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
      */
     public function value()
     {
+        if (empty($this->mediaType)) {
+            return null;
+        }
+
         if (empty($this->mediaType->value())) {
             return null;
         }
