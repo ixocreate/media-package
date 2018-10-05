@@ -13,6 +13,7 @@ use KiwiSuite\Media\Action\Image\ImageDefinitionListAction;
 use KiwiSuite\Media\Action\Media\ChangePublicStatusAction;
 use KiwiSuite\Media\Action\Media\DeleteAction;
 use KiwiSuite\Media\Action\Media\DetailAction;
+use KiwiSuite\Media\Action\Media\EditAction;
 use KiwiSuite\Media\Action\Media\FilterAction;
 use KiwiSuite\Media\Action\Media\IndexAction;
 use KiwiSuite\Media\Action\UploadAction;
@@ -25,7 +26,6 @@ $pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
             $group->get('/media/{id}', DetailAction::class, 'admin.api.media.detail');
             $group->post('/media/editor', EditorAction::class, 'admin.api.media.editor');
             $group->post('/media/upload', UploadAction::class, 'admin.api.media.upload');
-            $group->post('/media/filter', FilterAction::class, 'admin.api.media.filter');
             $group->patch('/media/public/{id}', ChangePublicStatusAction::class, 'admin.api.media.publicStatus');
             $group->delete('/media/{id}', DeleteAction::class, 'admin.api.media.delete');
         });
