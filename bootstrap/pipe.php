@@ -16,11 +16,12 @@ use KiwiSuite\Media\Action\Media\DetailAction;
 use KiwiSuite\Media\Action\Media\EditAction;
 use KiwiSuite\Media\Action\Media\FilterAction;
 use KiwiSuite\Media\Action\Media\IndexAction;
+use KiwiSuite\Media\Action\Media\PrivateStreamAction;
 use KiwiSuite\Media\Action\UploadAction;
+use KiwiSuite\Media\Middleware\StreamMiddleware;
 
 $pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
     $pipe->segment('/api')( function(PipeConfigurator $pipe) {
-
         $pipe->group("admin.authorized")(function (GroupPipeConfigurator $group) {
             $group->get('/media', IndexAction::class, 'admin.api.media.index');
             $group->get('/media/{id}', DetailAction::class, 'admin.api.media.detail');
