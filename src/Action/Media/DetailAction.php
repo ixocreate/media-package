@@ -116,17 +116,6 @@ final class DetailAction implements MiddlewareInterface
         if ($width >= $imageDefinition->width() && $height >= $imageDefinition->height()) {
             $state = true;
         }
-//        if ($width > $height) {
-//            if ($width >= $imageDefinition->width()) {
-//                $state = true;
-//            }
-//        }
-//
-//        if ($height > $width) {
-//            if ($height >= $imageDefinition->height()) {
-//                $state = true;
-//            }
-//        }
 
         return $state;
     }
