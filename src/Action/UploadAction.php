@@ -117,13 +117,14 @@ final class UploadAction implements MiddlewareInterface
             'id' => Uuid::uuid4(),
             'basePath' => $basePath,
             'filename' => $filename,
-            'mimeType' => finfo_file($finfo, 'data/media/' . $basePath . $filename),
-            'size' => sprintf('%u', filesize('data/media/' . $basePath . $filename)),
+            'mimeType' => \finfo_file($finfo, 'data/media/' . $basePath . $filename),
+            'size' => \sprintf('%u', filesize('data/media/' . $basePath . $filename)),
             'publicStatus' => false,
-            'hash' => hash_file('sha256','data/media/' . $basePath . $filename),
+            'hash' => \hash_file('sha256','data/media/' . $basePath . $filename),
             'createdAt' => new \DateTimeImmutable(),
             'updatedAt' => new \DateTimeImmutable(),
         ]);
+
         return $media;
     }
 
@@ -150,7 +151,7 @@ final class UploadAction implements MiddlewareInterface
     private function checkDuplicate(UploadedFile $upload): bool
     {
         $count =
-            $this->mediaRepository->count(['hash' => hash_file('sha256',$upload->getStream()->getMetadata()['uri'])]);
+            $this->mediaRepository->count(['hash' => \hash_file('sha256',$upload->getStream()->getMetadata()['uri'])]);
 
         return ($count > 0);
     }
@@ -164,7 +165,7 @@ final class UploadAction implements MiddlewareInterface
         $supported = false;
         $filenameParts = \pathinfo($upload->getClientFilename());
         foreach ($this->mediaConfig->whitelist() as $list) {
-            if (array_key_exists($filenameParts['extension'], $list) || in_array($upload->getClientMediaType(), $list)) {
+            if (\array_key_exists($filenameParts['extension'], $list) || \in_array($upload->getClientMediaType(), $list)) {
                 $supported = true;
             }
         }
