@@ -55,7 +55,7 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
         $type = clone $this;
         $mediaType = Type::create($value, MediaType::class);
 
-        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), array_values($this->mediaConfig->documentWhitelist()))) {
+        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), $this->mediaConfig->documentWhitelist())) {
             $type->mediaType = $mediaType;
         }
 

@@ -84,16 +84,16 @@ final class IndexAction implements MiddlewareInterface
             } elseif ($key === "type") {
                 switch ($value) {
                     case 'image':
-                        $mimeTypes = array_values($this->mediaConfig->imageWhitelist());
+                        $mimeTypes = $this->mediaConfig->imageWhitelist();
                         break;
                     case 'audio':
-                        $mimeTypes = array_values($this->mediaConfig->audioWhitelist());
+                        $mimeTypes = $this->mediaConfig->audioWhitelist();
                         break;
                     case 'video':
-                        $mimeTypes = array_values($this->mediaConfig->videoWhitelist());
+                        $mimeTypes = $this->mediaConfig->videoWhitelist();
                         break;
                     case 'document':
-                        $mimeTypes = array_values($this->mediaConfig->documentWhitelist());
+                        $mimeTypes = $this->mediaConfig->documentWhitelist();
                         break;
                     default:
                         $mimeTypes = null;

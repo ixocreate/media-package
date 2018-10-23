@@ -13,8 +13,8 @@ class MediaConfigurator implements ConfiguratorInterface
         'image' => [],
         'video' => [],
         'audio' => [],
-        'text' => [],
         'document' => [],
+        'global' => [],
     ];
 
     private $publicStatus = false;
@@ -43,7 +43,6 @@ class MediaConfigurator implements ConfiguratorInterface
 
     /**
      * @param array $whitelist
-     * Array needs to be defined as ['extension' => 'mimeType']
      */
     public function setImageWhiteliste(array $whitelist): void
     {
@@ -52,7 +51,6 @@ class MediaConfigurator implements ConfiguratorInterface
 
     /**
      * @param array $whitelist
-     * Array needs to be defined as ['extension' => 'mimeType']
      */
     public function setVideoWhitelist(array $whitelist): void
     {
@@ -61,7 +59,6 @@ class MediaConfigurator implements ConfiguratorInterface
 
     /**
      * @param array $whitelist
-     * Array needs to be defined as ['extension' => 'mimeType']
      */
     public function setAudioWhitelist(array $whitelist): void
     {
@@ -70,7 +67,14 @@ class MediaConfigurator implements ConfiguratorInterface
 
     /**
      * @param array $whitelist
-     * Array needs to be defined as ['extension' => 'mimeType']
+     */
+    public function setGlobalWhitelist(array $whitelist): void
+    {
+        $this->whitelist['global'] = $whitelist;
+    }
+
+    /**
+     * @param array $whitelist
      */
     public function setDocumentWhitelist(array $whitelist): void
     {

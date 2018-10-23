@@ -56,7 +56,7 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Sch
         $type = clone $this;
         $mediaType = Type::create($value, MediaType::class);
 
-        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), array_values($this->mediaConfig->videoWhitelist()))) {
+        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), $this->mediaConfig->videoWhitelist())) {
             $type->mediaType = $mediaType;
         }
 

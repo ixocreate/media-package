@@ -17,8 +17,8 @@ class MediaProjectConfig implements SerializableServiceInterface
         'image' => [],
         'video' => [],
         'audio' => [],
-        'text' => [],
-        'application' => [],
+        'global' => [],
+        'document' => [],
     ];
     
     private $publicStatus;
@@ -30,6 +30,24 @@ class MediaProjectConfig implements SerializableServiceInterface
     public function __construct(MediaConfigurator $mediaConfigurator)
     {
         $this->whitelist = $mediaConfigurator->whitelist();
+
+        $this->whitelist['image'] = array_unique(array_values($this->whitelist['image']));
+        $this->whitelist['video'] = array_unique(array_values($this->whitelist['video']));
+        $this->whitelist['video'] = array_unique(array_values($this->whitelist['video']));
+        $this->whitelist['document'] = array_unique(array_values($this->whitelist['document']));
+
+        $this->whitelist['global'] = array_unique(
+            array_values(
+                array_merge(
+                    $this->whitelist['global'],
+                    $this->whitelist['image'],
+                    $this->whitelist['video'],
+                    $this->whitelist['audio'],
+                    $this->whitelist['document']
+                )
+            )
+        );
+
         $this->publicStatus = $mediaConfigurator->publicStatus();
     }
 
@@ -38,7 +56,7 @@ class MediaProjectConfig implements SerializableServiceInterface
      */
     public function whitelist(): array
     {
-        return $this->whitelist;
+        return $this->whitelist['global'];
     }
 
     /**

@@ -162,13 +162,7 @@ final class UploadAction implements MiddlewareInterface
      */
     private function checkWhitelist(UploadedFile $upload): bool
     {
-        $supported = false;
-        $filenameParts = \pathinfo($upload->getClientFilename());
-        foreach ($this->mediaConfig->whitelist() as $list) {
-            if (\array_key_exists($filenameParts['extension'], $list) || \in_array($upload->getClientMediaType(), $list)) {
-                $supported = true;
-            }
-        }
-        return $supported;
+        $finfo = \finfo_open(FILEINFO_MIME_TYPE);
+        return \in_array(\finfo_buffer($finfo, (string) $upload->getStream()), $this->mediaConfig->whitelist());
     }
 }
