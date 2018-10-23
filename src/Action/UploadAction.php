@@ -11,9 +11,12 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action;
 
+use KiwiSuite\Admin\Entity\User;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Media\Entity\MediaCreated;
+use KiwiSuite\Media\Repository\MediaCreatedRepository;
 use KiwiSuite\Media\Repository\MediaRepository;
 use Cocur\Slugify\Slugify;
 use KiwiSuite\Admin\Response\ApiErrorResponse;
@@ -42,17 +45,24 @@ final class UploadAction implements MiddlewareInterface
      * @var MediaConfig
      */
     private $mediaConfig;
+    /**
+     * @var MediaCreatedRepository
+     */
+    private $mediaCreatedRepository;
 
     /**
      * UploadAction constructor.
+     * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
      * @param DelegatorSubManager $delegatorSubManager
+     * @param MediaConfig $mediaConfig
      */
-    public function __construct(MediaRepository $mediaRepository, DelegatorSubManager $delegatorSubManager, MediaConfig $mediaConfig)
+    public function __construct(MediaCreatedRepository $mediaCreatedRepository, MediaRepository $mediaRepository, DelegatorSubManager $delegatorSubManager, MediaConfig $mediaConfig)
     {
         $this->mediaRepository = $mediaRepository;
         $this->delegatorSubManager = $delegatorSubManager;
         $this->mediaConfig = $mediaConfig;
+        $this->mediaCreatedRepository = $mediaCreatedRepository;
     }
 
     /**
@@ -92,7 +102,13 @@ final class UploadAction implements MiddlewareInterface
             $delegator->process($media);
         }
 
-        $this->mediaRepository->save($media);
+        $media = $this->mediaRepository->save($media);
+
+        $mediaCreated = new MediaCreated([
+            'mediaId' => $media->id(),
+            'createdBy' => $request->getAttribute(User::class)->id()
+        ]);
+        $this->mediaCreatedRepository->save($mediaCreated);
 
         return new ApiSuccessResponse();
     }

@@ -4,9 +4,14 @@ declare(strict_types=1);
 namespace KiwiSuite\Media\Action\Media;
 
 use Doctrine\Common\Collections\Criteria;
+use KiwiSuite\Admin\Entity\User;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
+use KiwiSuite\Admin\Type\RoleType;
+use KiwiSuite\Contract\Admin\RoleInterface;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Media\Entity\MediaCreated;
+use KiwiSuite\Media\Repository\MediaCreatedRepository;
 use KiwiSuite\Media\Repository\MediaRepository;
 use KiwiSuite\Media\Uri\Uri;
 use Psr\Http\Message\ResponseInterface;
@@ -29,21 +34,28 @@ final class IndexAction implements MiddlewareInterface
      * @var MediaConfig
      */
     private $mediaConfig;
+    /**
+     * @var MediaCreatedRepository
+     */
+    private $mediaCreatedRepository;
 
     /**
      * IndexAction constructor.
      * @param MediaRepository $mediaRepository
      * @param Uri $uri
      * @param MediaConfig $mediaConfig
+     * @param MediaCreatedRepository $mediaCreatedRepository
      */
     public function __construct(
         MediaRepository $mediaRepository,
         Uri $uri,
-        MediaConfig $mediaConfig
+        MediaConfig $mediaConfig,
+        MediaCreatedRepository $mediaCreatedRepository
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->uri = $uri;
         $this->mediaConfig = $mediaConfig;
+        $this->mediaCreatedRepository = $mediaCreatedRepository;
     }
 
     /**
@@ -105,6 +117,20 @@ final class IndexAction implements MiddlewareInterface
                 }
             }
         }
+
+        /** @var RoleInterface $role */
+        $role = $request->getAttribute(User::class)->role()->getRole();
+        if (in_array('media.only-own-media', $role->getPermissions())) {
+            $createdResult = $this->mediaCreatedRepository->findBy(['createdBy' => $request->getAttribute(User::class)->id()]);
+            $mediaCreatedArray = [];
+            /** @var MediaCreated $mediaCreated */
+            foreach ($createdResult as $mediaCreated) {
+                $mediaCreatedArray[] = (string) $mediaCreated->mediaId();
+            }
+
+            $criteria->andWhere(Criteria::expr()->in('id', $mediaCreatedArray));
+        }
+
 
         if (empty($sorting)) {
             $criteria->orderBy(['createdAt' => 'DESC']);

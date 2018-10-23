@@ -17,6 +17,7 @@ use KiwiSuite\Admin\Response\ApiSuccessResponse;
 use KiwiSuite\Media\Entity\MediaCrop;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
+use KiwiSuite\Media\Repository\MediaCreatedRepository;
 use KiwiSuite\Media\Repository\MediaCropRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,18 +43,24 @@ final class DeleteAction implements MiddlewareInterface
      * @var ImageDefinitionSubManager
      */
     private $imageDefinitionSubManager;
+    /**
+     * @var MediaCreatedRepository
+     */
+    private $mediaCreatedRepository;
 
     /**
      * DeleteAction constructor.
+     * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
      * @param MediaCropRepository $mediaCropRepository
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
-    public function __construct(MediaRepository $mediaRepository, MediaCropRepository $mediaCropRepository,ImageDefinitionSubManager $imageDefinitionSubManager)
+    public function __construct(MediaCreatedRepository $mediaCreatedRepository, MediaRepository $mediaRepository, MediaCropRepository $mediaCropRepository,ImageDefinitionSubManager $imageDefinitionSubManager)
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaCropRepository = $mediaCropRepository;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
+        $this->mediaCreatedRepository = $mediaCreatedRepository;
     }
 
     /**
@@ -73,6 +80,11 @@ final class DeleteAction implements MiddlewareInterface
         $this->deleteFromStore($media);
 
         $this->mediaRepository->remove($media);
+
+        $mediaCreated = $this->mediaCreatedRepository->findOneBy(['mediaId' => $media->id()]);
+        if (!empty($mediaCreated)) {
+            $this->mediaCreatedRepository->remove($mediaCreated);
+        }
 
         return new ApiSuccessResponse();
     }
