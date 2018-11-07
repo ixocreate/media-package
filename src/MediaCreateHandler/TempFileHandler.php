@@ -39,6 +39,8 @@ class TempFileHandler implements MediaCreateHandlerInterface
 
     public function move($destination): bool
     {
-        return rename($this->file, $destination);
+        rename($this->file, $destination);
+        chmod($destination, 0655);
+        return true;
     }
 }
