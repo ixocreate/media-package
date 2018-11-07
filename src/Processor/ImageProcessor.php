@@ -70,7 +70,6 @@ final class ImageProcessor implements ProcessorInterface
         return 'ImageProcessor';
     }
 
-
     private function setParameters()
     {
         $this->imageParameters = [
@@ -89,7 +88,7 @@ final class ImageProcessor implements ProcessorInterface
      */
     public function process()
     {
-        $imageManager = new ImageManager(['driver' => $this->mediaConfig->getDriver()]);
+        $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
 
         if(!\is_dir($this->imageParameters['definitionSavingDir'])) {
             \mkdir($this->imageParameters['definitionSavingDir'],0777, true);

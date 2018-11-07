@@ -11,16 +11,12 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Delegator\Delegators;
 
-use KiwiSuite\Config\Config;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionMapping;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
-use Intervention\Image\ImageManager;
 use KiwiSuite\Media\Processor\ImageProcessor;
 use KiwiSuite\Media\Config\MediaConfig;
-use Zend\Diactoros\UploadedFile;
 
 final class Image implements DelegatorInterface
 {
@@ -56,7 +52,6 @@ final class Image implements DelegatorInterface
 
     /**
      * Image constructor.
-     * @param ImageDefinitionMapping $imageDefinitionMapping
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
      */
