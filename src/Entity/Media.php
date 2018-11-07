@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Entity;
 
+use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use KiwiSuite\Contract\Entity\DatabaseEntityInterface;
 use KiwiSuite\Contract\Type\TypeInterface;
 use KiwiSuite\Entity\Entity\Definition;
 use KiwiSuite\Entity\Entity\DefinitionCollection;
@@ -19,7 +21,7 @@ use KiwiSuite\Entity\Entity\EntityTrait;
 use KiwiSuite\CommonTypes\Entity\UuidType;
 use KiwiSuite\CommonTypes\Entity\DateTimeType;
 
-final class Media implements EntityInterface
+final class Media implements EntityInterface, DatabaseEntityInterface
 {
     use EntityTrait;
 
@@ -91,6 +93,21 @@ final class Media implements EntityInterface
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
         ]);
+    }
+
+    public static function loadMetadata(ClassMetadataBuilder $builder)
+    {
+        $builder->setTable('media_media');
+
+        $builder->createField('id', UuidType::serviceName())->makePrimaryKey()->build();
+        $builder->createField('basePath', 'string')->nullable(false)->build();
+        $builder->createField('filename', 'string')->nullable(false)->build();
+        $builder->createField('mimeType', 'string')->nullable(false)->build();
+        $builder->createField('size', 'integer')->nullable(false)->build();
+        $builder->createField('publicStatus', 'boolean')->nullable(false)->build();
+        $builder->createField('hash', 'string')->nullable(false)->build();
+        $builder->createField('createdAt', DateTimeType::serviceName())->nullable(false)->build();
+        $builder->createField('updatedAt', DateTimeType::serviceName())->nullable(false)->build();
     }
 }
 

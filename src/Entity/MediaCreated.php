@@ -3,18 +3,15 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Entity;
 
-
-use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use KiwiSuite\Contract\Entity\DatabaseEntityInterface;
 use KiwiSuite\Entity\Entity\DefinitionCollection;
 use KiwiSuite\Entity\Entity\EntityInterface;
 use KiwiSuite\Entity\Entity\EntityTrait;
 use KiwiSuite\Entity\Entity\Definition;
-use KiwiSuite\CommonTypes\Entity\DateTimeType;
-use KiwiSuite\Contract\Type\TypeInterface;
 use KiwiSuite\CommonTypes\Entity\UuidType;
 
-
-final class MediaCreated implements EntityInterface
+final class MediaCreated implements EntityInterface, DatabaseEntityInterface
 {
     use EntityTrait;
 
@@ -40,5 +37,13 @@ final class MediaCreated implements EntityInterface
             new Definition('mediaId', UuidType::class, false, true),
             new Definition('createdBy', UuidType::class, false, true),
         ]);
+    }
+
+    public static function loadMetadata(ClassMetadataBuilder $builder)
+    {
+        $builder->setTable('media_media_created');
+
+        $builder->createField('mediaId', UuidType::serviceName())->makePrimaryKey()->build();
+        $builder->createField('createdBy', UuidType::serviceName())->makePrimaryKey()->build();
     }
 }

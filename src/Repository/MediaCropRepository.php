@@ -12,10 +12,7 @@ declare(strict_types=1);
 namespace KiwiSuite\Media\Repository;
 
 use KiwiSuite\Media\Entity\MediaCrop;
-use KiwiSuite\Media\Metadata\MediaCropMetadata;
-use KiwiSuite\Media\Metadata\MediaMetadata;
 use KiwiSuite\Database\Repository\AbstractRepository;
-use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 
 final class MediaCropRepository extends AbstractRepository
 {
@@ -27,14 +24,5 @@ final class MediaCropRepository extends AbstractRepository
     {
         return MediaCrop::class;
     }
-
-    /**
-     * @param ClassMetadataBuilder $builder
-     */
-    public function loadMetadata(ClassMetadataBuilder $builder): void
-    {
-        $metadata = (new MediaCropMetadata($builder));
-    }
-
 }
 

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Entity;
 
-
-use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use KiwiSuite\Contract\Entity\DatabaseEntityInterface;
 use KiwiSuite\Entity\Entity\DefinitionCollection;
 use KiwiSuite\Entity\Entity\EntityInterface;
 use KiwiSuite\Entity\Entity\EntityTrait;
@@ -13,8 +13,7 @@ use KiwiSuite\CommonTypes\Entity\DateTimeType;
 use KiwiSuite\Contract\Type\TypeInterface;
 use KiwiSuite\CommonTypes\Entity\UuidType;
 
-
-final class MediaCrop implements EntityInterface
+final class MediaCrop implements EntityInterface, DatabaseEntityInterface
 {
     use EntityTrait;
 
@@ -68,5 +67,17 @@ final class MediaCrop implements EntityInterface
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
         ]);
+    }
+
+    public static function loadMetadata(ClassMetadataBuilder $builder)
+    {
+        $builder->setTable('media_media_crop');
+
+        $builder->createField('id', UuidType::serviceName())->makePrimaryKey()->build();
+        $builder->createField('mediaId', UuidType::serviceName())->nullable(false)->build();
+        $builder->createField('imageDefinition', 'string')->nullable(false)->build();
+        $builder->createField('cropParameters', 'json')->nullable(false)->build();
+        $builder->createField('createdAt', DateTimeType::serviceName())->nullable(false)->build();
+        $builder->createField('updatedAt', DateTimeType::serviceName())->nullable(false)->build();
     }
 }
