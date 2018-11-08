@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
+
 namespace KiwiSuite\Media\Uri;
 
+use Firebase\JWT\JWT;
 use KiwiSuite\Media\Entity\Media;
 use Symfony\Component\Asset\Packages;
 
@@ -14,13 +16,15 @@ final class Uri
 
     public function __construct(Packages $packages)
     {
-
         $this->packages = $packages;
     }
 
     public function url(Media $media): string
     {
-        return $this->generateUrl($media->basePath(), $media->filename());
+        if ($media->publicStatus()) {
+            return $this->generateUrl($media->basePath(), $media->filename());
+        }
+        return $this->generateStreamUrl($media);
     }
 
     public function imageUrl(Media $media, string $imageDefinition = null): string
@@ -29,7 +33,11 @@ final class Uri
             return $this->url($media);
         }
 
-        return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition);
+        if ($media->publicStatus()) {
+            return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition);
+        }
+
+        return $this->generateStreamUrl($media, $imageDefinition);
     }
 
     public function generateUrl(string $basePath, string $filename): string
@@ -44,5 +52,25 @@ final class Uri
         }
 
         return $this->packages->getUrl('/img/' . $imageDefinition . '/' . $basePath . $filename);
+    }
+
+    public function generateStreamUrl(Media $media, string $imageDefinition = null): string
+    {
+        try {
+            $payload = [
+                'iat' => time(),
+                'exp' => time() + 50000,
+                'data' => [
+                    'mediaId' => $media->id(),
+                    'imageDefinition' => $imageDefinition
+                ],
+            ];
+
+            $jwt = JWT::encode($payload, 'secret', 'HS512');
+        } catch (\Exception $e) {
+            // TODO
+        }
+
+        return $this->packages->getUrl($jwt, 'streamMedia');
     }
 }
