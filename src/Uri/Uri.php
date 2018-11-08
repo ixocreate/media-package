@@ -62,7 +62,7 @@ final class Uri
                 'exp' => time() + 50000,
                 'data' => [
                     'mediaId' => $media->id(),
-                    'imageDefinition' => $imageDefinition
+                    'imageDefinition' => $imageDefinition,
                 ],
             ];
 

@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Delegator\Delegators;
 
-use KiwiSuite\Media\Entity\Media;
+use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Delegator\DelegatorInterface;
+use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use KiwiSuite\Media\Processor\ImageProcessor;
-use KiwiSuite\Media\Config\MediaConfig;
 
 final class Image implements DelegatorInterface
 {
@@ -52,6 +52,7 @@ final class Image implements DelegatorInterface
 
     /**
      * Image constructor.
+     *
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
      */
@@ -90,12 +91,27 @@ final class Image implements DelegatorInterface
      */
     public function process(Media $media): void
     {
-        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
+        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinitionClassName) {
             /** @var ImageDefinitionInterface $imageDefinition */
-            $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
+            $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
             $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig);
             $imageProcessor->process();
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function directories(): array
+    {
+        $directories = [];
+        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $imageDefinitionClassName) {
+            /** @var ImageDefinitionInterface $imageDefinition */
+            $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
+
+            $directories[] = 'img/' . $imageDefinition->directory() . '/';
+        }
+        return $directories;
     }
 }

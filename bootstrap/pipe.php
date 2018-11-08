@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace KiwiSuite\Media;
 
 /** @var PipeConfigurator $pipe */
+
 use KiwiSuite\Admin\Config\AdminConfig;
 use KiwiSuite\ApplicationHttp\Pipe\GroupPipeConfigurator;
 use KiwiSuite\ApplicationHttp\Pipe\PipeConfigurator;
@@ -17,11 +18,14 @@ use KiwiSuite\Media\Action\Media\EditAction;
 use KiwiSuite\Media\Action\Media\FilterAction;
 use KiwiSuite\Media\Action\Media\IndexAction;
 use KiwiSuite\Media\Action\Media\PrivateStreamAction;
+use KiwiSuite\Media\Action\StreamAction;
 use KiwiSuite\Media\Action\UploadAction;
 use KiwiSuite\Media\Middleware\StreamMiddleware;
 
-$pipe->segmentPipe(AdminConfig::class)(function(PipeConfigurator $pipe) {
-    $pipe->segment('/api')( function(PipeConfigurator $pipe) {
+$pipe->get('/media/stream/{token}', StreamAction::class, 'media.stream');
+
+$pipe->segmentPipe(AdminConfig::class)(function (PipeConfigurator $pipe) {
+    $pipe->segment('/api')(function (PipeConfigurator $pipe) {
         $pipe->group("admin.authorized")(function (GroupPipeConfigurator $group) {
             $group->get('/media', IndexAction::class, 'admin.api.media.index');
             $group->get('/media/{id}', DetailAction::class, 'admin.api.media.detail');
