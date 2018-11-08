@@ -7,7 +7,8 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
-declare (strict_types=1);
+
+declare(strict_types=1);
 
 namespace KiwiSuite\Media\Delegator;
 

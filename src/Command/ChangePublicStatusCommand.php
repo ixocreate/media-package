@@ -1,4 +1,12 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
 
 declare(strict_types=1);
 
@@ -86,8 +94,8 @@ class ChangePublicStatusCommand extends AbstractCommand
     }
 
     /**
-     * @return bool
      * @throws \Exception
+     * @return bool
      */
     public function execute(): bool
     {
@@ -102,9 +110,9 @@ class ChangePublicStatusCommand extends AbstractCommand
         $basePath = $this->media->basePath();
         $publicDirectory = 'data/media/' . $basePath;
         $privateDirectory = 'data/media_private/' . $basePath;
-        if ($desiredPublicStatus && !file_exists($publicDirectory)) {
+        if ($desiredPublicStatus && !\file_exists($publicDirectory)) {
             $this->moveMedia($this->media, 'data/media_private/', 'data/media/');
-        } elseif (!$desiredPublicStatus && !file_exists($privateDirectory)) {
+        } elseif (!$desiredPublicStatus && !\file_exists($privateDirectory)) {
             $this->moveMedia($this->media, 'data/media/', 'data/media_private/');
         } else {
             return true;
@@ -129,7 +137,7 @@ class ChangePublicStatusCommand extends AbstractCommand
          * move source file
          */
         $this->createDir($toStoragePath . $media->basePath());
-        rename($fromStoragePath . $media->basePath(), $toStoragePath . $media->basePath());
+        \rename($fromStoragePath . $media->basePath(), $toStoragePath . $media->basePath());
 
         /**
          * move output files from delegators as well
@@ -144,8 +152,10 @@ class ChangePublicStatusCommand extends AbstractCommand
 
             foreach ($delegator->directories() as $directory) {
                 $this->createDir($toStoragePath . $directory . $media->basePath());
-                rename($fromStoragePath . $directory . $media->basePath(),
-                    $toStoragePath . $directory . $media->basePath());
+                \rename(
+                    $fromStoragePath . $directory . $media->basePath(),
+                    $toStoragePath . $directory . $media->basePath()
+                );
             }
         }
 

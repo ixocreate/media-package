@@ -7,17 +7,16 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action\Media;
-
 
 use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Repository\MediaRepository;
-use KiwiSuite\Media\Resource\MediaResource;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -45,7 +44,7 @@ final class ChangePublicStatusAction implements MiddlewareInterface
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
     }
-    
+
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var Media $media */
@@ -69,7 +68,7 @@ final class ChangePublicStatusAction implements MiddlewareInterface
             $publicStatus = (bool) true;
         }
 
-        $media = $media->with('publicStatus',$publicStatus);
+        $media = $media->with('publicStatus', $publicStatus);
         $media = $media->with('updatedAt', new \DateTime());
 
         $this->mediaRepository->save($media);

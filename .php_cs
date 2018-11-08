@@ -1,9 +1,9 @@
 <?php
 $header = <<<'EOF'
-kiwi-suite/application-http (https://github.com/kiwi-suite/application-http)
+kiwi-suite/media (https://github.com/kiwi-suite/media)
 
-@package kiwi-suite/application-http
-@link https://github.com/kiwi-suite/application-http
+@package kiwi-suite/media
+@link https://github.com/kiwi-suite/media
 @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
 @license MIT License
 EOF;
@@ -61,6 +61,6 @@ return PhpCsFixer\Config::create()
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->in('src')
-            ->in('tests')
+            // ->in('tests')
     )
 ;

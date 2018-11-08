@@ -1,4 +1,12 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
 
 declare(strict_types=1);
 
@@ -106,8 +114,8 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
-     * @return bool
      * @throws \Exception
+     * @return bool
      */
     public function execute(): bool
     {
@@ -135,7 +143,7 @@ class CreateCommand extends AbstractCommand
         if ($this->createdUser !== null) {
             $mediaCreated = new MediaCreated([
                 'mediaId' => $media->id(),
-                'createdBy' => $this->createdUser->id()
+                'createdBy' => $this->createdUser->id(),
             ]);
             $this->mediaCreatedRepository->save($mediaCreated);
         }
@@ -144,8 +152,8 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
-     * @return Media
      * @throws \Exception
+     * @return Media
      */
     private function prepareMedia(): Media
     {
@@ -163,9 +171,9 @@ class CreateCommand extends AbstractCommand
             'basePath' => $basePath,
             'filename' => $filename,
             'mimeType' => \finfo_file($finfo, 'data/media/' . $basePath . $filename),
-            'size' => \sprintf('%u', filesize('data/media/' . $basePath . $filename)),
+            'size' => \sprintf('%u', \filesize('data/media/' . $basePath . $filename)),
             'publicStatus' => false,
-            'hash' => \hash_file('sha256','data/media/' . $basePath . $filename),
+            'hash' => \hash_file('sha256', 'data/media/' . $basePath . $filename),
             'createdAt' => new \DateTimeImmutable(),
             'updatedAt' => new \DateTimeImmutable(),
         ]);
@@ -174,8 +182,8 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
-     * @return string
      * @throws \Exception
+     * @return string
      */
     private function createDir(): string
     {
@@ -196,7 +204,7 @@ class CreateCommand extends AbstractCommand
     private function checkDuplicate(string $file): bool
     {
         $count = $this->mediaRepository->count(['hash' => \hash_file('sha256', $file)]);
-        return ($count > 0);
+        return $count > 0;
     }
 
     /**

@@ -1,4 +1,13 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Entity;
@@ -62,8 +71,8 @@ final class MediaCrop implements EntityInterface, DatabaseEntityInterface
         return new DefinitionCollection([
             new Definition('id', UuidType::class, false, true),
             new Definition('mediaId', UuidType::class, false, true),
-            new Definition('imageDefinition', TypeInterface::TYPE_STRING, false,true),
-            new Definition('cropParameters',TypeInterface::TYPE_ARRAY,false,true),
+            new Definition('imageDefinition', TypeInterface::TYPE_STRING, false, true),
+            new Definition('cropParameters', TypeInterface::TYPE_ARRAY, false, true),
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
         ]);

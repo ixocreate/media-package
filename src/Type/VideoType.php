@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Type;
@@ -21,7 +22,6 @@ use KiwiSuite\Entity\Type\Type;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Uri\Uri;
-use KiwiSuite\Schema\Elements\AudioElement;
 use KiwiSuite\Schema\Elements\VideoElement;
 use KiwiSuite\Schema\ElementSubManager;
 
@@ -56,7 +56,7 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Sch
         $type = clone $this;
         $mediaType = Type::create($value, MediaType::class);
 
-        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), $this->mediaConfig->videoWhitelist())) {
+        if (!empty($mediaType->value()) && \in_array($mediaType->value()->mimeType(), $this->mediaConfig->videoWhitelist())) {
             $type->mediaType = $mediaType;
         }
 
@@ -71,7 +71,7 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Sch
         if (empty($this->mediaType)) {
             return null;
         }
-        
+
         if (empty($this->mediaType->value())) {
             return null;
         }

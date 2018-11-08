@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 namespace KiwiSuite\Media\Console;
 
@@ -49,7 +50,7 @@ final class ImageDefinitionListCommand extends Command implements CommandInterfa
         $io = new SymfonyStyle($input, $output);
 
         $data = [];
-        foreach (array_keys($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices()) as $name) {
+        foreach (\array_keys($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices()) as $name) {
             $data[] = [
                 $name,
             ];

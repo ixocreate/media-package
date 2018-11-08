@@ -7,18 +7,15 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Processor;
 
-
 use Intervention\Image\ImageManager;
-use Intervention\Image\Point;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use KiwiSuite\Media\Repository\MediaRepository;
-use Psr\Http\Message\ServerRequestInterface;
 use Intervention\Image\Size;
 
 final class EditorImageProcessor implements ProcessorInterface
@@ -72,12 +69,11 @@ final class EditorImageProcessor implements ProcessorInterface
         $this->media = $media;
         $this->requestData = $requestData;
 
-        $mediaImageSize = \getimagesize(getcwd() . '/data/media/' . $media->basePath() . $media->filename());
+        $mediaImageSize = \getimagesize(\getcwd() . '/data/media/' . $media->basePath() . $media->filename());
         $this->mediaSize = new Size($mediaImageSize[0], $mediaImageSize[1]);
 
         $this->requestWidth = $requestData['x2'] - $requestData['x1'];
         $this->requestHeight = $requestData['y2'] - $requestData['y1'];
-
     }
 
     /**
@@ -85,7 +81,7 @@ final class EditorImageProcessor implements ProcessorInterface
      */
     public static function serviceName(): string
     {
-       return 'NewEditorImageProcessor';
+        return 'NewEditorImageProcessor';
     }
 
     /**
@@ -94,7 +90,7 @@ final class EditorImageProcessor implements ProcessorInterface
     public function process()
     {
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
-        $image = $imageManager->make(getcwd() . '/data/media/' . $this->media->basePath() . $this->media->filename());
+        $image = $imageManager->make(\getcwd() . '/data/media/' . $this->media->basePath() . $this->media->filename());
 
         $this->gaugeMinimalRequestDataSize();
         $this->gaugeCanvasSize();
@@ -113,7 +109,6 @@ final class EditorImageProcessor implements ProcessorInterface
             ($this->requestWidth < $this->imageDefinition->width()) ? $this->imageDefinition->width() : $this->requestWidth;
         $this->requestHeight =
             ($this->requestHeight < $this->imageDefinition->height()) ? $this->imageDefinition->height() : $this->requestHeight;
-
     }
 
     /**
@@ -121,7 +116,6 @@ final class EditorImageProcessor implements ProcessorInterface
      */
     private function gaugeCanvasSize()
     {
-
         if (($this->requestData['x1'] + $this->requestWidth) > $this->mediaSize->width) {
             $diff = ($this->requestData['x1'] + $this->requestWidth) - $this->mediaSize->width;
             $this->requestData['x1'] = $this->requestData['x1'] - $diff;
@@ -137,5 +131,4 @@ final class EditorImageProcessor implements ProcessorInterface
     {
         //TODO
     }
-
 }

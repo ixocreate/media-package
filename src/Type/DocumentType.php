@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Type;
@@ -55,7 +56,7 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
         $type = clone $this;
         $mediaType = Type::create($value, MediaType::class);
 
-        if (!empty($mediaType->value()) && in_array($mediaType->value()->mimeType(), $this->mediaConfig->documentWhitelist())) {
+        if (!empty($mediaType->value()) && \in_array($mediaType->value()->mimeType(), $this->mediaConfig->documentWhitelist())) {
             $type->mediaType = $mediaType;
         }
 

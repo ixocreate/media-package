@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Processor;
@@ -14,7 +15,6 @@ namespace KiwiSuite\Media\Processor;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 use KiwiSuite\Media\Config\MediaConfig;
-use Intervention\Image\Size;
 use Intervention\Image\Constraint;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
@@ -53,7 +53,7 @@ final class ImageProcessor implements ProcessorInterface
      * @param MediaConfig $mediaConfig
      * @param Image|null $image
      */
-    public function __construct(Media $media,ImageDefinitionInterface $imageDefinition, MediaConfig $mediaConfig, Image $image = null)
+    public function __construct(Media $media, ImageDefinitionInterface $imageDefinition, MediaConfig $mediaConfig, Image $image = null)
     {
         $this->media = $media;
         $this->imageDefinition = $imageDefinition;
@@ -75,11 +75,11 @@ final class ImageProcessor implements ProcessorInterface
         $this->imageParameters = [
             'imagePath'      => 'data/media/' . $this->media->basePath(),
             'imageFilename'  => $this->media->filename(),
-            'definitionSavingDir' => 'data/media/img/'. $this->imageDefinition->directory() . '/' . $this->media->basePath(),
+            'definitionSavingDir' => 'data/media/img/' . $this->imageDefinition->directory() . '/' . $this->media->basePath(),
             'definitionWidth'     => $this->imageDefinition->width(),
             'definitionHeight'    => $this->imageDefinition->height(),
             'definitionMode'      => $this->imageDefinition->mode(),
-            'definitionUpscale'   => $this->imageDefinition->upscale()
+            'definitionUpscale'   => $this->imageDefinition->upscale(),
         ];
     }
 
@@ -90,8 +90,8 @@ final class ImageProcessor implements ProcessorInterface
     {
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
 
-        if(!\is_dir($this->imageParameters['definitionSavingDir'])) {
-            \mkdir($this->imageParameters['definitionSavingDir'],0777, true);
+        if (!\is_dir($this->imageParameters['definitionSavingDir'])) {
+            \mkdir($this->imageParameters['definitionSavingDir'], 0777, true);
         }
         $image = ($this->image != null) ? $this->image : $imageManager->make($this->imageParameters['imagePath'] . $this->imageParameters['imageFilename']);
 
@@ -111,16 +111,16 @@ final class ImageProcessor implements ProcessorInterface
     private function checkMode(Image $image, array $imageParameters)
     {
         switch ($imageParameters['definitionMode']) {
-            case ('fit'):
+            case 'fit':
                 $this->fit($image, $imageParameters);
                 break;
-            case ('fitCrop'):
+            case 'fitCrop':
                 $this->fitCrop($image, $imageParameters);
                 break;
-            case ('canvas'):
+            case 'canvas':
                 $this->canvas($image, $imageParameters);
                 break;
-            case ('canvasFitCrop'):
+            case 'canvasFitCrop':
                 $this->canvasFitCrop($image, $imageParameters);
                 break;
         }
@@ -135,7 +135,7 @@ final class ImageProcessor implements ProcessorInterface
         \extract($imageParameters);
 
 
-        $image->resize($definitionWidth,$definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+        $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
             if ($definitionUpscale === false) {
                 $constraint->upsize();
             }
@@ -176,9 +176,8 @@ final class ImageProcessor implements ProcessorInterface
         });
 
         if (($image->width() != $definitionWidth) || ($image->height() != $definitionHeight)) {
-            $image->resizeCanvas($definitionWidth,$definitionHeight);
+            $image->resizeCanvas($definitionWidth, $definitionHeight);
         }
-
     }
 
     /**
@@ -192,13 +191,11 @@ final class ImageProcessor implements ProcessorInterface
         if ($imageWidth >= $definitionWidth && $imageHeight >= $definitionHeight) {
             $image->fit($definitionWidth, $definitionHeight);
         } elseif ($imageWidth >= $definitionWidth || $imageHeight >= $definitionHeight) {
-            $image->crop($definitionWidth,$definitionHeight);
+            $image->crop($definitionWidth, $definitionHeight);
         }
 
         if (($image->width() != $definitionWidth) || ($image->height() != $definitionHeight)) {
-            $image->resizeCanvas($definitionWidth,$definitionHeight);
+            $image->resizeCanvas($definitionWidth, $definitionHeight);
         }
-
     }
-
 }

@@ -7,10 +7,10 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action\Image;
-
 
 use Assert\Assertion;
 use KiwiSuite\Admin\Response\ApiErrorResponse;
@@ -64,8 +64,7 @@ final class EditorAction implements MiddlewareInterface
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaCropRepository $mediaCropRepository
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
@@ -75,9 +74,9 @@ final class EditorAction implements MiddlewareInterface
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
      * @throws \Assert\AssertionFailedException
      * @throws \Exception
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -107,11 +106,9 @@ final class EditorAction implements MiddlewareInterface
             if ($entity::getDefinitions()->has('cropParameters')) {
                 $entity = $entity->with('cropParameters', $requestData['crop']);
             }
-
         }
 
         if (empty($this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]))) {
-
             $entity = new MediaCrop([
                 'id' => Uuid::uuid4(),
                 'mediaId' => $media->id(),
@@ -120,7 +117,6 @@ final class EditorAction implements MiddlewareInterface
                 'createdAt' => new \DateTimeImmutable(),
                 'updatedAt' => new \DateTimeImmutable(),
             ]);
-
         }
 
         (new EditorImageProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig))->process();

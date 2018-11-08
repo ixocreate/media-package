@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Config\Factory;
@@ -25,9 +26,9 @@ final class MediaConfigFactory implements FactoryInterface
      * @param ServiceManagerInterface $container
      * @param $requestedName
      * @param array|null $options
-     * @return MediaConfig|mixed
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return MediaConfig|mixed
      */
     public function __invoke(ServiceManagerInterface $container, $requestedName, array $options = null)
     {
@@ -39,13 +40,12 @@ final class MediaConfigFactory implements FactoryInterface
             /** @var ProjectUri $projectUri */
             $projectUri = $container->get(ProjectUri::class);
 
-            $uri = $uri->withPath(rtrim($projectUri->getMainUrl()->getPath(), '/') . '/' . ltrim($uri->getPath(), '/'));
+            $uri = $uri->withPath(\rtrim($projectUri->getMainUrl()->getPath(), '/') . '/' . \ltrim($uri->getPath(), '/'));
             $uri = $uri->withHost($projectUri->getMainUrl()->getHost());
             $uri = $uri->withScheme($projectUri->getMainUrl()->getScheme());
             $uri = $uri->withPort($projectUri->getMainUrl()->getPort());
         }
 
         return new MediaConfig($driver, $uri, $container->get(MediaProjectConfig::class));
-
     }
 }

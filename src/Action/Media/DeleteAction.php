@@ -7,15 +7,13 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action\Media;
 
-
 use KiwiSuite\Admin\Response\ApiErrorResponse;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Media\Entity\MediaCrop;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use KiwiSuite\Media\Repository\MediaCreatedRepository;
 use KiwiSuite\Media\Repository\MediaCropRepository;
@@ -24,7 +22,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use KiwiSuite\Media\Repository\MediaRepository;
-use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
 
 final class DeleteAction implements MiddlewareInterface
@@ -55,7 +52,7 @@ final class DeleteAction implements MiddlewareInterface
      * @param MediaCropRepository $mediaCropRepository
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
-    public function __construct(MediaCreatedRepository $mediaCreatedRepository, MediaRepository $mediaRepository, MediaCropRepository $mediaCropRepository,ImageDefinitionSubManager $imageDefinitionSubManager)
+    public function __construct(MediaCreatedRepository $mediaCreatedRepository, MediaRepository $mediaRepository, MediaCropRepository $mediaCropRepository, ImageDefinitionSubManager $imageDefinitionSubManager)
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaCropRepository = $mediaCropRepository;
@@ -76,7 +73,7 @@ final class DeleteAction implements MiddlewareInterface
         if (empty($media)) {
             return new ApiErrorResponse('given media Id does not exist');
         }
-        
+
         $this->deleteFromStore($media);
 
         $this->mediaRepository->remove($media);
@@ -96,13 +93,12 @@ final class DeleteAction implements MiddlewareInterface
     {
         $path = $media->basePath() . $media->filename();
 
-        \unlink(getcwd() . '/data/media/'. $path);
+        \unlink(\getcwd() . '/data/media/' . $path);
 
         foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $namedService => $namespace) {
-            if (file_exists(\getcwd() . '/data/media/img/' . $namedService . '/' . $path)) {
+            if (\file_exists(\getcwd() . '/data/media/img/' . $namedService . '/' . $path)) {
                 \unlink(\getcwd() . '/data/media/img/' . $namedService . '/' . $path);
             }
         }
     }
-
 }

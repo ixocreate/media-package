@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 namespace KiwiSuite\Media\Console;
 
@@ -16,7 +17,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 
 final class GenerateImageDefinitionCommand extends Command implements CommandInterface
 {
@@ -120,24 +120,28 @@ EOD;
             ->addArgument('serviceName', InputArgument::REQUIRED, 'Name of the Definition.')
             ->addArgument('width', InputArgument::OPTIONAL, 'Width of ImageDefinition')
             ->addArgument('height', InputArgument::OPTIONAL, 'Height of ImageDefinition')
-            ->addArgument('mode', InputArgument::OPTIONAL,
-                'Mode of ImageDefinition, allowed modes are: fit, fitCrop, canvas, canvasFitCrop','fit')
-            ->addArgument('upscale', InputArgument::OPTIONAL, 'Allow Upscale?','false');
+            ->addArgument(
+                'mode',
+                InputArgument::OPTIONAL,
+                'Mode of ImageDefinition, allowed modes are: fit, fitCrop, canvas, canvasFitCrop',
+                'fit'
+            )
+            ->addArgument('upscale', InputArgument::OPTIONAL, 'Allow Upscale?', 'false');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
      * @throws Exception
+     * @return int|null|void
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!in_array($input->getArgument('mode'), $this->allowedModes)) {
+        if (!\in_array($input->getArgument('mode'), $this->allowedModes)) {
             throw new \Exception('Given Mode ist not supported');
         }
 
-        if (!in_array($input->getArgument('upscale'), $this->allowedUpscale)) {
+        if (!\in_array($input->getArgument('upscale'), $this->allowedUpscale)) {
             throw new \Exception('Upscale must be declared true or false');
         }
 
@@ -151,8 +155,8 @@ EOD;
             throw new \Exception("ImageDefinition file already exists");
         }
 
-        if(!\is_dir(getcwd() . $this->imagePath . $this->CamelCaseToDashSeparated($input->getArgument('serviceName')))) {
-            \mkdir(getcwd() . $this->imagePath . $this->CamelCaseToDashSeparated($input->getArgument('serviceName')),0777, true);
+        if (!\is_dir(\getcwd() . $this->imagePath . $this->CamelCaseToDashSeparated($input->getArgument('serviceName')))) {
+            \mkdir(\getcwd() . $this->imagePath . $this->CamelCaseToDashSeparated($input->getArgument('serviceName')), 0777, true);
         }
 
 
@@ -180,7 +184,7 @@ EOD;
      */
     private function CamelCaseToDashSeparated(string $name)
     {
-        return \strtolower(\preg_replace('%([a-z])([A-Z])%', '\1-\2', $name));
+        return \mb_strtolower(\preg_replace('%([a-z])([A-Z])%', '\1-\2', $name));
     }
 
     /**
@@ -193,11 +197,15 @@ EOD;
         $clearedInput['serviceName'] = \trim($input->getArgument('serviceName'));
 
         $width = $input->getArgument('width');
-        settype($width, 'integer');
-        if($width === 0){$width = null;}
+        \settype($width, 'integer');
+        if ($width === 0) {
+            $width = null;
+        }
         $height = $input->getArgument('height');
-        settype($height,'integer');
-        if($height === 0){$height = null;}
+        \settype($height, 'integer');
+        if ($height === 0) {
+            $height = null;
+        }
         $clearedInput['width'] = $width;
         $clearedInput['height'] = $height;
         $clearedInput['mode'] = $input->getArgument('mode');
@@ -208,16 +216,22 @@ EOD;
 
     /**
      * @param string $name
+     * @param mixed $clearedInput
      */
     private function generatePHP($clearedInput)
     {
         $width = $clearedInput['width'];
-        if ($width === null) {$width = 'null';}
+        if ($width === null) {
+            $width = 'null';
+        }
         $height = $clearedInput['height'];
-        if ($height === null) {$height = 'null';}
+        if ($height === null) {
+            $height = 'null';
+        }
         \file_put_contents(
             \getcwd() . $this->definitionPath . \ucfirst($clearedInput['serviceName']) . '.php',
-            \sprintf($this->phpTemplate,
+            \sprintf(
+                $this->phpTemplate,
                 \ucfirst($clearedInput['serviceName']),
                 \trim($this->CamelCaseToDashSeparated($clearedInput['serviceName'])),
                 $width,
@@ -231,6 +245,7 @@ EOD;
 
     /**
      * @param string $name
+     * @param mixed $clearedInput
      */
     private function generateJson($clearedInput)
     {
@@ -240,11 +255,12 @@ EOD;
             'height' => $clearedInput['height'],
             'mode'  => $clearedInput['mode'],
             'upscale' => $clearedInput['upscale'],
-            'directory' => $this->CamelCaseToDashSeparated($clearedInput['serviceName'])
+            'directory' => $this->CamelCaseToDashSeparated($clearedInput['serviceName']),
         ];
-        $jsonEncode = json_encode($data);
+        $jsonEncode = \json_encode($data);
 
-        \file_put_contents(\getcwd() . $this->imagePath . '/' .$this->CamelCaseToDashSeparated($clearedInput['serviceName'])
+        \file_put_contents(
+            \getcwd() . $this->imagePath . '/' . $this->CamelCaseToDashSeparated($clearedInput['serviceName'])
             . '/' . \trim($this->CamelCaseToDashSeparated($clearedInput['serviceName'])) . '.json',
         $jsonEncode
         );

@@ -1,4 +1,13 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action\Media;
@@ -8,7 +17,6 @@ use KiwiSuite\Admin\Response\ApiSuccessResponse;
 use KiwiSuite\Entity\Type\Type;
 use KiwiSuite\Media\Delegator\Delegators\Image;
 use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\Entity\MediaCrop;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 use KiwiSuite\Media\Repository\MediaCropRepository;
@@ -53,8 +61,7 @@ final class DetailAction implements MiddlewareInterface
         Image $imageDelegator,
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaCropRepository $mediaCropRepository
-    )
-    {
+    ) {
         $this->uri = $uri;
         $this->imageDelegator = $imageDelegator;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
@@ -87,7 +94,7 @@ final class DetailAction implements MiddlewareInterface
         $mediaCropArray = $this->mediaCropRepository->findBy(['mediaId' => ($media->id())]);
 
         if ($isCropable) {
-            $definitions = $this->determineDefinitions($media,$mediaCropArray);
+            $definitions = $this->determineDefinitions($media, $mediaCropArray);
             $result['definitions'] = $definitions;
         }
 
@@ -103,7 +110,7 @@ final class DetailAction implements MiddlewareInterface
     {
         $state = false;
 
-        $size = \getimagesize(\getcwd(). '/data/media/' . $media->basePath() . $media->filename());
+        $size = \getimagesize(\getcwd() . '/data/media/' . $media->basePath() . $media->filename());
         $width = $size[0];
         $height = $size[1];
 
@@ -129,7 +136,7 @@ final class DetailAction implements MiddlewareInterface
     {
         $definitions = [];
 
-        foreach($this->imageDefinitionSubManager->getServices() as $key => $name) {
+        foreach ($this->imageDefinitionSubManager->getServices() as $key => $name) {
             $imageDefinition = $this->imageDefinitionSubManager->get($name);
             $validSize = $this->checkValidSize($media, $imageDefinition);
             $definitions[] = ['name' => $imageDefinition::serviceName(), 'isCropable' => $validSize, 'cropParameter' => ''];
@@ -142,5 +149,4 @@ final class DetailAction implements MiddlewareInterface
         }
         return $definitions;
     }
-
 }
