@@ -8,6 +8,7 @@
  * @license MIT License
  */
 declare(strict_types=1);
+
 namespace KiwiSuite\Media\Console;
 
 use KiwiSuite\Media\Delegator\Delegators\Image;
@@ -24,7 +25,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\Processor\ImageProcessor;
-use KiwiSuite\Media\Exceptions\InvalidArgumentException;
+use KiwiSuite\Media\Exception\InvalidArgumentException;
 
 final class RecreateImageDefinition extends Command implements CommandInterface
 {
