@@ -172,7 +172,7 @@ class CreateCommand extends AbstractCommand
             'filename' => $filename,
             'mimeType' => \finfo_file($finfo, 'data/media/' . $basePath . $filename),
             'size' => \sprintf('%u', \filesize('data/media/' . $basePath . $filename)),
-            'publicStatus' => false,
+            'publicStatus' => true,
             'hash' => \hash_file('sha256', 'data/media/' . $basePath . $filename),
             'createdAt' => new \DateTimeImmutable(),
             'updatedAt' => new \DateTimeImmutable(),
