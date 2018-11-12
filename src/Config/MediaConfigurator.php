@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Config;
 
-
 use KiwiSuite\Contract\Application\ConfiguratorInterface;
 use KiwiSuite\Contract\Application\ServiceRegistryInterface;
 

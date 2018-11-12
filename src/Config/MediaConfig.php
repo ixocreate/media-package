@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace KiwiSuite\Media\Config;
 
-use KiwiSuite\Media\Exceptions\InvalidExtensionException;
-use KiwiSuite\Media\Exceptions\InvalidConfigException;
+use KiwiSuite\Media\Exception\InvalidExtensionException;
+use KiwiSuite\Media\Exception\InvalidConfigException;
 use Psr\Http\Message\UriInterface;
 
 final class MediaConfig
@@ -128,8 +128,8 @@ final class MediaConfig
     }
 
     /**
-     * @throws \KiwiSuite\Media\Exceptions\InvalidExtensionException
-     * @throws \KiwiSuite\Media\Exceptions\InvalidConfigException
+     * @throws \KiwiSuite\Media\Exception\InvalidExtensionException
+     * @throws \KiwiSuite\Media\Exception\InvalidConfigException
      */
     private function assertDriver(): void
     {
