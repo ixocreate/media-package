@@ -86,7 +86,7 @@ class ChangePublicStatusCommand extends AbstractCommand
      * @param bool $publicStatus
      * @return ChangePublicStatusCommand
      */
-    public function withPublicStatuas(bool $publicStatus): ChangePublicStatusCommand
+    public function withPublicStatus(bool $publicStatus): ChangePublicStatusCommand
     {
         $command = clone $this;
         $command->publicStatus = $publicStatus;
@@ -114,13 +114,13 @@ class ChangePublicStatusCommand extends AbstractCommand
             $this->moveMedia($this->media, 'data/media_private/', 'data/media/');
         } elseif (!$desiredPublicStatus && !\file_exists($privateDirectory)) {
             $this->moveMedia($this->media, 'data/media/', 'data/media_private/');
-        } else {
-            return true;
         }
 
-        $this->media = $this->media->with('publicStatus', $desiredPublicStatus);
-        $this->media = $this->media->with('updatedAt', new \DateTime());
-        $this->mediaRepository->save($this->media);
+        if ($this->media->publicStatus() !== $desiredPublicStatus) {
+            $this->media = $this->media->with('publicStatus', $desiredPublicStatus);
+            $this->media = $this->media->with('updatedAt', new \DateTime());
+            $this->mediaRepository->save($this->media);
+        }
 
         return true;
     }
