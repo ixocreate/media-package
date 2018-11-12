@@ -1,4 +1,13 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Uri\Factory;
@@ -19,9 +28,9 @@ final class UriFactory implements FactoryInterface
      * @param ServiceManagerInterface $container
      * @param $requestedName
      * @param array|null $options
-     * @return Uri|mixed
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return Uri|mixed
      */
     public function __invoke(ServiceManagerInterface $container, $requestedName, array $options = null)
     {

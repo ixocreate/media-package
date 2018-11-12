@@ -7,8 +7,14 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
-declare(strict_types=1);
 
+declare(strict_types=1);
+/**
+ * Created by PhpStorm.
+ * User: afriedrich
+ * Date: 10.08.18
+ * Time: 10:08
+ */
 namespace KiwiSuite\Media\Config;
 
 use KiwiSuite\Contract\Application\SerializableServiceInterface;
@@ -22,7 +28,7 @@ class MediaProjectConfig implements SerializableServiceInterface
         'global' => [],
         'document' => [],
     ];
-    
+
     private $publicStatus;
 
     /**
@@ -33,14 +39,14 @@ class MediaProjectConfig implements SerializableServiceInterface
     {
         $this->whitelist = $mediaConfigurator->whitelist();
 
-        $this->whitelist['image'] = array_unique(array_values($this->whitelist['image']));
-        $this->whitelist['video'] = array_unique(array_values($this->whitelist['video']));
-        $this->whitelist['video'] = array_unique(array_values($this->whitelist['video']));
-        $this->whitelist['document'] = array_unique(array_values($this->whitelist['document']));
+        $this->whitelist['image'] = \array_unique(\array_values($this->whitelist['image']));
+        $this->whitelist['video'] = \array_unique(\array_values($this->whitelist['video']));
+        $this->whitelist['video'] = \array_unique(\array_values($this->whitelist['video']));
+        $this->whitelist['document'] = \array_unique(\array_values($this->whitelist['document']));
 
-        $this->whitelist['global'] = array_unique(
-            array_values(
-                array_merge(
+        $this->whitelist['global'] = \array_unique(
+            \array_values(
+                \array_merge(
                     $this->whitelist['global'],
                     $this->whitelist['image'],
                     $this->whitelist['video'],
@@ -106,7 +112,7 @@ class MediaProjectConfig implements SerializableServiceInterface
      */
     public function serialize()
     {
-        return serialize($this->whitelist);
+        return \serialize($this->whitelist);
     }
 
     /**
@@ -114,6 +120,6 @@ class MediaProjectConfig implements SerializableServiceInterface
      */
     public function unserialize($serialized)
     {
-        $this->whitelist = unserialize($serialized);
+        $this->whitelist = \unserialize($serialized);
     }
 }

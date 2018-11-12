@@ -1,4 +1,13 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action\Media;
@@ -6,7 +15,6 @@ namespace KiwiSuite\Media\Action\Media;
 use Doctrine\Common\Collections\Criteria;
 use KiwiSuite\Admin\Entity\User;
 use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Admin\Type\RoleType;
 use KiwiSuite\Contract\Admin\RoleInterface;
 use KiwiSuite\Media\Config\MediaConfig;
 use KiwiSuite\Media\Entity\Media;
@@ -120,7 +128,7 @@ final class IndexAction implements MiddlewareInterface
 
         /** @var RoleInterface $role */
         $role = $request->getAttribute(User::class)->role()->getRole();
-        if (in_array('media.only-own-media', $role->getPermissions())) {
+        if (\in_array('media.only-own-media', $role->getPermissions())) {
             $createdResult = $this->mediaCreatedRepository->findBy(['createdBy' => $request->getAttribute(User::class)->id()]);
             $mediaCreatedArray = [];
             /** @var MediaCreated $mediaCreated */
@@ -153,8 +161,7 @@ final class IndexAction implements MiddlewareInterface
 
         return new ApiSuccessResponse([
             'items' => $items,
-            'count' => $count
+            'count' => $count,
         ]);
     }
-
 }

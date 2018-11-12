@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Action;
@@ -51,8 +52,8 @@ final class StreamAction implements MiddlewareInterface
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
      * @throws \Exception
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

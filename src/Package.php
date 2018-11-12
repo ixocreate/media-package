@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media;
@@ -18,10 +19,6 @@ use KiwiSuite\Contract\ServiceManager\ServiceManagerInterface;
 use KiwiSuite\Media\BootstrapItem\DelegatorBootstrapItem;
 use KiwiSuite\Media\BootstrapItem\ImageDefinitionBootstrapItem;
 use KiwiSuite\Media\BootstrapItem\MediaBootstrapItem;
-use KiwiSuite\Media\Delegator\DelegatorConfigurator;
-use KiwiSuite\Media\Delegator\DelegatorSubManager;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
-use KiwiSuite\ServiceManager\ServiceManagerConfigurator;
 
 final class Package implements PackageInterface
 {
@@ -80,7 +77,7 @@ final class Package implements PackageInterface
         return [
             DelegatorBootstrapItem::class,
             ImageDefinitionBootstrapItem::class,
-            MediaBootstrapItem::class
+            MediaBootstrapItem::class,
         ];
     }
 

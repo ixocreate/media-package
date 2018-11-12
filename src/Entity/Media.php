@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Entity;
@@ -110,4 +111,3 @@ final class Media implements EntityInterface, DatabaseEntityInterface
         $builder->createField('updatedAt', DateTimeType::serviceName())->nullable(false)->build();
     }
 }
-

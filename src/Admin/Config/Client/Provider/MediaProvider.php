@@ -3,7 +3,7 @@
  * kiwi-suite/media (https://github.com/kiwi-suite/media)
  *
  * @package kiwi-suite/media
- * @link https://github.com/kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
@@ -14,7 +14,6 @@ namespace KiwiSuite\Media\Admin\Config\Client\Provider;
 
 use KiwiSuite\Contract\Admin\ClientConfigProviderInterface;
 use KiwiSuite\Contract\Admin\RoleInterface;
-use KiwiSuite\Intl\LocaleManager;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
 use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
 
@@ -48,7 +47,7 @@ final class MediaProvider implements ClientConfigProviderInterface
 
             $result[] = [
                 'name' => $imageDefinition::serviceName(),
-                'label' => ucfirst($imageDefinition::serviceName()),
+                'label' => \ucfirst($imageDefinition::serviceName()),
                 'width' => $imageDefinition->width(),
                 'height' => $imageDefinition->height(),
                 'upscale' => $imageDefinition->upscale(),

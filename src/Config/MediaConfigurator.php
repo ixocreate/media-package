@@ -1,4 +1,13 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Config;
@@ -34,7 +43,7 @@ class MediaConfigurator implements ConfiguratorInterface
         return $this->publicStatus;
     }
 
-    
+
     public function setPublicStatus(bool $bool): void
     {
         $this->publicStatus = $bool;
@@ -79,7 +88,7 @@ class MediaConfigurator implements ConfiguratorInterface
     {
         $this->whitelist['document'] = $whitelist;
     }
-    
+
     public function registerService(ServiceRegistryInterface $serviceRegistry): void
     {
         $serviceRegistry->add(MediaProjectConfig::class, new MediaProjectConfig($this));

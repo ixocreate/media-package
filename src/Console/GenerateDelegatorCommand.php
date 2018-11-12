@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 namespace KiwiSuite\Media\Console;
 
@@ -98,12 +99,11 @@ EOD;
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
      * @throws Exception
+     * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         if (!\is_dir(\getcwd() . '/src/App/Media/Delegator')) {
             \mkdir(\getcwd() . '/src/App/Media/Delegator', 0777, true);
         }
@@ -128,7 +128,8 @@ EOD;
     {
         \file_put_contents(
             \getcwd() . '/src/App/Media/Delegator/' . \trim(\ucfirst($input->getArgument('name'))) . '.php',
-            \sprintf($this->template,
+            \sprintf(
+                $this->template,
                 \trim(\ucfirst($input->getArgument('name'))),
                 \trim(\ucfirst($input->getArgument('name')))
             )
@@ -142,5 +143,4 @@ EOD;
     {
         return "media:generate-delegator";
     }
-
 }

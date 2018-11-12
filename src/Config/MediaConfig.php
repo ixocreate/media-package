@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
  * @license MIT License
  */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Config;
@@ -18,7 +19,7 @@ use Psr\Http\Message\UriInterface;
 final class MediaConfig
 {
     /**
-     * @var string 
+     * @var string
      */
     private $driver;
 
@@ -56,7 +57,7 @@ final class MediaConfig
 
     /**
      * @return string
-     * @deprecated 
+     * @deprecated
      */
     public function getDriver(): string
     {
@@ -138,30 +139,30 @@ final class MediaConfig
         if (empty($driver)) {
             $this->driver = 'automatic';
         }
-        if (in_array($this->driver, $allowedConfigParameter)) {
+        if (\in_array($this->driver, $allowedConfigParameter)) {
             switch ($this->driver):
                 case 'gd':
-                    if (extension_loaded('gd') === false) {
+                    if (\extension_loaded('gd') === false) {
                         throw new InvalidExtensionException("PHP Extension 'gd' could not be found");
                     }
-                    break;
-                case 'imagick':
-                    if (extension_loaded('imagick') === false) {
+            break;
+            case 'imagick':
+                    if (\extension_loaded('imagick') === false) {
                         throw new InvalidExtensionException("PHP Extension 'imagick' could not be found");
                     }
-                    break;
-                case 'automatic':
+            break;
+            case 'automatic':
                     $this->driver = 'imagick';
-                    if (extension_loaded('imagick') === false) {
-                        $this->driver = 'gd';
-                        if (extension_loaded('gd') === false) {
-                            throw new InvalidExtensionException("Neither 'gd' or 'imagick' PHP Extension could be found");
-                        }
-                    }
-                    break;
+            if (\extension_loaded('imagick') === false) {
+                $this->driver = 'gd';
+                if (\extension_loaded('gd') === false) {
+                    throw new InvalidExtensionException("Neither 'gd' or 'imagick' PHP Extension could be found");
+                }
+            }
+            break;
             endswitch;
         } else {
-            throw new InvalidConfigException(sprintf("Given media config driver: '%s', is not valid", $this->driver));
+            throw new InvalidConfigException(\sprintf("Given media config driver: '%s', is not valid", $this->driver));
         }
     }
 }

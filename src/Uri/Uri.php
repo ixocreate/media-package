@@ -1,4 +1,13 @@
 <?php
+/**
+ * kiwi-suite/media (https://github.com/kiwi-suite/media)
+ *
+ * @package kiwi-suite/media
+ * @see https://github.com/kiwi-suite/media
+ * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace KiwiSuite\Media\Uri;
@@ -58,8 +67,8 @@ final class Uri
     {
         try {
             $payload = [
-                'iat' => time(),
-                'exp' => time() + 50000,
+                'iat' => \time(),
+                'exp' => \time() + 50000,
                 'data' => [
                     'mediaId' => $media->id(),
                     'imageDefinition' => $imageDefinition,
