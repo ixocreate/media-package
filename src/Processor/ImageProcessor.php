@@ -81,6 +81,11 @@ final class ImageProcessor implements ProcessorInterface
             'definitionMode'      => $this->imageDefinition->mode(),
             'definitionUpscale'   => $this->imageDefinition->upscale(),
         ];
+
+        if ($this->media->publicStatus() === false) {
+            $this->imageParameters['imagePath'] = 'data/media_private/' . $this->media->basePath();
+            $this->imageParameters['definitionSavingDir'] = 'data/media_private/img/' . $this->imageDefinition->directory() . '/' . $this->media->basePath();
+        }
     }
 
     /**

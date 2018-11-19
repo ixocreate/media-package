@@ -51,7 +51,12 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     /**
      * @var string
      */
-    private $imagePath = '/data/media/img/';
+    private $publicImagePath = '/data/media/img/';
+
+    /**
+     * @var string
+     */
+    private $privateImagePath = '/data/media_private/img/';
 
 
     /**
@@ -66,9 +71,10 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         MediaConfig $mediaConfig,
         MediaRepository $mediaRepository,
         Image $imageDelegator
-    ) {
+    )
+    {
         parent::__construct(self::getCommandName());
-        $this->imageDefinitionSubManager= $imageDefinitionSubManager;
+        $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->mediaRepository = $mediaRepository;
         $this->imageDelegator = $imageDelegator;
@@ -206,7 +212,10 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $mediaRepository = [];
         foreach ($this->mediaRepository->findAll() as $media) {
             $filePath = $media->basePath() . $media->filename();
-            if (!\file_exists(\getcwd() . $this->imagePath . $imageDefinition->directory() . '/' . $filePath)) {
+            if (
+                !\file_exists(\getcwd() . $this->publicImagePath . $imageDefinition->directory() . '/' . $filePath) &&
+                !\file_exists(\getcwd() . $this->privateImagePath . $imageDefinition->directory() . '/' . $filePath)
+            ) {
                 if (!$this->imageDelegator->isResponsible($media)) {
                     continue;
                 }
@@ -224,39 +233,46 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      */
     private function handleChanges(ImageDefinitionInterface $imageDefinition, $mediaRepository, SymfonyStyle $io, ProgressBar $progressBar)
     {
-        $jsonFile = \getcwd() . $this->imagePath . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json';
+        $jsonFiles = [
+            'publicJsonFile' => \getcwd() . $this->publicImagePath . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
+            'privateJsonFile' => \getcwd() . $this->privateImagePath . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json'
+        ];
 
-        if (\file_exists($jsonFile)) {
-            $content = \file_get_contents($jsonFile);
-            $json = \json_decode($content, true);
 
-            if (
-                $json['width']  != $imageDefinition->width() ||
-                $json['height'] != $imageDefinition->height() ||
-                $json['mode']   != $imageDefinition->mode() ||
-                $json['upscale']!= $imageDefinition->upscale()
-            ) {
+        foreach ($jsonFiles as $type => $file) {
+            if (\file_exists($file)) {
+                $content = \file_get_contents($file);
+                $json = \json_decode($content, true);
+
+                if (
+                    $json['width'] != $imageDefinition->width() ||
+                    $json['height'] != $imageDefinition->height() ||
+                    $json['mode'] != $imageDefinition->mode() ||
+                    $json['upscale'] != $imageDefinition->upscale()
+                ) {
+                    $json['width'] = $imageDefinition->width();
+                    $json['height'] = $imageDefinition->height();
+                    $json['mode'] = $imageDefinition->mode();
+                    $json['upscale'] = $imageDefinition->upscale();
+                    $newJson = \json_encode($json);
+                    \file_put_contents($file, $newJson);
+                    return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+                }
+            }
+
+            if (!\file_exists($file)) {
+                $json['serviceName'] = $imageDefinition::serviceName();
                 $json['width'] = $imageDefinition->width();
                 $json['height'] = $imageDefinition->height();
                 $json['mode'] = $imageDefinition->mode();
                 $json['upscale'] = $imageDefinition->upscale();
+                $json['directory'] = $imageDefinition->directory();
                 $newJson = \json_encode($json);
-                \file_put_contents($jsonFile, $newJson);
+                \file_put_contents($file, $newJson);
                 return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
             }
         }
 
-        if (!\file_exists($jsonFile)) {
-            $json['serviceName'] = $imageDefinition::serviceName();
-            $json['width'] = $imageDefinition->width();
-            $json['height'] = $imageDefinition->height();
-            $json['mode'] = $imageDefinition->mode();
-            $json['upscale'] = $imageDefinition->upscale();
-            $json['directory'] = $imageDefinition->directory();
-            $newJson = \json_encode($json);
-            \file_put_contents($jsonFile, $newJson);
-            return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
-        }
         return $io->writeln('No changes have been made in ImageDefinition: ' . $imageDefinition::serviceName());
     }
 
