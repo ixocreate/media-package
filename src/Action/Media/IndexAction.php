@@ -157,7 +157,7 @@ final class IndexAction implements MiddlewareInterface
             $items[] = $item;
         }
 
-        $count = $this->mediaRepository->count([]);
+        $count = $this->mediaRepository->count($criteria);
 
         return new ApiSuccessResponse([
             'items' => $items,
