@@ -82,7 +82,7 @@ final class %s implements DelegatorInterface
     /**
      * @param Media $media
      */
-    private function process(Media $media)
+    public function process(Media $media)
     {
     }
 }
