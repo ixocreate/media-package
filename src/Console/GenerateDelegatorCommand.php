@@ -71,6 +71,13 @@ final class %s implements DelegatorInterface
         }
         return $responsible;
     }
+    
+    /**
+    * @return array
+    */
+    public function directories(): array
+    {
+    }
 
     /**
      * @param Media $media
