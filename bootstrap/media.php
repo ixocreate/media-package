@@ -62,6 +62,7 @@ $media->setDocumentWhitelist([
     "application/vnd.oasis.opendocument.chart",
     "application/vnd.oasis.opendocument.database",
     "application/vnd.oasis.opendocument.formula",
+    "application/octet-stream",
     'text/csv',
     'text/plain',
     'application/rtf',
