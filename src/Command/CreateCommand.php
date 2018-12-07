@@ -20,6 +20,8 @@ use KiwiSuite\Media\Delegator\DelegatorInterface;
 use KiwiSuite\Media\Delegator\DelegatorSubManager;
 use KiwiSuite\Media\Entity\Media;
 use KiwiSuite\Media\Entity\MediaCreated;
+use KiwiSuite\Media\Exception\FileDuplicateException;
+use KiwiSuite\Media\Exception\FileTypeNotSupportedException;
 use KiwiSuite\Media\MediaCreateHandler\MediaCreateHandlerInterface;
 use KiwiSuite\Media\Repository\MediaCreatedRepository;
 use KiwiSuite\Media\Repository\MediaRepository;
@@ -62,7 +64,13 @@ class CreateCommand extends AbstractCommand
     private $checkForDuplicates = true;
 
     /**
+     * @var bool
+     */
+    private $publicStatus = true;
+
+    /**
      * CreateCommand constructor.
+     *
      * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
      * @param DelegatorSubManager $delegatorSubManager
@@ -114,17 +122,28 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
+     * @param bool $publicStatus
+     * @return CreateCommand
+     */
+    public function withPublicStatus(bool $publicStatus): CreateCommand
+    {
+        $command = clone $this;
+        $command->publicStatus = $publicStatus;
+        return $command;
+    }
+
+    /**
      * @throws \Exception
      * @return bool
      */
     public function execute(): bool
     {
         if (!($this->checkWhitelist($this->mediaCreateHandler->tempFile()))) {
-            return false;
+            throw new FileTypeNotSupportedException();
         }
 
         if ($this->checkForDuplicates && $this->checkDuplicate($this->mediaCreateHandler->tempFile())) {
-            return false;
+            throw new FileDuplicateException();
         }
 
         $media = $this->prepareMedia();
@@ -157,23 +176,23 @@ class CreateCommand extends AbstractCommand
      */
     private function prepareMedia(): Media
     {
-        $basePath = $this->createDir();
+        $storageDir = $this->publicStatus ? 'data/media/' : 'data/media_private/';
+        $basePath = $this->createDir($storageDir);
         $filenameParts = \pathinfo($this->mediaCreateHandler->filename());
         $slugify = new Slugify();
         $filename = $slugify->slugify($filenameParts['filename']) . '.' . $filenameParts['extension'];
 
-        $this->mediaCreateHandler->move('data/media/' . $basePath . $filename);
-
+        $this->mediaCreateHandler->move($storageDir . $basePath . $filename);
         $finfo = \finfo_open(FILEINFO_MIME_TYPE);
 
         $media = new Media([
             'id' => $this->uuid(),
             'basePath' => $basePath,
             'filename' => $filename,
-            'mimeType' => \finfo_file($finfo, 'data/media/' . $basePath . $filename),
-            'size' => \sprintf('%u', \filesize('data/media/' . $basePath . $filename)),
-            'publicStatus' => true,
-            'hash' => \hash_file('sha256', 'data/media/' . $basePath . $filename),
+            'mimeType' => \finfo_file($finfo, $storageDir . $basePath . $filename),
+            'size' => \sprintf('%u', \filesize($storageDir . $basePath . $filename)),
+            'publicStatus' => $this->publicStatus,
+            'hash' => \hash_file('sha256', $storageDir . $basePath . $filename),
             'createdAt' => new \DateTimeImmutable(),
             'updatedAt' => new \DateTimeImmutable(),
         ]);
@@ -182,23 +201,24 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
-     * @throws \Exception
+     * @param string $directory
      * @return string
+     * @throws \Exception
      */
-    private function createDir(): string
+    private function createDir(string $directory): string
     {
         do {
             $basePath = \implode('/', \str_split(\bin2hex(\random_bytes(3)), 2)) . '/';
-            $exists = \is_dir('data/media/' . $basePath);
+            $exists = \is_dir($directory . $basePath);
         } while ($exists === true);
 
-        \mkdir('data/media/' . $basePath, 0777, true);
+        \mkdir($directory . $basePath, 0777, true);
 
         return $basePath;
     }
 
     /**
-     * @param $upload
+     * @param string $file
      * @return bool
      */
     private function checkDuplicate(string $file): bool
@@ -208,7 +228,7 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
-     * @param $upload
+     * @param string $file
      * @return bool
      */
     private function checkWhitelist(string $file): bool
