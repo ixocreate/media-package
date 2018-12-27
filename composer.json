@@ -1,18 +1,18 @@
 {
-    "name": "kiwi-suite/media",
-    "description": "kiwi-suite/media",
+    "name": "ixocreate/media",
+    "description": "IXOCREATE Media",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
-            "name": "Andreas Friedrich"
+            "name": "IXOCREATE"
         }
     ],
     "require": {
         "php": "^7.1",
         "intervention/image": "^2.4.1",
         "firebase/php-jwt": "^5.0",
-        "kiwi-suite/contract": "dev-develop",
+        "ixocreate/contract": "dev-develop",
         "symfony/asset": "^4.1",
         "cocur/slugify": "^3.1"
     },
@@ -20,7 +20,7 @@
         "ext-gd": ">=2.0",
         "ext-imagick": "*",
         "phpunit/phpunit": "^6.0.6",
-        "kiwi-suite/admin": "dev-develop",
+        "ixocreate/admin": "dev-develop",
         "friendsofphp/php-cs-fixer": "^2.5"
     },
     "autoload": {
@@ -29,6 +29,6 @@
         }
     },
     "scripts": {
-        "fix-cs": "vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix"
+        "fix-cs": "vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --config vendor/ixocreate/coding-standard/.php_cs"
     }
 }
