@@ -10,15 +10,15 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Config\Factory;
+namespace Ixocreate\Media\Config\Factory;
 
-use KiwiSuite\Config\Config;
-use KiwiSuite\Contract\ServiceManager\FactoryInterface;
-use KiwiSuite\Contract\ServiceManager\ServiceManagerInterface;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Config\MediaProjectConfig;
+use Ixocreate\Config\Config;
+use Ixocreate\Contract\ServiceManager\FactoryInterface;
+use Ixocreate\Contract\ServiceManager\ServiceManagerInterface;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Config\MediaProjectConfig;
 use Zend\Diactoros\Uri;
-use KiwiSuite\ProjectUri\ProjectUri;
+use Ixocreate\ProjectUri\ProjectUri;
 
 final class MediaConfigFactory implements FactoryInterface
 {

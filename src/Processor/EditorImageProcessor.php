@@ -10,12 +10,12 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Processor;
+namespace Ixocreate\Media\Processor;
 
 use Intervention\Image\ImageManager;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Intervention\Image\Size;
 
 final class EditorImageProcessor implements ProcessorInterface

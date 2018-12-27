@@ -5,8 +5,8 @@ namespace KiwiMigration;
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
-use KiwiSuite\CommonTypes\Entity\DateTimeType;
-use KiwiSuite\CommonTypes\Entity\UuidType;
+use Ixocreate\CommonTypes\Entity\DateTimeType;
+use Ixocreate\CommonTypes\Entity\UuidType;
 
 /**
  * Auto-generated Migration: Please modify to your needs!

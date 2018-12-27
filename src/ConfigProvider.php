@@ -9,9 +9,9 @@
  */
 
 declare(strict_types=1);
-namespace KiwiSuite\Media;
+namespace Ixocreate\Media;
 
-use KiwiSuite\Contract\Application\ConfigProviderInterface;
+use Ixocreate\Contract\Application\ConfigProviderInterface;
 
 final class ConfigProvider implements ConfigProviderInterface
 {

@@ -1,26 +1,26 @@
 <?php
 declare(strict_types=1);
 
-namespace KiwiSuite\Media;
+namespace Ixocreate\Media;
 
 /** @var PipeConfigurator $pipe */
 
-use KiwiSuite\Admin\Config\AdminConfig;
-use KiwiSuite\ApplicationHttp\Pipe\GroupPipeConfigurator;
-use KiwiSuite\ApplicationHttp\Pipe\PipeConfigurator;
-use KiwiSuite\Media\Action\Image\EditorAction;
-use KiwiSuite\Media\Action\Image\ImageDefinitionDetailAction;
-use KiwiSuite\Media\Action\Image\ImageDefinitionListAction;
-use KiwiSuite\Media\Action\Media\ChangePublicStatusAction;
-use KiwiSuite\Media\Action\Media\DeleteAction;
-use KiwiSuite\Media\Action\Media\DetailAction;
-use KiwiSuite\Media\Action\Media\EditAction;
-use KiwiSuite\Media\Action\Media\FilterAction;
-use KiwiSuite\Media\Action\Media\IndexAction;
-use KiwiSuite\Media\Action\Media\PrivateStreamAction;
-use KiwiSuite\Media\Action\StreamAction;
-use KiwiSuite\Media\Action\UploadAction;
-use KiwiSuite\Media\Middleware\StreamMiddleware;
+use Ixocreate\Admin\Config\AdminConfig;
+use Ixocreate\ApplicationHttp\Pipe\GroupPipeConfigurator;
+use Ixocreate\ApplicationHttp\Pipe\PipeConfigurator;
+use Ixocreate\Media\Action\Image\EditorAction;
+use Ixocreate\Media\Action\Image\ImageDefinitionDetailAction;
+use Ixocreate\Media\Action\Image\ImageDefinitionListAction;
+use Ixocreate\Media\Action\Media\ChangePublicStatusAction;
+use Ixocreate\Media\Action\Media\DeleteAction;
+use Ixocreate\Media\Action\Media\DetailAction;
+use Ixocreate\Media\Action\Media\EditAction;
+use Ixocreate\Media\Action\Media\FilterAction;
+use Ixocreate\Media\Action\Media\IndexAction;
+use Ixocreate\Media\Action\Media\PrivateStreamAction;
+use Ixocreate\Media\Action\StreamAction;
+use Ixocreate\Media\Action\UploadAction;
+use Ixocreate\Media\Middleware\StreamMiddleware;
 
 $pipe->get('/media/stream/{token}', StreamAction::class, 'media.stream');
 

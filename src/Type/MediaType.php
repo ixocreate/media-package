@@ -10,18 +10,18 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Type;
+namespace Ixocreate\Media\Type;
 
-use KiwiSuite\Contract\Type\DatabaseTypeInterface;
-use KiwiSuite\Contract\Type\SchemaElementInterface;
-use KiwiSuite\Entity\Type\AbstractType;
+use Ixocreate\Contract\Type\DatabaseTypeInterface;
+use Ixocreate\Contract\Type\SchemaElementInterface;
+use Ixocreate\Entity\Type\AbstractType;
 use Doctrine\DBAL\Types\GuidType;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Schema\Elements\MediaElement;
-use KiwiSuite\Contract\Schema\ElementInterface;
-use KiwiSuite\Media\Repository\MediaRepository;
-use KiwiSuite\Schema\ElementSubManager;
-use KiwiSuite\Media\Uri\Uri;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Schema\Elements\MediaElement;
+use Ixocreate\Contract\Schema\ElementInterface;
+use Ixocreate\Media\Repository\MediaRepository;
+use Ixocreate\Schema\ElementSubManager;
+use Ixocreate\Media\Uri\Uri;
 
 class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {

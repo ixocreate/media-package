@@ -10,13 +10,13 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Action;
+namespace Ixocreate\Media\Action;
 
 use Firebase\JWT\JWT;
-use KiwiSuite\Admin\Response\ApiErrorResponse;
-use KiwiSuite\ApplicationHttp\ErrorHandling\Response\NotFoundHandler;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\Repository\MediaRepository;
+use Ixocreate\Admin\Response\ApiErrorResponse;
+use Ixocreate\ApplicationHttp\ErrorHandling\Response\NotFoundHandler;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

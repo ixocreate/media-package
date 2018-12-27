@@ -10,18 +10,18 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Action\Media;
+namespace Ixocreate\Media\Action\Media;
 
 use Doctrine\Common\Collections\Criteria;
-use KiwiSuite\Admin\Entity\User;
-use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Contract\Admin\RoleInterface;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\Entity\MediaCreated;
-use KiwiSuite\Media\Repository\MediaCreatedRepository;
-use KiwiSuite\Media\Repository\MediaRepository;
-use KiwiSuite\Media\Uri\Uri;
+use Ixocreate\Admin\Entity\User;
+use Ixocreate\Admin\Response\ApiSuccessResponse;
+use Ixocreate\Contract\Admin\RoleInterface;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Entity\MediaCreated;
+use Ixocreate\Media\Repository\MediaCreatedRepository;
+use Ixocreate\Media\Repository\MediaRepository;
+use Ixocreate\Media\Uri\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

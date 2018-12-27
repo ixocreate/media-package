@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\BootstrapItem;
+namespace Ixocreate\Media\BootstrapItem;
 
-use KiwiSuite\Contract\Application\BootstrapItemInterface;
-use KiwiSuite\Contract\Application\ConfiguratorInterface;
-use KiwiSuite\Media\Delegator\DelegatorConfigurator;
+use Ixocreate\Contract\Application\BootstrapItemInterface;
+use Ixocreate\Contract\Application\ConfiguratorInterface;
+use Ixocreate\Media\Delegator\DelegatorConfigurator;
 
 final class DelegatorBootstrapItem implements BootstrapItemInterface
 {

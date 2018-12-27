@@ -10,10 +10,10 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Uri;
+namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
-use KiwiSuite\Media\Entity\Media;
+use Ixocreate\Media\Entity\Media;
 use Symfony\Component\Asset\Packages;
 
 final class Uri

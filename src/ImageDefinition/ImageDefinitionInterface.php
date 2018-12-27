@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\ImageDefinition;
+namespace Ixocreate\Media\ImageDefinition;
 
-use KiwiSuite\Contract\ServiceManager\NamedServiceInterface;
+use Ixocreate\Contract\ServiceManager\NamedServiceInterface;
 
 interface ImageDefinitionInterface extends NamedServiceInterface
 {

@@ -10,14 +10,14 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Delegator\Delegators;
+namespace Ixocreate\Media\Delegator\Delegators;
 
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Delegator\DelegatorInterface;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
-use KiwiSuite\Media\Processor\ImageProcessor;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Delegator\DelegatorInterface;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Processor\ImageProcessor;
 
 final class Image implements DelegatorInterface
 {

@@ -10,14 +10,14 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Processor;
+namespace Ixocreate\Media\Processor;
 
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
-use KiwiSuite\Media\Config\MediaConfig;
+use Ixocreate\Media\Config\MediaConfig;
 use Intervention\Image\Constraint;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 
 final class ImageProcessor implements ProcessorInterface
 {

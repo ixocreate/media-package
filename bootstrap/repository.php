@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace KiwiSuite\Media;
+namespace Ixocreate\Media;
 
-use KiwiSuite\Media\Repository\MediaCreatedRepository;
-use KiwiSuite\Media\Repository\MediaCropRepository;
-use KiwiSuite\Media\Repository\MediaRepository;
+use Ixocreate\Media\Repository\MediaCreatedRepository;
+use Ixocreate\Media\Repository\MediaCropRepository;
+use Ixocreate\Media\Repository\MediaRepository;
 
-/** @var \KiwiSuite\Database\Repository\RepositoryConfigurator $repository */
+/** @var \Ixocreate\Database\Repository\RepositoryConfigurator $repository */
 $repository->addRepository(MediaRepository::class);
 $repository->addRepository(MediaCropRepository::class);
 $repository->addRepository(MediaCreatedRepository::class);

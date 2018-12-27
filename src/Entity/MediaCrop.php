@@ -10,17 +10,17 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Entity;
+namespace Ixocreate\Media\Entity;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
-use KiwiSuite\Contract\Entity\DatabaseEntityInterface;
-use KiwiSuite\Entity\Entity\DefinitionCollection;
-use KiwiSuite\Entity\Entity\EntityInterface;
-use KiwiSuite\Entity\Entity\EntityTrait;
-use KiwiSuite\Entity\Entity\Definition;
-use KiwiSuite\CommonTypes\Entity\DateTimeType;
-use KiwiSuite\Contract\Type\TypeInterface;
-use KiwiSuite\CommonTypes\Entity\UuidType;
+use Ixocreate\Contract\Entity\DatabaseEntityInterface;
+use Ixocreate\Entity\Entity\DefinitionCollection;
+use Ixocreate\Entity\Entity\EntityInterface;
+use Ixocreate\Entity\Entity\EntityTrait;
+use Ixocreate\Entity\Entity\Definition;
+use Ixocreate\CommonTypes\Entity\DateTimeType;
+use Ixocreate\Contract\Type\TypeInterface;
+use Ixocreate\CommonTypes\Entity\UuidType;
 
 final class MediaCrop implements EntityInterface, DatabaseEntityInterface
 {

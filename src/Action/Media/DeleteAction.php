@@ -10,19 +10,19 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Action\Media;
+namespace Ixocreate\Media\Action\Media;
 
-use KiwiSuite\Admin\Response\ApiErrorResponse;
-use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
-use KiwiSuite\Media\Repository\MediaCreatedRepository;
-use KiwiSuite\Media\Repository\MediaCropRepository;
+use Ixocreate\Admin\Response\ApiErrorResponse;
+use Ixocreate\Admin\Response\ApiSuccessResponse;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Repository\MediaCreatedRepository;
+use Ixocreate\Media\Repository\MediaCropRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use KiwiSuite\Media\Repository\MediaRepository;
-use KiwiSuite\Media\Entity\Media;
+use Ixocreate\Media\Repository\MediaRepository;
+use Ixocreate\Media\Entity\Media;
 
 final class DeleteAction implements MiddlewareInterface
 {

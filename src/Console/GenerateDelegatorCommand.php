@@ -9,10 +9,10 @@
  */
 
 declare(strict_types=1);
-namespace KiwiSuite\Media\Console;
+namespace Ixocreate\Media\Console;
 
 use Symfony\Component\Console\Command\Command;
-use KiwiSuite\Contract\Command\CommandInterface;
+use Ixocreate\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,8 +29,8 @@ declare(strict_types=1);
 
 namespace App\Media\Delegator;
 
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\Delegator\DelegatorInterface;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Delegator\DelegatorInterface;
 
 final class %s implements DelegatorInterface
 {

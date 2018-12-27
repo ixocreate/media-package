@@ -15,9 +15,9 @@ declare(strict_types=1);
  * Date: 10.08.18
  * Time: 10:08
  */
-namespace KiwiSuite\Media\Config;
+namespace Ixocreate\Media\Config;
 
-use KiwiSuite\Contract\Application\SerializableServiceInterface;
+use Ixocreate\Contract\Application\SerializableServiceInterface;
 
 class MediaProjectConfig implements SerializableServiceInterface
 {

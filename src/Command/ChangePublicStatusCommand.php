@@ -10,16 +10,16 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Command;
+namespace Ixocreate\Media\Command;
 
-use KiwiSuite\CommandBus\Command\AbstractCommand;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Delegator\DelegatorInterface;
-use KiwiSuite\Media\Delegator\DelegatorSubManager;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\MediaCreateHandler\MediaCreateHandlerInterface;
-use KiwiSuite\Media\Repository\MediaCreatedRepository;
-use KiwiSuite\Media\Repository\MediaRepository;
+use Ixocreate\CommandBus\Command\AbstractCommand;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Delegator\DelegatorInterface;
+use Ixocreate\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\MediaCreateHandler\MediaCreateHandlerInterface;
+use Ixocreate\Media\Repository\MediaCreatedRepository;
+use Ixocreate\Media\Repository\MediaRepository;
 
 class ChangePublicStatusCommand extends AbstractCommand
 {

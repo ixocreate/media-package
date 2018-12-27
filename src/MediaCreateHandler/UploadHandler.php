@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\MediaCreateHandler;
+namespace Ixocreate\Media\MediaCreateHandler;
 
 use Zend\Diactoros\UploadedFile;
 

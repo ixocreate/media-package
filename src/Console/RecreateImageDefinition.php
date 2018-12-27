@@ -10,22 +10,22 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Console;
+namespace Ixocreate\Media\Console;
 
-use KiwiSuite\Media\Delegator\Delegators\Image;
+use Ixocreate\Media\Delegator\Delegators\Image;
 use Symfony\Component\Console\Command\Command;
-use KiwiSuite\Contract\Command\CommandInterface;
+use Ixocreate\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Repository\MediaRepository;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use KiwiSuite\Media\Processor\ImageProcessor;
-use KiwiSuite\Media\Exception\InvalidArgumentException;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\Processor\ImageProcessor;
+use Ixocreate\Media\Exception\InvalidArgumentException;
 
 final class RecreateImageDefinition extends Command implements CommandInterface
 {

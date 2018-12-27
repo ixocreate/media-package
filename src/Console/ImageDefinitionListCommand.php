@@ -9,11 +9,11 @@
  */
 
 declare(strict_types=1);
-namespace KiwiSuite\Media\Console;
+namespace Ixocreate\Media\Console;
 
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Symfony\Component\Console\Command\Command;
-use KiwiSuite\Contract\Command\CommandInterface;
+use Ixocreate\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;

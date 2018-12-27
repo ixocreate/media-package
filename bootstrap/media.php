@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace KiwiSuite\Media;
+namespace Ixocreate\Media;
 
-use KiwiSuite\Media\Config\MediaConfigurator;
+use Ixocreate\Media\Config\MediaConfigurator;
 
 /** @var MediaConfigurator $media */
 $media->setImageWhiteliste([

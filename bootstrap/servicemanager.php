@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace KiwiSuite\Media;
+namespace Ixocreate\Media;
 
-use KiwiSuite\Media\Uri\Factory\UriFactory;
-use KiwiSuite\Media\Uri\Uri;
-use KiwiSuite\ServiceManager\ServiceManagerConfigurator;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Config\Factory\MediaConfigFactory;
-use KiwiSuite\Media\Delegator\DelegatorSubManager;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Uri\Factory\UriFactory;
+use Ixocreate\Media\Uri\Uri;
+use Ixocreate\ServiceManager\ServiceManagerConfigurator;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Config\Factory\MediaConfigFactory;
+use Ixocreate\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 
 /** @var ServiceManagerConfigurator $serviceManager */
 $serviceManager->addFactory(MediaConfig::class, MediaConfigFactory::class);

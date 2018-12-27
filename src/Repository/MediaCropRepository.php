@@ -10,10 +10,10 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Repository;
+namespace Ixocreate\Media\Repository;
 
-use KiwiSuite\Media\Entity\MediaCrop;
-use KiwiSuite\Database\Repository\AbstractRepository;
+use Ixocreate\Media\Entity\MediaCrop;
+use Ixocreate\Database\Repository\AbstractRepository;
 
 final class MediaCropRepository extends AbstractRepository
 {

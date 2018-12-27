@@ -15,9 +15,9 @@ declare(strict_types=1);
  * Date: 20.08.18
  * Time: 07:54
  */
-namespace KiwiSuite\Media\Processor;
+namespace Ixocreate\Media\Processor;
 
-use KiwiSuite\Contract\ServiceManager\NamedServiceInterface;
+use Ixocreate\Contract\ServiceManager\NamedServiceInterface;
 
 interface ProcessorInterface extends NamedServiceInterface
 {

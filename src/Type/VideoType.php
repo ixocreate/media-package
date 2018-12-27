@@ -10,20 +10,20 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Type;
+namespace Ixocreate\Media\Type;
 
 use Doctrine\DBAL\Types\GuidType;
-use KiwiSuite\Contract\Schema\ElementInterface;
-use KiwiSuite\Contract\Type\DatabaseTypeInterface;
-use KiwiSuite\Contract\Type\SchemaElementInterface;
-use KiwiSuite\Contract\Type\TypeInterface;
-use KiwiSuite\Entity\Type\AbstractType;
-use KiwiSuite\Entity\Type\Type;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\Uri\Uri;
-use KiwiSuite\Schema\Elements\VideoElement;
-use KiwiSuite\Schema\ElementSubManager;
+use Ixocreate\Contract\Schema\ElementInterface;
+use Ixocreate\Contract\Type\DatabaseTypeInterface;
+use Ixocreate\Contract\Type\SchemaElementInterface;
+use Ixocreate\Contract\Type\TypeInterface;
+use Ixocreate\Entity\Type\AbstractType;
+use Ixocreate\Entity\Type\Type;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Schema\Elements\VideoElement;
+use Ixocreate\Schema\ElementSubManager;
 
 final class VideoType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
 {

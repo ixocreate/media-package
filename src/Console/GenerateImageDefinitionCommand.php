@@ -9,14 +9,14 @@
  */
 
 declare(strict_types=1);
-namespace KiwiSuite\Media\Console;
+namespace Ixocreate\Media\Console;
 
 use Symfony\Component\Console\Command\Command;
-use KiwiSuite\Contract\Command\CommandInterface;
+use Ixocreate\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 
 final class GenerateImageDefinitionCommand extends Command implements CommandInterface
 {
@@ -30,7 +30,7 @@ declare(strict_types=1);
 
 namespace App\Media\ImageDefinition;
 
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 
 final class %s implements ImageDefinitionInterface
 {

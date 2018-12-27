@@ -10,10 +10,10 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Delegator;
+namespace Ixocreate\Media\Delegator;
 
-use KiwiSuite\Contract\ServiceManager\NamedServiceInterface;
-use KiwiSuite\Media\Entity\Media;
+use Ixocreate\Contract\ServiceManager\NamedServiceInterface;
+use Ixocreate\Media\Entity\Media;
 
 interface DelegatorInterface extends NamedServiceInterface
 {

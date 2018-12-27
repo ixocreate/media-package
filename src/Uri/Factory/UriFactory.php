@@ -10,13 +10,13 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Uri\Factory;
+namespace Ixocreate\Media\Uri\Factory;
 
-use KiwiSuite\Contract\ServiceManager\FactoryInterface;
-use KiwiSuite\Contract\ServiceManager\ServiceManagerInterface;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Uri\Uri;
-use KiwiSuite\ProjectUri\ProjectUri;
+use Ixocreate\Contract\ServiceManager\FactoryInterface;
+use Ixocreate\Contract\ServiceManager\ServiceManagerInterface;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Uri\Uri;
+use Ixocreate\ProjectUri\ProjectUri;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Asset\UrlPackage;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;

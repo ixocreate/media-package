@@ -10,12 +10,12 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Console;
+namespace Ixocreate\Media\Console;
 
-use KiwiSuite\CommandBus\CommandBus;
-use KiwiSuite\Contract\Command\CommandInterface;
-use KiwiSuite\Media\Command\ChangePublicStatusCommand;
-use KiwiSuite\Media\Repository\MediaRepository;
+use Ixocreate\CommandBus\CommandBus;
+use Ixocreate\Contract\Command\CommandInterface;
+use Ixocreate\Media\Command\ChangePublicStatusCommand;
+use Ixocreate\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

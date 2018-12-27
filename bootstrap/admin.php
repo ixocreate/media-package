@@ -1,9 +1,9 @@
 <?php
-namespace KiwiSuite\Media;
+namespace Ixocreate\Media;
 
-/** @var \KiwiSuite\Admin\Config\AdminConfigurator $admin */
+/** @var \Ixocreate\Admin\Config\AdminConfigurator $admin */
 
-use KiwiSuite\Media\Admin\Config\Client\Provider\MediaProvider;
+use Ixocreate\Media\Admin\Config\Client\Provider\MediaProvider;
 
 $admin->addClientProvider(MediaProvider::class);
 

@@ -10,20 +10,20 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Action\Image;
+namespace Ixocreate\Media\Action\Image;
 
 use Assert\Assertion;
-use KiwiSuite\Admin\Response\ApiErrorResponse;
-use KiwiSuite\Admin\Response\ApiSuccessResponse;
-use KiwiSuite\Entity\Entity\EntityInterface;
-use KiwiSuite\Media\Config\MediaConfig;
-use KiwiSuite\Media\Entity\Media;
-use KiwiSuite\Media\Entity\MediaCrop;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionInterface;
-use KiwiSuite\Media\ImageDefinition\ImageDefinitionSubManager;
-use KiwiSuite\Media\Processor\EditorImageProcessor;
-use KiwiSuite\Media\Repository\MediaCropRepository;
-use KiwiSuite\Media\Repository\MediaRepository;
+use Ixocreate\Admin\Response\ApiErrorResponse;
+use Ixocreate\Admin\Response\ApiSuccessResponse;
+use Ixocreate\Entity\Entity\EntityInterface;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Entity\MediaCrop;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Processor\EditorImageProcessor;
+use Ixocreate\Media\Repository\MediaCropRepository;
+use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

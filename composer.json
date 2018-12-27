@@ -25,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "KiwiSuite\\Media\\": "src/"
+            "Ixocreate\\Media\\": "src/"
         }
     },
     "scripts": {

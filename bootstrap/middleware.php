@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-use KiwiSuite\ApplicationHttp\Middleware\MiddlewareConfigurator;
+use Ixocreate\ApplicationHttp\Middleware\MiddlewareConfigurator;
 
 /** @var MiddlewareConfigurator $middleware */
-$middleware->addAction(\KiwiSuite\Media\Action\Image\EditorAction::class);
-$middleware->addAction(\KiwiSuite\Media\Action\Media\DetailAction::class);
-$middleware->addAction(\KiwiSuite\Media\Action\StreamAction::class);
-$middleware->addAction(\KiwiSuite\Media\Action\UploadAction::class);
-$middleware->addAction(\KiwiSuite\Media\Action\Media\ChangePublicStatusAction::class);
-$middleware->addAction(\KiwiSuite\Media\Action\Media\DeleteAction::class);
-$middleware->addAction(\KiwiSuite\Media\Action\Media\IndexAction::class);
+$middleware->addAction(\Ixocreate\Media\Action\Image\EditorAction::class);
+$middleware->addAction(\Ixocreate\Media\Action\Media\DetailAction::class);
+$middleware->addAction(\Ixocreate\Media\Action\StreamAction::class);
+$middleware->addAction(\Ixocreate\Media\Action\UploadAction::class);
+$middleware->addAction(\Ixocreate\Media\Action\Media\ChangePublicStatusAction::class);
+$middleware->addAction(\Ixocreate\Media\Action\Media\DeleteAction::class);
+$middleware->addAction(\Ixocreate\Media\Action\Media\IndexAction::class);

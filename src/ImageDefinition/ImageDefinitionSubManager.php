@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\ImageDefinition;
+namespace Ixocreate\Media\ImageDefinition;
 
-use KiwiSuite\ServiceManager\SubManager\SubManager;
+use Ixocreate\ServiceManager\SubManager\SubManager;
 
 final class ImageDefinitionSubManager extends SubManager
 {

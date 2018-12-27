@@ -10,14 +10,14 @@
 
 declare(strict_types=1);
 
-namespace KiwiSuite\Media\Action;
+namespace Ixocreate\Media\Action;
 
-use KiwiSuite\Admin\Entity\User;
-use KiwiSuite\CommandBus\CommandBus;
-use KiwiSuite\Media\Command\CreateCommand;
-use KiwiSuite\Media\MediaCreateHandler\UploadHandler;
-use KiwiSuite\Admin\Response\ApiErrorResponse;
-use KiwiSuite\Admin\Response\ApiSuccessResponse;
+use Ixocreate\Admin\Entity\User;
+use Ixocreate\CommandBus\CommandBus;
+use Ixocreate\Media\Command\CreateCommand;
+use Ixocreate\Media\MediaCreateHandler\UploadHandler;
+use Ixocreate\Admin\Response\ApiErrorResponse;
+use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
