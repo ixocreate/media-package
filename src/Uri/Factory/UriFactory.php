@@ -1,10 +1,7 @@
 <?php
 /**
- * kiwi-suite/media (https://github.com/kiwi-suite/media)
- *
- * @package kiwi-suite/media
- * @see https://github.com/kiwi-suite/media
- * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @see https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
@@ -23,7 +20,6 @@ use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
 
 final class UriFactory implements FactoryInterface
 {
-
     /**
      * @param ServiceManagerInterface $container
      * @param $requestedName

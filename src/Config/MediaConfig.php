@@ -1,10 +1,7 @@
 <?php
 /**
- * kiwi-suite/media (https://github.com/kiwi-suite/media)
- *
- * @package kiwi-suite/media
- * @see https://github.com/kiwi-suite/media
- * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @see https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
@@ -146,21 +143,21 @@ final class MediaConfig
                     if (\extension_loaded('gd') === false) {
                         throw new InvalidExtensionException("PHP Extension 'gd' could not be found");
                     }
-                    break;
-                case 'imagick':
+            break;
+            case 'imagick':
                     if (\extension_loaded('imagick') === false) {
                         throw new InvalidExtensionException("PHP Extension 'imagick' could not be found");
                     }
-                    break;
-                case 'automatic':
+            break;
+            case 'automatic':
                     $this->driver = 'imagick';
-                    if (\extension_loaded('imagick') === false) {
-                        $this->driver = 'gd';
-                        if (\extension_loaded('gd') === false) {
-                            throw new InvalidExtensionException("Neither 'gd' or 'imagick' PHP Extension could be found");
-                        }
-                    }
-                    break;
+            if (\extension_loaded('imagick') === false) {
+                $this->driver = 'gd';
+                if (\extension_loaded('gd') === false) {
+                    throw new InvalidExtensionException("Neither 'gd' or 'imagick' PHP Extension could be found");
+                }
+            }
+            break;
             endswitch;
         } else {
             throw new InvalidConfigException(\sprintf("Given media config driver: '%s', is not valid", $this->driver));

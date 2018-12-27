@@ -1,10 +1,7 @@
 <?php
 /**
- * kiwi-suite/media (https://github.com/kiwi-suite/media)
- *
- * @package kiwi-suite/media
- * @see https://github.com/kiwi-suite/media
- * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @see https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
@@ -27,6 +24,7 @@ interface ImageDefinitionInterface extends NamedServiceInterface
      * cut it out and resize it to the given dimension
      */
     const MODE_FIT_CROP = 'fitCrop';
+
     /**
      * Adds a canvas to image, if image is smaller than given width & height, else just resizes to given parameters.
      * Needs width & height.

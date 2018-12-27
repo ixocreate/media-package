@@ -1,10 +1,7 @@
 <?php
 /**
- * kiwi-suite/media (https://github.com/kiwi-suite/media)
- *
- * @package kiwi-suite/media
- * @see https://github.com/kiwi-suite/media
- * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @see https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
@@ -27,13 +24,21 @@ final class Media implements EntityInterface, DatabaseEntityInterface
     use EntityTrait;
 
     private $id;
+
     private $basePath;
+
     private $filename;
+
     private $mimeType;
+
     private $size;
+
     private $publicStatus;
+
     private $hash;
+
     private $createdAt;
+
     private $updatedAt;
 
     public function id(): UuidType

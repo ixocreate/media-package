@@ -1,10 +1,7 @@
 <?php
 /**
- * kiwi-suite/media (https://github.com/kiwi-suite/media)
- *
- * @package kiwi-suite/media
- * @see https://github.com/kiwi-suite/media
- * @copyright Copyright (c) 2010 - 2018 kiwi suite GmbH
+ * @see https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
@@ -43,6 +40,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @var MediaRepository
      */
     private $mediaRepository;
+
     /**
      * @var Image
      */
@@ -58,7 +56,6 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      */
     private $privateImagePath = '/data/media_private/img/';
 
-
     /**
      * RefactorImageDefinition constructor.
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
@@ -71,8 +68,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         MediaConfig $mediaConfig,
         MediaRepository $mediaRepository,
         Image $imageDelegator
-    )
-    {
+    ) {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
@@ -235,7 +231,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     {
         $jsonFiles = [
             'publicJsonFile' => \getcwd() . $this->publicImagePath . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
-            'privateJsonFile' => \getcwd() . $this->privateImagePath . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json'
+            'privateJsonFile' => \getcwd() . $this->privateImagePath . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
         ];
 
 
