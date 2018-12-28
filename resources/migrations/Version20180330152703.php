@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace KiwiMigration;
+namespace IxocreateMigration;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
