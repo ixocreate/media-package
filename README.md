@@ -1,6 +1,6 @@
 # IXOCREATE media
 
-[![Build Status](https://travis-ci.org/ixocreate/config.svg?branch=master)](https://travis-ci.org/ixocreate/config)
+[![Build Status](https://travis-ci.com/ixocreate/media.svg?branch=master)](https://travis-ci.com/ixocreate/media)
 [![Coverage Status](https://coveralls.io/repos/github/ixocreate/config/badge.svg?branch=master)](https://coveralls.io/github/ixocreate/config?branch=master)
 [![Packagist](https://img.shields.io/packagist/v/ixocreate/config.svg)](https://packagist.org/packages/ixocreate/config)
 [![Packagist Pre Release](https://img.shields.io/packagist/vpre/ixocreate/config.svg)](https://packagist.org/packages/ixocreate/config)
