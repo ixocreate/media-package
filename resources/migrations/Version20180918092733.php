@@ -16,12 +16,12 @@ final class Version20180918092733 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         $table = $schema->createTable('media_media_crop');
-        $table->addColumn('id',UuidType::class);
-        $table->addColumn('mediaId',UuidType::class);
+        $table->addColumn('id',UuidType::servicename());
+        $table->addColumn('mediaId',UuidType::servicename());
         $table->addColumn('imageDefinition', Type::STRING);
         $table->addColumn('cropParameters', Type::JSON);
-        $table->addColumn('createdAt', DateTimeType::class);
-        $table->addColumn('updatedAt', DateTimeType::class);
+        $table->addColumn('createdAt', DateTimeType::servicename());
+        $table->addColumn('updatedAt', DateTimeType::servicename());
         $table->setPrimaryKey(['id']);
         $table->addForeignKeyConstraint('media_media',['mediaId'],['id'], ['onDelete' => 'CASCADE']);
     }

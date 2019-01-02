@@ -16,12 +16,12 @@ final class Version20180330152703 extends AbstractMigration
     public function up(Schema $schema)
     {
         $table = $schema->createTable('media_media');
-        $table->addColumn('id', UuidType::class);
+        $table->addColumn('id', UuidType::servicename());
         $table->addColumn('basePath', Type::STRING);
         $table->addColumn('filename', Type::STRING);
         $table->addColumn('mimeType', Type::STRING);
         $table->addColumn('size', Type::INTEGER);
-        $table->addColumn('createdAt', DateTimeType::class);
+        $table->addColumn('createdAt', DateTimeType::servicename());
         $table->setPrimaryKey(["id"]);
     }
 
