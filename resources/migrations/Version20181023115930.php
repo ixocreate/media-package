@@ -14,8 +14,8 @@ final class Version20181023115930 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         $table = $schema->createTable('media_media_created');
-        $table->addColumn('mediaId',UuidType::servicename());
-        $table->addColumn('createdBy',UuidType::servicename());
+        $table->addColumn('mediaId',UuidType::serviceName());
+        $table->addColumn('createdBy',UuidType::serviceName());
         $table->setPrimaryKey(['mediaId']);
         $table->addForeignKeyConstraint('media_media',['mediaId'],['id'], ['onDelete' => 'CASCADE']);
     }

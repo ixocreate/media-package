@@ -17,7 +17,7 @@ final class Version20180824071610 extends AbstractMigration
         $table = $schema->getTable('media_media');
         $table->addColumn('hash', Type::STRING);
         $table->addColumn('publicStatus',Type::BOOLEAN);
-        $table->addColumn('updatedAt', DateTimeType::servicename());
+        $table->addColumn('updatedAt', DateTimeType::serviceName());
     }
 
     public function down(Schema $schema) : void
