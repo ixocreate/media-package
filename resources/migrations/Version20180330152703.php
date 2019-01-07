@@ -1,10 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types=1);
 
 namespace IxocreateMigration;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\Migrations\AbstractMigration;
 use Ixocreate\CommonTypes\Entity\DateTimeType;
 use Ixocreate\CommonTypes\Entity\UuidType;
 
