@@ -53,6 +53,11 @@ final class EditorImageProcessor implements ProcessorInterface
     private $requestHeight;
 
     /**
+     * @var string
+     */
+    private $storagePath;
+
+    /**
      * NewEditorImageProcessor constructor.
      * @param array $requestData
      * @param ImageDefinitionInterface $imageDefinition
@@ -66,7 +71,9 @@ final class EditorImageProcessor implements ProcessorInterface
         $this->media = $media;
         $this->requestData = $requestData;
 
-        $mediaImageSize = \getimagesize(\getcwd() . '/data/media/' . $media->basePath() . $media->filename());
+        $this->storagePath = $media->publicStatus() ? 'data/media/' : 'data/media_private/';
+
+        $mediaImageSize = \getimagesize($this->storagePath . $media->basePath() . $media->filename());
         $this->mediaSize = new Size($mediaImageSize[0], $mediaImageSize[1]);
 
         $this->requestWidth = $requestData['x2'] - $requestData['x1'];
@@ -87,7 +94,7 @@ final class EditorImageProcessor implements ProcessorInterface
     public function process()
     {
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
-        $image = $imageManager->make(\getcwd() . '/data/media/' . $this->media->basePath() . $this->media->filename());
+        $image = $imageManager->make($this->storagePath . $this->media->basePath() . $this->media->filename());
 
         $this->gaugeMinimalRequestDataSize();
         $this->gaugeCanvasSize();

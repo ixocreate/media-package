@@ -150,8 +150,8 @@ final class IndexAction implements MiddlewareInterface
         /** @var Media $media */
         foreach ($result as $media) {
             $item = $media->toPublicArray();
-            $item['thumb'] = $this->uri->generateImageUrl($media->basePath(), $media->filename(), 'admin-thumb');
-            $item['original'] = $this->uri->generateImageUrl($media->basePath(), $media->filename());
+            $item['thumb'] = $this->uri->imageUrl($media, 'admin-thumb');
+            $item['original'] = $this->uri->url($media);
 
             $items[] = $item;
         }

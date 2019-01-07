@@ -107,7 +107,9 @@ final class DetailAction implements MiddlewareInterface
     {
         $state = false;
 
-        $size = \getimagesize(\getcwd() . '/data/media/' . $media->basePath() . $media->filename());
+        $storagePath = $media->publicStatus() ? 'data/media/' : 'data/media_private/';
+
+        $size = \getimagesize($storagePath . $media->basePath() . $media->filename());
         $width = $size[0];
         $height = $size[1];
 
