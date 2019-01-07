@@ -92,7 +92,7 @@ final class StreamAction implements MiddlewareInterface
          */
         return (new Response())
             ->withHeader('Content-Type', $media->mimeType())
-            ->withHeader('Content-Length', (string)$media->size())
+            ->withHeader('Content-Length', (string)\filesize($filePath))
             ->withHeader('Content-Disposition', 'inline; filename=' . $media->filename())
             ->withBody(new Stream($filePath));
     }
