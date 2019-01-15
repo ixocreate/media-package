@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace IxocreateMigration;
 
@@ -12,15 +13,15 @@ use Ixocreate\CommonTypes\Entity\DateTimeType;
  */
 final class Version20180824071610 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $table = $schema->getTable('media_media');
         $table->addColumn('hash', Type::STRING);
-        $table->addColumn('publicStatus',Type::BOOLEAN);
-        $table->addColumn('updatedAt', DateTimeType::class);
+        $table->addColumn('publicStatus', Type::BOOLEAN);
+        $table->addColumn('updatedAt', DateTimeType::serviceName());
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
     }
 }

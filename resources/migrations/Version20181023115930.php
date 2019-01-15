@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace IxocreateMigration;
 
@@ -11,16 +12,16 @@ use Ixocreate\CommonTypes\Entity\UuidType;
  */
 final class Version20181023115930 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $table = $schema->createTable('media_media_created');
-        $table->addColumn('mediaId',UuidType::class);
-        $table->addColumn('createdBy',UuidType::class);
+        $table->addColumn('mediaId', UuidType::serviceName());
+        $table->addColumn('createdBy', UuidType::serviceName());
         $table->setPrimaryKey(['mediaId']);
-        $table->addForeignKeyConstraint('media_media',['mediaId'],['id'], ['onDelete' => 'CASCADE']);
+        $table->addForeignKeyConstraint('media_media', ['mediaId'], ['id'], ['onDelete' => 'CASCADE']);
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         $schema->dropTable("media_media_created");
     }
