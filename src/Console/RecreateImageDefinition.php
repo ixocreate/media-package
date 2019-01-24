@@ -103,7 +103,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      */
     public static function getCommandName()
     {
-        return 'media:recreate-imageDefinition';
+        return 'media:recreate-image-definition';
     }
 
     /**
