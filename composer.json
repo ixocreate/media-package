@@ -14,7 +14,7 @@
         "php": "^7.1",
         "intervention/image": "^2.4.1",
         "firebase/php-jwt": "^5.0",
-        "ixocreate/contract": "=1.0.0-alpha2",
+        "ixocreate/contract": "dev-develop",
         "symfony/asset": "^4.1",
         "cocur/slugify": "^3.1"
     },
@@ -23,7 +23,7 @@
         "ext-imagick": "*",
         "ixocreate/coding-standard": "^1.0",
         "phpunit/phpunit": "^6.0.6",
-        "ixocreate/admin": "=1.0.0-alpha2"
+        "ixocreate/admin": "dev-develop"
     },
     "autoload": {
         "psr-4": {
