@@ -25,4 +25,14 @@ final class ConfigProvider implements ConfigProviderInterface
             ],
         ];
     }
+
+    public function configName(): string
+    {
+        return 'media';
+    }
+
+    public function configContent(): string
+    {
+        return \file_get_contents(__DIR__ . '/../resources/media.config.example.php');
+    }
 }
