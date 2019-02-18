@@ -9,18 +9,18 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Type;
 
+use Ixocreate\Contract\Schema\BuilderInterface;
+use Ixocreate\Contract\Schema\ElementProviderInterface;
 use Ixocreate\Contract\Type\DatabaseTypeInterface;
-use Ixocreate\Contract\Type\SchemaElementInterface;
 use Ixocreate\Entity\Type\AbstractType;
 use Doctrine\DBAL\Types\GuidType;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Schema\Elements\MediaElement;
 use Ixocreate\Contract\Schema\ElementInterface;
 use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Schema\ElementSubManager;
 use Ixocreate\Media\Uri\Uri;
 
-class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+class MediaType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface
 {
     /**
      * @var MediaRepository
@@ -113,17 +113,13 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
         return $this->uri->imageUrl($media);
     }
 
-    /**
-     * @param ElementSubManager $elementSubManager
-     * @return ElementInterface
-     */
-    public function schemaElement(ElementSubManager $elementSubManager): ElementInterface
-    {
-        return $elementSubManager->get(MediaElement::class);
-    }
-
     public static function serviceName(): string
     {
         return 'media';
+    }
+
+    public function provideElement(BuilderInterface $builder): ElementInterface
+    {
+        return $builder->get(MediaElement::class);
     }
 }

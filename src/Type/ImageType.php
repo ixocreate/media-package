@@ -10,9 +10,10 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Type;
 
 use Doctrine\DBAL\Types\GuidType;
+use Ixocreate\Contract\Schema\BuilderInterface;
 use Ixocreate\Contract\Schema\ElementInterface;
+use Ixocreate\Contract\Schema\ElementProviderInterface;
 use Ixocreate\Contract\Type\DatabaseTypeInterface;
-use Ixocreate\Contract\Type\SchemaElementInterface;
 use Ixocreate\Contract\Type\TypeInterface;
 use Ixocreate\Entity\Type\AbstractType;
 use Ixocreate\Entity\Type\Type;
@@ -20,9 +21,8 @@ use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Uri\Uri;
 use Ixocreate\Schema\Elements\ImageElement;
-use Ixocreate\Schema\ElementSubManager;
 
-final class ImageType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+final class ImageType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface
 {
     /**
      * @var MediaType
@@ -127,13 +127,13 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
         return GuidType::class;
     }
 
-    public function schemaElement(ElementSubManager $elementSubManager): ElementInterface
-    {
-        return $elementSubManager->get(ImageElement::class);
-    }
-
     public static function serviceName(): string
     {
         return 'image';
+    }
+
+    public function provideElement(BuilderInterface $builder): ElementInterface
+    {
+        return $builder->get(ImageElement::class);
     }
 }
