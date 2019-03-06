@@ -21,9 +21,10 @@
     "require-dev": {
         "ext-gd": ">=2.0",
         "ext-imagick": "*",
-        "ixocreate/coding-standard": "^1.0",
-        "phpunit/phpunit": "^6.0.6",
-        "ixocreate/admin": "dev-develop"
+        "ixocreate/admin": "dev-develop",
+        "ixocreate/coding-standard": "^1.0.1",
+        "php-coveralls/php-coveralls": "^2.1",
+        "phpunit/phpunit": "^6.0.6"
     },
     "autoload": {
         "psr-4": {
