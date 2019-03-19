@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Delegator\Delegators;
 
+use Ixocreate\Contract\Media\DelegatorInterface;
+use Ixocreate\Contract\Media\ImageDefinitionInterface;
+use Ixocreate\Contract\Media\MediaInterface;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Delegator\DelegatorInterface;
-use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\Processor\ImageProcessor;
 
@@ -69,10 +69,10 @@ final class Image implements DelegatorInterface
     }
 
     /**
-     * @param Media $media
+     * @param MediaInterface $media
      * @return bool
      */
-    public function isResponsible(Media $media): bool
+    public function isResponsible(MediaInterface $media): bool
     {
         $pathInfo = \pathinfo($media->filename());
         $extension = $pathInfo['extension'];
@@ -85,9 +85,9 @@ final class Image implements DelegatorInterface
     }
 
     /**
-     * @param Media $media
+     * @param MediaInterface $media
      */
-    public function process(Media $media): void
+    public function process(MediaInterface $media): void
     {
         foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinitionClassName) {
             /** @var ImageDefinitionInterface $imageDefinition */
