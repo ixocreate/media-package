@@ -48,7 +48,7 @@ class MediaConfigurator implements ConfiguratorInterface
     /**
      * @param array $whitelist
      */
-    public function setImageWhiteliste(array $whitelist): void
+    public function setImageWhitelist(array $whitelist): void
     {
         $this->whitelist['image'] = $whitelist;
     }
