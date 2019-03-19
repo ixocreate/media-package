@@ -9,7 +9,9 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\MediaCreateHandler;
 
-class TempFileHandler implements MediaCreateHandlerInterface
+use League\Flysystem\FilesystemInterface;
+
+final class TempFileHandler implements MediaCreateHandlerInterface
 {
     /**
      * @var string
@@ -42,10 +44,30 @@ class TempFileHandler implements MediaCreateHandlerInterface
         return $this->file;
     }
 
-    public function move($destination): bool
+    public function move(FilesystemInterface $storage, $destination): bool
     {
-        \rename($this->file, $destination);
-        \chmod($destination, 0655);
+        $f = fopen($this->file, 'r');
+        $storage->writeStream($destination, $f);
+
+        fclose($f);
+        unlink($this->file);
+
         return true;
+    }
+
+    public function mimeType(): string
+    {
+        $finfo = \finfo_open(FILEINFO_MIME_TYPE);
+        return \finfo_file($finfo, $this->file);
+    }
+
+    public function fileSize(): int
+    {
+        return \filesize($this->file);
+    }
+
+    public function fileHash(): string
+    {
+        return \hash_file('sha256', $this->file);
     }
 }

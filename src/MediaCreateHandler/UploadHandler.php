@@ -9,14 +9,20 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\MediaCreateHandler;
 
+use League\Flysystem\FilesystemInterface;
 use Zend\Diactoros\UploadedFile;
 
-class UploadHandler implements MediaCreateHandlerInterface
+final class UploadHandler implements MediaCreateHandlerInterface
 {
     /**
      * @var UploadedFile
      */
     private $uploadedFile;
+
+    /**
+     * @var resource|null
+     */
+    private $stream;
 
     /**
      * UploadHandler constructor.
@@ -25,6 +31,7 @@ class UploadHandler implements MediaCreateHandlerInterface
     public function __construct(UploadedFile $uploadedFile)
     {
         $this->uploadedFile = $uploadedFile;
+        $this->stream = $this->uploadedFile->getStream()->detach();
     }
 
     public function filename(): string
@@ -37,9 +44,25 @@ class UploadHandler implements MediaCreateHandlerInterface
         return $this->uploadedFile->getStream()->getMetadata()['uri'];
     }
 
-    public function move($destination): bool
+    public function mimeType(): string
     {
-        $this->uploadedFile->moveTo($destination);
-        return true;
+        return $this->uploadedFile->getClientMediaType();
+    }
+
+    public function fileSize(): int
+    {
+        return $this->uploadedFile->getSize();
+    }
+
+    public function fileHash(): string
+    {
+        $hc = hash_init('sha256');
+        \hash_update_stream($hc, $this->stream);
+        return hash_final($hc);
+    }
+
+    public function move(FilesystemInterface $storage, $destination)
+    {
+        return $storage->writeStream($destination, $this->stream);
     }
 }
