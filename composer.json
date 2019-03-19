@@ -14,14 +14,16 @@
         "php": "^7.1",
         "intervention/image": "^2.4.1",
         "firebase/php-jwt": "^5.0",
+        "ixocreate/media-contract": "dev-develop",
         "ixocreate/contract": "dev-develop",
+        "ixocreate/admin": "dev-develop",
+        "ixocreate/filesystem": "dev-develop",
         "symfony/asset": "^4.1",
         "cocur/slugify": "^3.1"
     },
     "require-dev": {
         "ext-gd": ">=2.0",
         "ext-imagick": "*",
-        "ixocreate/admin": "dev-develop",
         "ixocreate/coding-standard": "^1.0.1",
         "php-coveralls/php-coveralls": "^2.1",
         "phpunit/phpunit": "^6.0.6"
@@ -29,6 +31,12 @@
     "autoload": {
         "psr-4": {
             "Ixocreate\\Media\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "IxocreateMisc\\Media\\": "tests/misc/",
+            "IxocreateTest\\Media\\": "tests/src/"
         }
     },
     "scripts": {
