@@ -9,11 +9,19 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\MediaCreateHandler;
 
+use League\Flysystem\FilesystemInterface;
+
 interface MediaCreateHandlerInterface
 {
     public function filename(): string;
 
     public function tempFile(): string;
 
-    public function move($destination): bool;
+    public function mimeType(): string;
+
+    public function fileSize(): int;
+
+    public function fileHash(): string;
+
+    public function move(FilesystemInterface $storage, $destination);
 }
