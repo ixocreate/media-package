@@ -93,7 +93,6 @@ final class EditorImageProcessor implements ProcessorInterface
     }
 
     /**
-     * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
      */
     public function process()
