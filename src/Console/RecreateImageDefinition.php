@@ -16,8 +16,6 @@ use Ixocreate\Media\Delegator\Delegators\Image;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\MediaPaths;
-use Ixocreate\Media\Type\ImageType;
-use Ixocreate\Media\Type\MediaType;
 use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Console\Command\Command;
 use Ixocreate\Contract\Command\CommandInterface;
@@ -53,16 +51,6 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @var Image
      */
     private $imageDelegator;
-
-    /**
-     * @var string
-     */
-    private $publicImagePath = '/data/media/img/';
-
-    /**
-     * @var string
-     */
-    private $privateImagePath = '/data/media_private/img/';
 
     /**
      * @var StorageSubManager
@@ -224,8 +212,6 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         // If Option "missing" is NOT assigned
         if (!$input->getOption('missing')) {
             $mediaEntityCollection = new EntityCollection($this->mediaRepository->findAll());
-//            $mediaRepository = $this->mediaRepository->findAll();
-//            $count = \count($this->mediaRepository->findAll());
             $progressBar = $this->customProgressBar($output, $imageDefinition, $mediaEntityCollection->count());
             // If Option "changed" is assigned
             if ($input->getOption('changed')) {
