@@ -12,8 +12,10 @@ namespace Ixocreate\Media\Delegator\Delegators;
 use Ixocreate\Contract\Media\DelegatorInterface;
 use Ixocreate\Contract\Media\ImageDefinitionInterface;
 use Ixocreate\Contract\Media\MediaInterface;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
 
 final class Image implements DelegatorInterface
@@ -49,15 +51,26 @@ final class Image implements DelegatorInterface
     private $mediaConfig;
 
     /**
+     * @var StorageSubManager
+     */
+    private $storageSubManager;
+
+    /**
      * Image constructor.
      *
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
+     * @param StorageSubManager $storageSubManager
      */
-    public function __construct(ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
+    public function __construct(
+        ImageDefinitionSubManager $imageDefinitionSubManager,
+        MediaConfig $mediaConfig,
+        StorageSubManager $storageSubManager
+    )
     {
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
+        $this->storageSubManager = $storageSubManager;
     }
 
     /**
@@ -76,25 +89,27 @@ final class Image implements DelegatorInterface
     {
         $pathInfo = \pathinfo($media->filename());
         $extension = $pathInfo['extension'];
-        $responsible = true;
         if ((!\in_array($media->mimeType(), $this->allowedMimeTypes)) &&
             (!\in_array($extension, $this->allowedFileExtensions))) {
-            $responsible = false;
+            return false;
         }
-        return $responsible;
+        return true;
     }
+
 
     /**
      * @param MediaInterface $media
+     * @throws \League\Flysystem\FileNotFoundException
      */
     public function process(MediaInterface $media): void
     {
-        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinitionClassName) {
+        $storage = $this->storageSubManager->get('media');
+
+        foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
-            $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig);
-            $imageProcessor->process();
+            (new ImageProcessor($media, $imageDefinition, $this->mediaConfig, $storage))->process();
         }
     }
 
@@ -104,11 +119,11 @@ final class Image implements DelegatorInterface
     public function directories(): array
     {
         $directories = [];
-        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $imageDefinitionClassName) {
+        foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
-            $directories[] = 'img/' . $imageDefinition->directory() . '/';
+            $directories[] = MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/';
         }
         return $directories;
     }
