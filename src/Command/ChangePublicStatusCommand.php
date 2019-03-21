@@ -10,13 +10,15 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
+use Ixocreate\Contract\Media\DelegatorInterface;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Delegator\DelegatorInterface;
 use Ixocreate\Media\Delegator\DelegatorSubManager;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\MediaCreateHandler\MediaCreateHandlerInterface;
-use Ixocreate\Media\Repository\MediaCreatedRepository;
+use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
+use League\Flysystem\FilesystemInterface;
 
 class ChangePublicStatusCommand extends AbstractCommand
 {
@@ -36,11 +38,6 @@ class ChangePublicStatusCommand extends AbstractCommand
     private $mediaConfig;
 
     /**
-     * @var MediaCreateHandlerInterface
-     */
-    private $mediaCreateHandler;
-
-    /**
      * @var Media
      */
     private $media;
@@ -51,26 +48,38 @@ class ChangePublicStatusCommand extends AbstractCommand
     private $publicStatus;
 
     /**
+     * @var StorageSubManager
+     */
+    private $storageSubManager;
+
+    /**
+     * @var FilesystemInterface
+     */
+    private $storage;
+
+    /**
      * CreateCommand constructor.
      *
-     * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
      * @param DelegatorSubManager $delegatorSubManager
      * @param MediaConfig $mediaConfig
+     * @param StorageSubManager $storageSubManager
      */
     public function __construct(
         MediaRepository $mediaRepository,
         DelegatorSubManager $delegatorSubManager,
-        MediaConfig $mediaConfig
+        MediaConfig $mediaConfig,
+        StorageSubManager $storageSubManager
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->delegatorSubManager = $delegatorSubManager;
         $this->mediaConfig = $mediaConfig;
+        $this->storageSubManager = $storageSubManager;
     }
 
     /**
-     * @param bool $publicStatus
-     * @return CreateCommand
+     * @param Media $media
+     * @return ChangePublicStatusCommand
      */
     public function withMedia(Media $media): ChangePublicStatusCommand
     {
@@ -96,6 +105,12 @@ class ChangePublicStatusCommand extends AbstractCommand
      */
     public function execute(): bool
     {
+        if (!$this->storageSubManager->has('media')) {
+            throw new InvalidConfigException('Storage Config not set');
+        }
+
+        $this->storage = $this->storageSubManager->get('media');
+
         $desiredPublicStatus = $this->media->publicStatus();
         if ($this->publicStatus !== null) {
             $desiredPublicStatus = $this->publicStatus;
@@ -105,12 +120,12 @@ class ChangePublicStatusCommand extends AbstractCommand
          * check if already moved
          */
         $basePath = $this->media->basePath();
-        $publicDirectory = 'data/media/' . $basePath;
-        $privateDirectory = 'data/media_private/' . $basePath;
-        if ($desiredPublicStatus && !\file_exists($publicDirectory)) {
-            $this->moveMedia($this->media, 'data/media_private/', 'data/media/');
-        } elseif (!$desiredPublicStatus && !\file_exists($privateDirectory)) {
-            $this->moveMedia($this->media, 'data/media/', 'data/media_private/');
+        $publicDirectory = MediaPaths::PUBLIC_PATH . $basePath;
+        $privateDirectory = MediaPaths::PRIVATE_PATH . $basePath;
+        if ($desiredPublicStatus && !$this->storage->has($publicDirectory)) {
+            $this->moveMedia($this->media, MediaPaths::PRIVATE_PATH, MediaPaths::PUBLIC_PATH);
+        } elseif (!$desiredPublicStatus && !$this->storage->has($privateDirectory)) {
+            $this->moveMedia($this->media, MediaPaths::PUBLIC_PATH, MediaPaths::PRIVATE_PATH);
         }
 
         if ($this->media->publicStatus() !== $desiredPublicStatus) {
@@ -127,14 +142,15 @@ class ChangePublicStatusCommand extends AbstractCommand
      * @param string $fromStoragePath
      * @param string $toStoragePath
      * @return Media
+     * @throws \League\Flysystem\FileExistsException
+     * @throws \League\Flysystem\FileNotFoundException
      */
     private function moveMedia(Media $media, string $fromStoragePath, string $toStoragePath): Media
     {
         /**
          * move source file
          */
-        $this->createDir($toStoragePath . $media->basePath());
-        \rename($fromStoragePath . $media->basePath(), $toStoragePath . $media->basePath());
+        $this->storage->rename($fromStoragePath . $media->basePath(), $toStoragePath . $media->basePath());
 
         /**
          * move output files from delegators as well
@@ -148,23 +164,11 @@ class ChangePublicStatusCommand extends AbstractCommand
             }
 
             foreach ($delegator->directories() as $directory) {
-                $this->createDir($toStoragePath . $directory . $media->basePath());
-                \rename(
-                    $fromStoragePath . $directory . $media->basePath(),
-                    $toStoragePath . $directory . $media->basePath()
-                );
+                $this->storage->rename($fromStoragePath . $directory . $media->basePath(), $toStoragePath . $directory . $media->basePath());
             }
         }
 
         return $media;
-    }
-
-    /**
-     * @param string $path
-     */
-    private function createDir(string $path)
-    {
-        \mkdir($path, 0777, true);
     }
 
     /**
