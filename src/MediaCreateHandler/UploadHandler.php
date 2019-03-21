@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\MediaCreateHandler;
 
+use Ixocreate\Contract\Media\MediaCreateHandlerInterface;
 use League\Flysystem\FilesystemInterface;
 use Zend\Diactoros\UploadedFile;
 
