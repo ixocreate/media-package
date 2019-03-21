@@ -56,9 +56,9 @@ final class UploadHandler implements MediaCreateHandlerInterface
 
     public function fileHash(): string
     {
-        $hc = hash_init('sha256');
-        \hash_update_stream($hc, $this->stream);
-        return hash_final($hc);
+        $hashInit = hash_init('sha256');
+        \hash_update_stream($hashInit, $this->stream);
+        return hash_final($hashInit);
     }
 
     public function move(FilesystemInterface $storage, $destination)
