@@ -7,11 +7,12 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\MediaCreateHandler;
+namespace Ixocreate\Contract\Media\MediaCreateHandler;
 
+use Ixocreate\Contract\Media\MediaCreateHandlerInterface;
 use League\Flysystem\FilesystemInterface;
 
-final class TempFileHandler implements MediaCreateHandlerInterface
+final class LocalFileHandler implements MediaCreateHandlerInterface
 {
     /**
      * @var string
