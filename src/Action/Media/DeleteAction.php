@@ -11,9 +11,8 @@ namespace Ixocreate\Media\Action\Media;
 
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\Repository\MediaCreatedRepository;
-use Ixocreate\Media\Repository\MediaCropRepository;
+use Ixocreate\CommandBus\CommandBus;
+use Ixocreate\Media\Command\Media\DeleteCommand;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -29,33 +28,19 @@ final class DeleteAction implements MiddlewareInterface
     private $mediaRepository;
 
     /**
-     * @var MediaCropRepository
+     * @var CommandBus
      */
-    private $mediaCropRepository;
-
-    /**
-     * @var ImageDefinitionSubManager
-     */
-    private $imageDefinitionSubManager;
-
-    /**
-     * @var MediaCreatedRepository
-     */
-    private $mediaCreatedRepository;
+    private $commandBus;
 
     /**
      * DeleteAction constructor.
-     * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
-     * @param MediaCropRepository $mediaCropRepository
-     * @param ImageDefinitionSubManager $imageDefinitionSubManager
+     * @param CommandBus $commandBus
      */
-    public function __construct(MediaCreatedRepository $mediaCreatedRepository, MediaRepository $mediaRepository, MediaCropRepository $mediaCropRepository, ImageDefinitionSubManager $imageDefinitionSubManager)
+    public function __construct(MediaRepository $mediaRepository, CommandBus $commandBus)
     {
         $this->mediaRepository = $mediaRepository;
-        $this->mediaCropRepository = $mediaCropRepository;
-        $this->imageDefinitionSubManager = $imageDefinitionSubManager;
-        $this->mediaCreatedRepository = $mediaCreatedRepository;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -72,31 +57,12 @@ final class DeleteAction implements MiddlewareInterface
             return new ApiErrorResponse('given media Id does not exist');
         }
 
-        $this->deleteFromStore($media);
+        $commandResult = $this->commandBus->command(DeleteCommand::class, ['media' => $media]);
 
-        $this->mediaRepository->remove($media);
-
-        $mediaCreated = $this->mediaCreatedRepository->findOneBy(['mediaId' => $media->id()]);
-        if (!empty($mediaCreated)) {
-            $this->mediaCreatedRepository->remove($mediaCreated);
+        if (!$commandResult->isSuccessful()) {
+            return new ApiErrorResponse('media-media-delete', $commandResult->messages());
         }
 
         return new ApiSuccessResponse();
-    }
-
-    /**
-     * @param Media $media
-     */
-    private function deleteFromStore(Media $media)
-    {
-        $path = $media->basePath() . $media->filename();
-
-        \unlink(\getcwd() . '/data/media/' . $path);
-
-        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $namedService => $namespace) {
-            if (\file_exists(\getcwd() . '/data/media/img/' . $namedService . '/' . $path)) {
-                \unlink(\getcwd() . '/data/media/img/' . $namedService . '/' . $path);
-            }
-        }
     }
 }
