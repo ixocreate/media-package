@@ -11,7 +11,7 @@ namespace Ixocreate\Media\Action;
 
 use Ixocreate\Admin\Entity\User;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Media\Command\CreateCommand;
+use Ixocreate\Media\Command\Media\CreateCommand;
 use Ixocreate\Media\MediaCreateHandler\UploadHandler;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
