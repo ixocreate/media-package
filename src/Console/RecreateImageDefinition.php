@@ -9,7 +9,16 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Console;
 
+use Ixocreate\Contract\Media\ImageDefinitionInterface;
+use Ixocreate\Entity\Entity\EntityCollection;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Delegator\Delegators\Image;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Type\ImageType;
+use Ixocreate\Media\Type\MediaType;
+use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Console\Command\Command;
 use Ixocreate\Contract\Command\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +29,6 @@ use Ixocreate\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\Processor\ImageProcessor;
 use Ixocreate\Media\Exception\InvalidArgumentException;
 
@@ -57,23 +65,37 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     private $privateImagePath = '/data/media_private/img/';
 
     /**
+     * @var StorageSubManager
+     */
+    private $storageSubManager;
+
+    /**
+     * @var FilesystemInterface
+     */
+    private $storage;
+
+    /**
      * RefactorImageDefinition constructor.
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
      * @param MediaRepository $mediaRepository
      * @param Image $imageDelegator
+     * @param StorageSubManager $storageSubManager
      */
     public function __construct(
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaConfig $mediaConfig,
         MediaRepository $mediaRepository,
-        Image $imageDelegator
-    ) {
+        Image $imageDelegator,
+        StorageSubManager $storageSubManager
+    )
+    {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->mediaRepository = $mediaRepository;
         $this->imageDelegator = $imageDelegator;
+        $this->storageSubManager = $storageSubManager;
     }
 
     public function configure()
@@ -90,12 +112,20 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null|void
+     * @throws \League\Flysystem\FileExistsException
+     * @throws \League\Flysystem\FileNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if (!$this->storageSubManager->has('media')) {
+            throw new InvalidConfigException('Storage Config not set');
+        }
+
+        $this->storage = $this->storageSubManager->get('media');
+
         $io = new SymfonyStyle($input, $output);
         $io->title('Refactor ImageDefinition');
-        $this->processInput($input, $output, $io);
+        $this->evaluateInput($input, $output, $io);
     }
 
     /**
@@ -110,13 +140,15 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param SymfonyStyle $io
+     * @throws \League\Flysystem\FileExistsException
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    private function processInput(InputInterface $input, OutputInterface $output, SymfonyStyle $io)
+    private function evaluateInput(InputInterface $input, OutputInterface $output, SymfonyStyle $io)
     {
         if ($input->getOption('all') && empty($input->getArgument('name'))) {
-            foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinition) {
+            foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
                 /** @var ImageDefinitionInterface $imageDefinition */
-                $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinition);
+                $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
                 $this->generateFiles($imageDefinition, $input, $output, $io);
             }
         }
@@ -167,79 +199,85 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param SymfonyStyle $io
+     * @throws \League\Flysystem\FileExistsException
+     * @throws \League\Flysystem\FileNotFoundException
      */
     private function generateFiles(ImageDefinitionInterface $imageDefinition, InputInterface $input, OutputInterface $output, SymfonyStyle $io)
     {
+        $mediaEntityCollection = null;
+        $progressBar = null;
+
+        // If Option "missing" ist assigned
         if ($input->getOption('missing')) {
-            $mediaRepository = $this->handleMissing($imageDefinition, $input, $io);
-            if (empty($mediaRepository)) {
+            $mediaEntityCollection = $this->handleMissing($imageDefinition);
+            if ($mediaEntityCollection->count() === 0) {
                 $io->writeln(\sprintf('There are no missing Images in ImageDefinition: %s', $imageDefinition::serviceName()));
                 return;
             }
-            $count = \count($mediaRepository);
-            $progressBar = $this->customProgressBar($output, $imageDefinition, $count);
+            // If Option "changed" is assigned
+            $progressBar = $this->customProgressBar($output, $imageDefinition, $mediaEntityCollection->count());
             if ($input->getOption('changed')) {
-                $this->handleChanges($imageDefinition, $mediaRepository, $io, $progressBar);
+                $this->handleChanges($imageDefinition, $mediaEntityCollection, $io, $progressBar);
                 return;
             }
         }
-
+        // If Option "missing" is NOT assigned
         if (!$input->getOption('missing')) {
-            $mediaRepository = $this->mediaRepository->findAll();
-            $count = \count($this->mediaRepository->findAll());
-            $progressBar = $this->customProgressBar($output, $imageDefinition, $count);
+            $mediaEntityCollection = new EntityCollection($this->mediaRepository->findAll());
+//            $mediaRepository = $this->mediaRepository->findAll();
+//            $count = \count($this->mediaRepository->findAll());
+            $progressBar = $this->customProgressBar($output, $imageDefinition, $mediaEntityCollection->count());
+            // If Option "changed" is assigned
             if ($input->getOption('changed')) {
-                $this->handleChanges($imageDefinition, $mediaRepository, $io, $progressBar);
+                $this->handleChanges($imageDefinition, $mediaEntityCollection, $io, $progressBar);
                 return;
             }
         }
 
-        return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+        return $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
     }
 
     /**
      * @param ImageDefinitionInterface $imageDefinition
-     * @param InputInterface $input
-     * @param SymfonyStyle $io
-     * @return array
+     * @return EntityCollection
      */
-    private function handleMissing(ImageDefinitionInterface $imageDefinition, InputInterface $input, SymfonyStyle $io)
+    private function handleMissing(ImageDefinitionInterface $imageDefinition)
     {
-        $mediaRepository = [];
+        $mediaCollection = [];
         foreach ($this->mediaRepository->findAll() as $media) {
-            $filePath = $media->basePath() . $media->filename();
+            /** @var Media $media */
             if (
-                !\file_exists(\getcwd() . $this->publicImagePath . $imageDefinition->directory() . '/' . $filePath) &&
-                !\file_exists(\getcwd() . $this->privateImagePath . $imageDefinition->directory() . '/' . $filePath)
+                !$this->storage->has(MediaPaths::PUBLIC_PATH . $imageDefinition->directory() . '/' . $media->basePath() . $media->filename()) &&
+                !$this->storage->has(MediaPaths::PRIVATE_PATH . $imageDefinition->directory() . '/' . $media->basePath() . $media->filename())
             ) {
                 if (!$this->imageDelegator->isResponsible($media)) {
                     continue;
                 }
-                $mediaRepository [] = $media;
+                $mediaCollection [] = $media;
             }
         }
-        return $mediaRepository;
+        return (new EntityCollection($mediaCollection));
     }
 
     /**
      * @param ImageDefinitionInterface $imageDefinition
-     * @param $mediaRepository
+     * @param EntityCollection $mediaEntityCollection
      * @param SymfonyStyle $io
      * @param ProgressBar $progressBar
+     * @throws \League\Flysystem\FileExistsException
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    private function handleChanges(ImageDefinitionInterface $imageDefinition, $mediaRepository, SymfonyStyle $io, ProgressBar $progressBar)
+    private function handleChanges(ImageDefinitionInterface $imageDefinition, EntityCollection $mediaEntityCollection, SymfonyStyle $io, ProgressBar $progressBar)
     {
         $jsonFiles = [
-            'publicJsonFile' => \getcwd() . $this->publicImagePath . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
-            'privateJsonFile' => \getcwd() . $this->privateImagePath . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
+            'publicJsonFile' => MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
+            'privateJsonFile' => MediaPaths::PRIVATE_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
         ];
 
-
         foreach ($jsonFiles as $type => $file) {
-            if (\file_exists($file)) {
-                $content = \file_get_contents($file);
-                $json = \json_decode($content, true);
-
+            if ($this->storage->has($file)) {
+                $json = $this->storage->read($file);
+                $json = \json_decode($json, true);
                 if (
                     $json['width'] != $imageDefinition->width() ||
                     $json['height'] != $imageDefinition->height() ||
@@ -250,22 +288,20 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                     $json['height'] = $imageDefinition->height();
                     $json['mode'] = $imageDefinition->mode();
                     $json['upscale'] = $imageDefinition->upscale();
-                    $newJson = \json_encode($json);
-                    \file_put_contents($file, $newJson);
-                    return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+                    $this->storage->put($file, \json_encode($json));
+                    return $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
                 }
             }
 
-            if (!\file_exists($file)) {
+            if (!$this->storage->has($file)) {
                 $json['serviceName'] = $imageDefinition::serviceName();
                 $json['width'] = $imageDefinition->width();
                 $json['height'] = $imageDefinition->height();
                 $json['mode'] = $imageDefinition->mode();
                 $json['upscale'] = $imageDefinition->upscale();
                 $json['directory'] = $imageDefinition->directory();
-                $newJson = \json_encode($json);
-                \file_put_contents($file, $newJson);
-                return $this->processImages($imageDefinition, $mediaRepository, $io, $progressBar);
+                $this->storage->write($file, \json_encode($json));
+                return $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
             }
         }
 
@@ -274,20 +310,23 @@ final class RecreateImageDefinition extends Command implements CommandInterface
 
     /**
      * @param ImageDefinitionInterface $imageDefinition
-     * @param $mediaRepository
+     * @param EntityCollection $mediaEntityCollection
      * @param SymfonyStyle $io
      * @param ProgressBar $progressBar
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    private function processImages(ImageDefinitionInterface $imageDefinition, $mediaRepository, SymfonyStyle $io, ProgressBar $progressBar)
+    private function processImages(ImageDefinitionInterface $imageDefinition, EntityCollection $mediaEntityCollection, SymfonyStyle $io, ProgressBar $progressBar)
     {
         $progressBar->start();
 
-        foreach ($mediaRepository as $media) {
+        $array = $mediaEntityCollection->toArray();
+
+        foreach ($array as $media) {
             if (!$this->imageDelegator->isResponsible($media)) {
                 continue;
             }
 
-            $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig);
+            $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig, $this->storage);
             $imageProcessor->process();
             $progressBar->advance();
         }
