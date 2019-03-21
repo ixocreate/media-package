@@ -7,9 +7,7 @@ namespace Ixocreate\Media\Action\Media;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Media\Command\UpdateCommand;
-use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Repository\MediaRepository;
+use Ixocreate\Media\Command\Media\UpdateCommand;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -39,7 +37,7 @@ final class UpdateAction implements MiddlewareInterface
         $command = $this->commandBus->command(UpdateCommand::class, $data);
 
         if (!$command->isSuccessful()) {
-            return new ApiErrorResponse($command->messages());
+            return new ApiErrorResponse('media-media-update', $command->messages());
         }
 
         return new ApiSuccessResponse();
