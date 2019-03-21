@@ -99,7 +99,8 @@ class CreateCommand extends AbstractCommand
         DelegatorSubManager $delegatorSubManager,
         MediaConfig $mediaConfig,
         StorageSubManager $storageSubManager
-    ) {
+    )
+    {
         $this->mediaCreatedRepository = $mediaCreatedRepository;
         $this->mediaRepository = $mediaRepository;
         $this->delegatorSubManager = $delegatorSubManager;

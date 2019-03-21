@@ -70,7 +70,8 @@ class ChangePublicStatusCommand extends AbstractCommand
         DelegatorSubManager $delegatorSubManager,
         MediaConfig $mediaConfig,
         StorageSubManager $storageSubManager
-    ) {
+    )
+    {
         $this->mediaRepository = $mediaRepository;
         $this->delegatorSubManager = $delegatorSubManager;
         $this->mediaConfig = $mediaConfig;

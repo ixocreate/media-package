@@ -85,10 +85,10 @@ final class ImageProcessor implements ProcessorInterface
     private function setParameters(): void
     {
         $this->imageParameters = [
-            'definitionWidth'     => $this->imageDefinition->width(),
-            'definitionHeight'    => $this->imageDefinition->height(),
-            'definitionMode'      => $this->imageDefinition->mode(),
-            'definitionUpscale'   => $this->imageDefinition->upscale(),
+            'definitionWidth' => $this->imageDefinition->width(),
+            'definitionHeight' => $this->imageDefinition->height(),
+            'definitionMode' => $this->imageDefinition->mode(),
+            'definitionUpscale' => $this->imageDefinition->upscale(),
         ];
     }
 

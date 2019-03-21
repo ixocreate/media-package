@@ -34,26 +34,41 @@ final class UploadHandler implements MediaCreateHandlerInterface
         $this->stream = $this->uploadedFile->getStream()->detach();
     }
 
+    /**
+     * @return string
+     */
     public function filename(): string
     {
         return $this->uploadedFile->getClientFilename();
     }
 
+    /**
+     * @return string
+     */
     public function tempFile(): string
     {
         return $this->uploadedFile->getStream()->getMetadata()['uri'];
     }
 
+    /**
+     * @return string
+     */
     public function mimeType(): string
     {
         return $this->uploadedFile->getClientMediaType();
     }
 
+    /**
+     * @return int
+     */
     public function fileSize(): int
     {
         return $this->uploadedFile->getSize();
     }
 
+    /**
+     * @return string
+     */
     public function fileHash(): string
     {
         $hashInit = hash_init('sha256');
@@ -61,6 +76,12 @@ final class UploadHandler implements MediaCreateHandlerInterface
         return hash_final($hashInit);
     }
 
+    /**
+     * @param FilesystemInterface $storage
+     * @param $destination
+     * @return bool
+     * @throws \League\Flysystem\FileExistsException
+     */
     public function move(FilesystemInterface $storage, $destination)
     {
         return $storage->writeStream($destination, $this->stream);

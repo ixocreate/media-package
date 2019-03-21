@@ -38,7 +38,8 @@ final class MoveByPublicStatusCommand extends Command implements CommandInterfac
     public function __construct(
         MediaRepository $mediaRepository,
         CommandBus $commandBus
-    ) {
+    )
+    {
         parent::__construct(self::getCommandName());
         $this->mediaRepository = $mediaRepository;
         $this->commandBus = $commandBus;

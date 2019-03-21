@@ -33,13 +33,13 @@ final class UriFactory implements FactoryInterface
         $packages = new Packages();
 
         $urlPackage = new UrlPackage(
-            (string) $container->get(MediaConfig::class)->uri(),
+            (string)$container->get(MediaConfig::class)->uri(),
             new EmptyVersionStrategy()
         );
         $packages->setDefaultPackage($urlPackage);
 
         $urlPackage = new UrlPackage(
-            (string) $container->get(ProjectUri::class)->getMainUrl() . '/media/stream/',
+            (string)$container->get(ProjectUri::class)->getMainUrl() . '/media/stream/',
             new EmptyVersionStrategy()
         );
         $packages->addPackage('streamMedia', $urlPackage);
