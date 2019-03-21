@@ -10,10 +10,12 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Processor;
 
 use Intervention\Image\ImageManager;
+use Ixocreate\Contract\Media\ImageDefinitionInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Intervention\Image\Size;
+use Ixocreate\Media\MediaPaths;
+use League\Flysystem\FilesystemInterface;
 
 final class EditorImageProcessor implements ProcessorInterface
 {
@@ -53,9 +55,9 @@ final class EditorImageProcessor implements ProcessorInterface
     private $requestHeight;
 
     /**
-     * @var string
+     * @var FilesystemInterface
      */
-    private $storagePath;
+    private $storage;
 
     /**
      * NewEditorImageProcessor constructor.
@@ -63,19 +65,21 @@ final class EditorImageProcessor implements ProcessorInterface
      * @param ImageDefinitionInterface $imageDefinition
      * @param Media $media
      * @param MediaConfig $mediaConfig
+     * @param FilesystemInterface $storage
      */
-    public function __construct(array $requestData, ImageDefinitionInterface $imageDefinition, Media $media, MediaConfig $mediaConfig)
+    public function __construct(
+        array $requestData,
+        ImageDefinitionInterface $imageDefinition,
+        Media $media,
+        MediaConfig $mediaConfig,
+        FilesystemInterface $storage
+    )
     {
-        $this->imageDefinition = $imageDefinition;
-        $this->mediaConfig = $mediaConfig;
-        $this->media = $media;
         $this->requestData = $requestData;
-
-        $this->storagePath = $media->publicStatus() ? 'data/media/' : 'data/media_private/';
-
-        $mediaImageSize = \getimagesize($this->storagePath . $media->basePath() . $media->filename());
-        $this->mediaSize = new Size($mediaImageSize[0], $mediaImageSize[1]);
-
+        $this->imageDefinition = $imageDefinition;
+        $this->media = $media;
+        $this->mediaConfig = $mediaConfig;
+        $this->storage = $storage;
         $this->requestWidth = $requestData['x2'] - $requestData['x1'];
         $this->requestHeight = $requestData['y2'] - $requestData['y1'];
     }
@@ -89,19 +93,31 @@ final class EditorImageProcessor implements ProcessorInterface
     }
 
     /**
-     *
+     * @throws \League\Flysystem\FileExistsException
+     * @throws \League\Flysystem\FileNotFoundException
      */
     public function process()
     {
+
+        $mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
+
+        $file = $this->storage->read($mediaPath . $this->media->basePath() . $this->media->filename());
+
+        $size = \getimagesizefromstring($file);
+
+        $imageWidth = $size[0];
+        $imageHeight = $size[1];
+
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
-        $image = $imageManager->make($this->storagePath . $this->media->basePath() . $this->media->filename());
+
+        $image = $imageManager->make($this->storage->read($mediaPath . $this->media->basePath() . $this->media->filename()));
 
         $this->gaugeMinimalRequestDataSize();
-        $this->gaugeCanvasSize();
+        $this->gaugeCanvasSize($imageWidth, $imageHeight);
 
         $image->crop($this->requestWidth, $this->requestHeight, $this->requestData['x1'], $this->requestData['y1']);
 
-        (new ImageProcessor($this->media, $this->imageDefinition, $this->mediaConfig, $image))->process();
+        (new ImageProcessor($this->media, $this->imageDefinition, $this->mediaConfig, $this->storage, $image))->process();
     }
 
     /**
@@ -117,22 +133,19 @@ final class EditorImageProcessor implements ProcessorInterface
 
     /**
      * Gauges X and Y Position
+     * @param $imageWidth
+     * @param $imageHeight
      */
-    private function gaugeCanvasSize()
+    private function gaugeCanvasSize($imageWidth, $imageHeight)
     {
-        if (($this->requestData['x1'] + $this->requestWidth) > $this->mediaSize->width) {
-            $diff = ($this->requestData['x1'] + $this->requestWidth) - $this->mediaSize->width;
+        if (($this->requestData['x1'] + $this->requestWidth) > $imageWidth) {
+            $diff = ($this->requestData['x1'] + $this->requestWidth) - $imageWidth;
             $this->requestData['x1'] = $this->requestData['x1'] - $diff;
         }
 
-        if (($this->requestData['y1'] + $this->requestHeight) > $this->mediaSize->height) {
-            $diff = ($this->requestData['y1'] + $this->requestHeight) - $this->mediaSize->height;
+        if (($this->requestData['y1'] + $this->requestHeight) > $imageHeight) {
+            $diff = ($this->requestData['y1'] + $this->requestHeight) - $imageHeight;
             $this->requestData['y1'] = $this->requestData['y1'] - $diff;
         }
-    }
-
-    private function zoom()
-    {
-        //TODO
     }
 }
