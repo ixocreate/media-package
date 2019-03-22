@@ -11,7 +11,7 @@ namespace Ixocreate\Media\Console;
 
 use Ixocreate\CommandBus\CommandBus;
 use Ixocreate\Contract\Command\CommandInterface;
-use Ixocreate\Media\Command\ChangePublicStatusCommand;
+use Ixocreate\Media\Command\Media\UpdateCommand;
 use Ixocreate\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -57,13 +57,14 @@ final class MoveByPublicStatusCommand extends Command implements CommandInterfac
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var ChangePublicStatusCommand $command */
-        $command = $this->commandBus->create(ChangePublicStatusCommand::class, []);
+        /** @var UpdateCommand $command */
+        $command = $this->commandBus->create(UpdateCommand::class, []);
 
         $mediaFiles = $this->mediaRepository->findAll();
 
         foreach ($mediaFiles as $mediaFile) {
             $command = $command->withMedia($mediaFile);
+            $command = $command->withPublicStatus($mediaFile->publicStatus());
             $this->commandBus->dispatch($command);
         }
     }
