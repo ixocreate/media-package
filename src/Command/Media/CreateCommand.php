@@ -13,6 +13,7 @@ use Cocur\Slugify\Slugify;
 use Ixocreate\Admin\Entity\User;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Contract\Media\DelegatorInterface;
+use Ixocreate\Contract\Media\MediaCreateHandlerInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Delegator\DelegatorSubManager;
@@ -21,7 +22,6 @@ use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Exception\FileDuplicateException;
 use Ixocreate\Media\Exception\FileTypeNotSupportedException;
 use Ixocreate\Media\Exception\InvalidConfigException;
-use Ixocreate\Media\MediaCreateHandler\MediaCreateHandlerInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaCreatedRepository;
 use Ixocreate\Media\Repository\MediaRepository;
@@ -229,18 +229,26 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
-     * @param string $directory
-     * @throws \Exception
+     * @param string $mediaPath
      * @return string
+     * @throws \Exception
      */
-    private function createDir(string $directory): string
+    private function createDir(string $mediaPath): string
     {
         do {
             $basePath = \implode('/', \str_split(\bin2hex(\random_bytes(3)), 2)) . '/';
-            $exists = \is_dir($directory . $basePath);
+
+            $folders = \explode('/', $basePath);
+
+            if (\in_array('ad', $folders)) {
+                continue;
+            }
+
+            $exists = $this->storage->has($mediaPath . $basePath);
+
         } while ($exists === true);
 
-        $this->storage->createDir($directory . $basePath);
+        $this->storage->createDir($mediaPath . $basePath);
 
         return $basePath;
     }
@@ -251,8 +259,7 @@ class CreateCommand extends AbstractCommand
      */
     private function checkDuplicate(string $hash): bool
     {
-        $count = $this->mediaRepository->count(['hash' => $hash]);
-        return $count > 0;
+        return ($this->mediaRepository->count(['hash' => $hash])) > 0;
     }
 
     /**
