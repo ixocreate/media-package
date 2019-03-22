@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
+use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
 final class Uri
@@ -21,12 +23,19 @@ final class Uri
     private $packages;
 
     /**
+     * @var AdminConfig
+     */
+    private $adminConfig;
+
+    /**
      * Uri constructor.
      * @param Packages $packages
+     * @param AdminConfig $adminConfig
      */
-    public function __construct(Packages $packages)
+    public function __construct(Packages $packages, AdminConfig $adminConfig)
     {
         $this->packages = $packages;
+        $this->adminConfig = $adminConfig;
     }
 
     /**
@@ -81,7 +90,7 @@ final class Uri
             return $this->generateUrl($basePath, $filename);
         }
 
-        return $this->packages->getUrl('/img/' . $imageDefinition . '/' . $basePath . $filename);
+        return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename);
     }
 
     /**
@@ -91,6 +100,8 @@ final class Uri
      */
     public function generateStreamUrl(Media $media, string $imageDefinition = null): string
     {
+        $jwt = null;
+
         try {
             $payload = [
                 'iat' => \time(),
@@ -101,7 +112,7 @@ final class Uri
                 ],
             ];
 
-            $jwt = JWT::encode($payload, 'secret', 'HS512');
+            $jwt = JWT::encode($payload, $this->adminConfig->secret(), 'HS512');
         } catch (\Exception $e) {
             // TODO
         }

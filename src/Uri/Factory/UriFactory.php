@@ -9,9 +9,11 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Uri\Factory;
 
+use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Contract\ServiceManager\FactoryInterface;
 use Ixocreate\Contract\ServiceManager\ServiceManagerInterface;
 use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Uri\Uri;
 use Ixocreate\ProjectUri\ProjectUri;
 use Symfony\Component\Asset\Packages;
@@ -32,6 +34,8 @@ final class UriFactory implements FactoryInterface
     {
         $packages = new Packages();
 
+        $adminConfig = $container->get(AdminConfig::class);
+
         $urlPackage = new UrlPackage(
             (string)$container->get(MediaConfig::class)->uri(),
             new EmptyVersionStrategy()
@@ -39,11 +43,11 @@ final class UriFactory implements FactoryInterface
         $packages->setDefaultPackage($urlPackage);
 
         $urlPackage = new UrlPackage(
-            (string)$container->get(ProjectUri::class)->getMainUrl() . '/media/stream/',
+            (string)$container->get(ProjectUri::class)->getMainUrl() . '/' . MediaPaths::STREAM_PATH,
             new EmptyVersionStrategy()
         );
         $packages->addPackage('streamMedia', $urlPackage);
 
-        return new Uri($packages);
+        return new Uri($packages, $adminConfig);
     }
 }
