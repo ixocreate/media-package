@@ -81,7 +81,7 @@ final class MediaConfig
      */
     public function driver(): string
     {
-        return $this->mediaProjectConfig->driver();
+        return $this->driver;
     }
 
     /**
@@ -155,6 +155,8 @@ final class MediaConfig
     private function assertDriver(): void
     {
         $allowedConfigParameter = ['automatic', 'gd', 'imagick'];
+
+        $this->driver = $this->mediaProjectConfig->driver();
 
         if (empty($driver)) {
             $this->driver = 'automatic';
