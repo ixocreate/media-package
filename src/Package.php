@@ -38,9 +38,7 @@ final class Package implements PackageInterface
      */
     public function getConfigProvider(): ?array
     {
-        return [
-            ConfigProvider::class,
-        ];
+        return [];
     }
 
     /**
