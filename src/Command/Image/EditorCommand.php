@@ -17,7 +17,7 @@ use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCrop;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\Processor\EditorImageProcessor;
+use Ixocreate\Media\Processor\EditorProcessor;
 use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Ramsey\Uuid\Uuid;
@@ -28,18 +28,22 @@ final class EditorCommand extends AbstractCommand
      * @var MediaRepository
      */
     private $mediaRepository;
+
     /**
      * @var MediaConfig
      */
     private $mediaConfig;
+
     /**
      * @var ImageDefinitionSubManager
      */
     private $imageDefinitionSubManager;
+
     /**
      * @var MediaCropRepository
      */
     private $mediaCropRepository;
+
     /**
      * @var StorageSubManager
      */
@@ -105,7 +109,7 @@ final class EditorCommand extends AbstractCommand
             ]);
         }
 
-        (new EditorImageProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig, $storage))->process();
+        (new EditorProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig, $storage))->process();
 
         $this->mediaCropRepository->save($mediaCrop);
 
