@@ -11,7 +11,9 @@ namespace Ixocreate\Media\Config;
 
 use Ixocreate\Media\Exception\InvalidExtensionException;
 use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\ProjectUri\ProjectUri;
 use Psr\Http\Message\UriInterface;
+use Zend\Diactoros\Uri;
 
 final class MediaConfig
 {
@@ -31,17 +33,21 @@ final class MediaConfig
     private $uri;
 
     /**
-     * MediaConfig constructor.
-     * @param string $driver
-     * @param UriInterface $uri
-     * @param MediaProjectConfig $mediaProjectConfig
+     * @var ProjectUri
      */
-    public function __construct(string $driver, UriInterface $uri, MediaProjectConfig $mediaProjectConfig)
+    private $projectUri;
+
+    /**
+     * MediaConfig constructor.
+     * @param MediaProjectConfig $mediaProjectConfig
+     * @param ProjectUri $projectUri
+     */
+    public function __construct(MediaProjectConfig $mediaProjectConfig, ProjectUri $projectUri)
     {
-        $this->driver = $driver;
-        $this->uri = $uri;
         $this->mediaProjectConfig = $mediaProjectConfig;
+        $this->projectUri = $projectUri;
         $this->assertDriver();
+        $this->assertUri();
     }
 
     /**
@@ -75,7 +81,7 @@ final class MediaConfig
      */
     public function driver(): string
     {
-        return $this->driver;
+        return $this->mediaProjectConfig->driver();
     }
 
     /**
@@ -124,6 +130,22 @@ final class MediaConfig
     public function documentWhitelist(): array
     {
         return $this->mediaProjectConfig->documentWhitelist();
+    }
+
+
+    private function assertUri(): void
+    {
+        $uri = new Uri($this->mediaProjectConfig->uri());
+        if (empty($uri->getHost())) {
+            /** @var ProjectUri $projectUri */
+            $projectUri = $this->projectUri;
+
+            $uri = $uri->withPath(\rtrim($projectUri->getMainUrl()->getPath(), '/') . '/' . \ltrim($uri->getPath(), '/'));
+            $uri = $uri->withHost($projectUri->getMainUrl()->getHost());
+            $uri = $uri->withScheme($projectUri->getMainUrl()->getScheme());
+            $uri = $uri->withPort($projectUri->getMainUrl()->getPort());
+        }
+        $this->uri = $uri;
     }
 
     /**
