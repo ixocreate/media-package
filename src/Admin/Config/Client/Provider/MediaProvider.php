@@ -11,7 +11,7 @@ namespace Ixocreate\Media\Admin\Config\Client\Provider;
 
 use Ixocreate\Contract\Admin\ClientConfigProviderInterface;
 use Ixocreate\Contract\Admin\UserInterface;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Contract\Media\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 
 final class MediaProvider implements ClientConfigProviderInterface
