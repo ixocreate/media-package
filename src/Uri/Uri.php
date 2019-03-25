@@ -11,6 +11,8 @@ namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
+use Ixocreate\Contract\Media\DelegatorInterface;
+use Ixocreate\Media\Delegator\DelegatorSubManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
@@ -26,16 +28,22 @@ final class Uri
      * @var AdminConfig
      */
     private $adminConfig;
+    /**
+     * @var DelegatorSubManager
+     */
+    private $delegatorSubManager;
 
     /**
      * Uri constructor.
      * @param Packages $packages
      * @param AdminConfig $adminConfig
+     * @param DelegatorSubManager $delegatorSubManager
      */
-    public function __construct(Packages $packages, AdminConfig $adminConfig)
+    public function __construct(Packages $packages, AdminConfig $adminConfig, DelegatorSubManager $delegatorSubManager)
     {
         $this->packages = $packages;
         $this->adminConfig = $adminConfig;
+        $this->delegatorSubManager = $delegatorSubManager;
     }
 
     /**
@@ -57,6 +65,14 @@ final class Uri
      */
     public function imageUrl(Media $media, string $imageDefinition = null): string
     {
+        foreach ($this->delegatorSubManager->getServices() as $delegatorClassName) {
+            /** @var DelegatorInterface $delegator */
+            $delegator = $this->delegatorSubManager->get($delegatorClassName);
+            if (!$delegator->isResponsible($media)) {
+                $imageDefinition = null;
+            }
+        }
+
         if ($imageDefinition === null) {
             return $this->url($media);
         }

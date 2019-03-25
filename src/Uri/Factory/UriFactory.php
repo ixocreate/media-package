@@ -13,6 +13,7 @@ use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Contract\ServiceManager\FactoryInterface;
 use Ixocreate\Contract\ServiceManager\ServiceManagerInterface;
 use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Delegator\DelegatorSubManager;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Uri\Uri;
 use Ixocreate\ProjectUri\ProjectUri;
@@ -48,6 +49,8 @@ final class UriFactory implements FactoryInterface
         );
         $packages->addPackage('streamMedia', $urlPackage);
 
-        return new Uri($packages, $adminConfig);
+        $delegatorSubManager = $container->get(DelegatorSubManager::class);
+
+        return new Uri($packages, $adminConfig, $delegatorSubManager);
     }
 }
