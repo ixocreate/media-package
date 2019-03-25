@@ -35,11 +35,6 @@ final class EditorImageProcessor implements ProcessorInterface
     private $imageDefinition;
 
     /**
-     * @var Size
-     */
-    private $mediaSize;
-
-    /**
      * @var array
      */
     private $requestData;
