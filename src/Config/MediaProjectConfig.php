@@ -21,7 +21,20 @@ class MediaProjectConfig implements SerializableServiceInterface
         'document' => [],
     ];
 
+    /**
+     * @var string
+     */
+    private $driver;
+
+    /*
+     * @var bool
+     */
     private $publicStatus;
+
+    /**
+     * @var string
+     */
+    private $uri;
 
     /**
      * MediaProjectConfig constructor.
@@ -47,8 +60,9 @@ class MediaProjectConfig implements SerializableServiceInterface
                 )
             )
         );
-
+        $this->driver = $mediaConfigurator->driver();
         $this->publicStatus = $mediaConfigurator->publicStatus();
+        $this->uri = $mediaConfigurator->uri();
     }
 
     /**
@@ -60,11 +74,27 @@ class MediaProjectConfig implements SerializableServiceInterface
     }
 
     /**
+     * @return string
+     */
+    public function driver(): string
+    {
+        return $this->driver;
+    }
+
+    /**
      * @return bool
      */
     public function publicStatus(): bool
     {
         return $this->publicStatus;
+    }
+
+    /**
+     * @return string
+     */
+    public function uri(): string
+    {
+        return $this->uri;
     }
 
     /**
