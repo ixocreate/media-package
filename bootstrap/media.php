@@ -70,4 +70,9 @@ $media->setDocumentWhitelist([
 $media->setGlobalWhitelist([
 
 ]);
+
+$media->setUri('media');
+
+$media->setDriver('automatic');
+
 $media->setPublicStatus(false);
