@@ -18,6 +18,7 @@
         "ixocreate/contract": "dev-develop",
         "ixocreate/admin": "dev-develop",
         "ixocreate/filesystem": "dev-develop",
+        "ixocreate/collection": "dev-develop",
         "symfony/asset": "^4.1",
         "cocur/slugify": "^3.1"
     },
