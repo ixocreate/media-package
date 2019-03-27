@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -74,8 +74,7 @@ final class DetailAction implements MiddlewareInterface
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaCropRepository $mediaCropRepository,
         StorageSubManager $storageSubManager
-    )
-    {
+    ) {
         $this->uri = $uri;
         $this->imageDelegator = $imageDelegator;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
@@ -86,8 +85,8 @@ final class DetailAction implements MiddlewareInterface
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
      * @throws \League\Flysystem\FileNotFoundException
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -125,8 +124,8 @@ final class DetailAction implements MiddlewareInterface
     /**
      * @param Media $media
      * @param ImageDefinitionInterface $imageDefinition
-     * @return bool
      * @throws \League\Flysystem\FileNotFoundException
+     * @return bool
      */
     private function checkValidSize(Media $media, ImageDefinitionInterface $imageDefinition): bool
     {
@@ -157,8 +156,8 @@ final class DetailAction implements MiddlewareInterface
     /**
      * @param Media $media
      * @param array $mediaCropArray
-     * @return array
      * @throws \League\Flysystem\FileNotFoundException
+     * @return array
      */
     private function determineDefinitions(Media $media, array $mediaCropArray)
     {

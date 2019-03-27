@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -99,8 +99,7 @@ class CreateCommand extends AbstractCommand
         DelegatorSubManager $delegatorSubManager,
         MediaConfig $mediaConfig,
         StorageSubManager $storageSubManager
-    )
-    {
+    ) {
         $this->mediaCreatedRepository = $mediaCreatedRepository;
         $this->mediaRepository = $mediaRepository;
         $this->delegatorSubManager = $delegatorSubManager;
@@ -230,8 +229,8 @@ class CreateCommand extends AbstractCommand
 
     /**
      * @param string $mediaPath
-     * @return string
      * @throws \Exception
+     * @return string
      */
     private function createDir(string $mediaPath): string
     {
@@ -245,7 +244,6 @@ class CreateCommand extends AbstractCommand
             }
 
             $exists = $this->storage->has($mediaPath . $basePath);
-
         } while ($exists === true);
 
         $this->storage->createDir($mediaPath . $basePath);

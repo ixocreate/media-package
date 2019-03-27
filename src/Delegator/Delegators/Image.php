@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -66,8 +66,7 @@ final class Image implements DelegatorInterface
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaConfig $mediaConfig,
         StorageSubManager $storageSubManager
-    )
-    {
+    ) {
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->storageSubManager = $storageSubManager;
@@ -95,7 +94,6 @@ final class Image implements DelegatorInterface
         }
         return true;
     }
-
 
     /**
      * @param MediaInterface $media

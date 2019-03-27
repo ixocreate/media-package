@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -51,7 +51,6 @@ final class StreamAction implements MiddlewareInterface
      * @var FilesystemInterface
      */
     private $storage;
-
 
     /**
      * UploadAction constructor.

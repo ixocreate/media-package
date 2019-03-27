@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -55,8 +55,7 @@ final class EditorCommand extends AbstractCommand
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaCropRepository $mediaCropRepository,
         StorageSubManager $storageSubManager
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
@@ -65,8 +64,8 @@ final class EditorCommand extends AbstractCommand
     }
 
     /**
-     * @return bool
      * @throws \Exception
+     * @return bool
      */
     public function execute(): bool
     {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -54,16 +54,16 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
     /**
      * @param FilesystemInterface $storage
      * @param $destination
-     * @return bool
      * @throws \League\Flysystem\FileExistsException
+     * @return bool
      */
     public function move(FilesystemInterface $storage, $destination): bool
     {
-        $f = fopen($this->file, 'r');
+        $f = \fopen($this->file, 'r');
         $storage->writeStream($destination, $f);
 
-        fclose($f);
-        unlink($this->file);
+        \fclose($f);
+        \unlink($this->file);
 
         return true;
     }

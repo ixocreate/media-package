@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -64,8 +64,7 @@ final class ImageProcessor implements ProcessorInterface
         MediaConfig $mediaConfig,
         FilesystemInterface $storage,
         Image $image = null
-    )
-    {
+    ) {
         $this->media = $media;
         $this->imageDefinition = $imageDefinition;
         $this->mediaConfig = $mediaConfig;
@@ -148,7 +147,6 @@ final class ImageProcessor implements ProcessorInterface
         /** @var $definitionWidth int */
         /** @var $definitionHeight int */
         /** @var $definitionUpscale bool */
-
         $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
             if ($definitionUpscale === false) {
                 $constraint->upsize();
@@ -167,7 +165,6 @@ final class ImageProcessor implements ProcessorInterface
         /** @var $definitionWidth int */
         /** @var $definitionHeight int */
         /** @var $definitionUpscale bool */
-
         if ($definitionWidth != null && $definitionHeight != null) {
             $image->fit($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
                 if ($definitionUpscale === false) {
@@ -187,7 +184,6 @@ final class ImageProcessor implements ProcessorInterface
         /** @var $definitionWidth int */
         /** @var $definitionHeight int */
         /** @var $definitionUpscale bool */
-
         $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
             if ($definitionUpscale === false) {
                 $constraint->upsize();
@@ -212,7 +208,6 @@ final class ImageProcessor implements ProcessorInterface
         /** @var $definitionUpscale bool */
         /** @var $imageWidth int */
         /** @var $imageHeight int */
-
         if ($imageWidth >= $definitionWidth && $imageHeight >= $definitionHeight) {
             $image->fit($definitionWidth, $definitionHeight);
         } elseif ($imageWidth >= $definitionWidth || $imageHeight >= $definitionHeight) {

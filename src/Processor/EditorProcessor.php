@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -68,8 +68,7 @@ final class EditorProcessor implements ProcessorInterface
         Media $media,
         MediaConfig $mediaConfig,
         FilesystemInterface $storage
-    )
-    {
+    ) {
         $this->requestData = $requestData;
         $this->imageDefinition = $imageDefinition;
         $this->media = $media;
@@ -92,7 +91,6 @@ final class EditorProcessor implements ProcessorInterface
      */
     public function process()
     {
-
         $mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
         $file = $this->storage->read($mediaPath . $this->media->basePath() . $this->media->filename());

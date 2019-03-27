@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -72,16 +72,16 @@ final class UploadHandler implements MediaCreateHandlerInterface
      */
     public function fileHash(): string
     {
-        $hashInit = hash_init('sha256');
+        $hashInit = \hash_init('sha256');
         \hash_update_stream($hashInit, $this->stream);
-        return hash_final($hashInit);
+        return \hash_final($hashInit);
     }
 
     /**
      * @param FilesystemInterface $storage
      * @param $destination
-     * @return bool
      * @throws \League\Flysystem\FileExistsException
+     * @return bool
      */
     public function move(FilesystemInterface $storage, $destination)
     {

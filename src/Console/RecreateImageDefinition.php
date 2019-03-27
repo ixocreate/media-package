@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -76,8 +76,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         MediaRepository $mediaRepository,
         Image $imageDelegator,
         StorageSubManager $storageSubManager
-    )
-    {
+    ) {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
@@ -99,9 +98,9 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
      * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
+     * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -242,7 +241,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                 $mediaCollection [] = $media;
             }
         }
-        return (new EntityCollection($mediaCollection));
+        return new EntityCollection($mediaCollection);
     }
 
     /**

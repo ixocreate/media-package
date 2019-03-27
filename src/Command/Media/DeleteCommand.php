@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -52,8 +52,7 @@ class DeleteCommand extends AbstractCommand
         MediaRepository $mediaRepository,
         DelegatorSubManager $delegatorSubManager,
         StorageSubManager $storageSubManager
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->delegatorSubManager = $delegatorSubManager;
         $this->storageSubManager = $storageSubManager;

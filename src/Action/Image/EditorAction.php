@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -110,7 +110,7 @@ final class EditorAction implements MiddlewareInterface
         $data = [
             'media' => $media,
             'imageDefinition' => $imageDefinition,
-            'requestData' => $requestData
+            'requestData' => $requestData,
         ];
 
         $commandResult = $this->commandBus->command(EditorCommand::class, $data);
@@ -120,7 +120,6 @@ final class EditorAction implements MiddlewareInterface
         }
 
         return new ApiSuccessResponse();
-
     }
 
     /**

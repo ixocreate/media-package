@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -26,6 +26,7 @@ final class UpdateAction implements MiddlewareInterface
      * @var CommandBus
      */
     private $commandBus;
+
     /**
      * @var MediaRepository
      */
@@ -36,7 +37,7 @@ final class UpdateAction implements MiddlewareInterface
      * @param MediaRepository $mediaRepository
      * @param CommandBus $commandBus
      */
-    public function __construct(MediaRepository $mediaRepository,CommandBus $commandBus)
+    public function __construct(MediaRepository $mediaRepository, CommandBus $commandBus)
     {
         $this->commandBus = $commandBus;
         $this->mediaRepository = $mediaRepository;

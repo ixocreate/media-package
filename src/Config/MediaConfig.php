@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -131,7 +131,6 @@ final class MediaConfig
     {
         return $this->mediaProjectConfig->documentWhitelist();
     }
-
 
     private function assertUri(): void
     {

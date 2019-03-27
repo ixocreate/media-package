@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -54,11 +54,11 @@ final class DisplayImageDefinition extends Command implements CommandInterface
                 (empty($service->height())) ? '-' : $service->height(),
                 $service->mode(),
                 ($service->upscale() === true) ? 'Yes' : 'No',
-                $service->directory()
+                $service->directory(),
             ];
         }
-        uasort($rows, function ($item1, $item2) {
-            return strcmp($item1[0], $item2[0]);
+        \uasort($rows, function ($item1, $item2) {
+            return \strcmp($item1[0], $item2[0]);
         });
         $table = new Table($output);
         $table

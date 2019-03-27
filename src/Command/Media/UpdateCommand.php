@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -75,8 +75,7 @@ class UpdateCommand extends AbstractCommand
         StorageSubManager $storageSubManager,
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->delegatorSubManager = $delegatorSubManager;
@@ -116,12 +115,11 @@ class UpdateCommand extends AbstractCommand
         return $command;
     }
 
-
     /**
-     * @return bool
      * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
      * @throws \Exception
+     * @return bool
      */
     public function execute(): bool
     {
@@ -164,7 +162,6 @@ class UpdateCommand extends AbstractCommand
                     $this->media = $this->media->with('publicStatus', $desiredPublicStatus);
                 }
             }
-
         }
 
         $this->media = $this->media->with('updatedAt', new \DateTimeImmutable());
@@ -178,9 +175,9 @@ class UpdateCommand extends AbstractCommand
      * @param MediaInterface $media
      * @param string $newFilename
      * @param array $fileInfo
-     * @return MediaInterface
      * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
+     * @return MediaInterface
      */
     private function renameFiles(MediaInterface $media, string $newFilename, array $fileInfo): MediaInterface
     {
@@ -203,9 +200,9 @@ class UpdateCommand extends AbstractCommand
      * @param MediaInterface $media
      * @param string $fromMediaPath
      * @param string $toMediaPath
-     * @return MediaInterface
      * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
+     * @return MediaInterface
      */
     private function moveMedia(MediaInterface $media, string $fromMediaPath, string $toMediaPath): MediaInterface
     {
@@ -233,13 +230,12 @@ class UpdateCommand extends AbstractCommand
         return $media;
     }
 
-
     private function filterNewFilename(): void
     {
         // remove whitespace
-        $newFilename = trim($this->newFilename);
+        $newFilename = \trim($this->newFilename);
         // remove Extension
-        $newFilename = \pathInfo($newFilename, PATHINFO_FILENAME);
+        $newFilename = \pathinfo($newFilename, PATHINFO_FILENAME);
         // remove all special Characters except "-_ /."
         $newFilename = \preg_replace("/([^A-Za-z0-9ÖöÄäÜü\/\-_\.])/", "", $newFilename);
 

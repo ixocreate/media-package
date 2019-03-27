@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -38,8 +38,7 @@ final class MoveByPublicStatusCommand extends Command implements CommandInterfac
     public function __construct(
         MediaRepository $mediaRepository,
         CommandBus $commandBus
-    )
-    {
+    ) {
         parent::__construct(self::getCommandName());
         $this->mediaRepository = $mediaRepository;
         $this->commandBus = $commandBus;
