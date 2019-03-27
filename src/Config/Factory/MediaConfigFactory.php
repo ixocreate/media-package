@@ -37,10 +37,10 @@ final class MediaConfigFactory implements FactoryInterface
             /** @var ProjectUri $projectUri */
             $projectUri = $container->get(ProjectUri::class);
 
-            $uri = $uri->withPath(\rtrim($projectUri->getMainUrl()->getPath(), '/') . '/' . \ltrim($uri->getPath(), '/'));
-            $uri = $uri->withHost($projectUri->getMainUrl()->getHost());
-            $uri = $uri->withScheme($projectUri->getMainUrl()->getScheme());
-            $uri = $uri->withPort($projectUri->getMainUrl()->getPort());
+            $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim($uri->getPath(), '/'));
+            $uri = $uri->withHost($projectUri->getMainUri()->getHost());
+            $uri = $uri->withScheme($projectUri->getMainUri()->getScheme());
+            $uri = $uri->withPort($projectUri->getMainUri()->getPort());
         }
 
         return new MediaConfig($driver, $uri, $container->get(MediaProjectConfig::class));
