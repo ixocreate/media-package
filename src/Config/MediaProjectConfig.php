@@ -110,7 +110,10 @@ class MediaProjectConfig implements SerializableServiceInterface
      */
     public function serialize()
     {
-        return \serialize($this->whitelist);
+        return \serialize([
+            'whitelist' => $this->whitelist,
+            'publicStatus' => $this->publicStatus,
+        ]);
     }
 
     /**
@@ -118,6 +121,8 @@ class MediaProjectConfig implements SerializableServiceInterface
      */
     public function unserialize($serialized)
     {
-        $this->whitelist = \unserialize($serialized);
+        $unserialized = \unserialize($serialized);
+        $this->whitelist = $unserialized['whitelist'];
+        $this->publicStatus = $unserialized['publicStatus'];
     }
 }
