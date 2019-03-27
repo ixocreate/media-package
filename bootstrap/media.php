@@ -6,7 +6,7 @@ namespace Ixocreate\Media;
 use Ixocreate\Media\Config\MediaConfigurator;
 
 /** @var MediaConfigurator $media */
-$media->setImageWhiteliste([
+$media->setImageWhitelist([
     'image/jpeg',
     'image/gif',
     'image/png',
@@ -70,4 +70,9 @@ $media->setDocumentWhitelist([
 $media->setGlobalWhitelist([
 
 ]);
+
+$media->setUri('media');
+
+$media->setDriver('automatic');
+
 $media->setPublicStatus(false);

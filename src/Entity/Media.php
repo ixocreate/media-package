@@ -11,6 +11,7 @@ namespace Ixocreate\Media\Entity;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Ixocreate\Contract\Entity\DatabaseEntityInterface;
+use Ixocreate\Contract\Media\MediaInterface;
 use Ixocreate\Contract\Type\TypeInterface;
 use Ixocreate\Entity\Entity\Definition;
 use Ixocreate\Entity\Entity\DefinitionCollection;
@@ -19,7 +20,7 @@ use Ixocreate\Entity\Entity\EntityTrait;
 use Ixocreate\CommonTypes\Entity\UuidType;
 use Ixocreate\CommonTypes\Entity\DateTimeType;
 
-final class Media implements EntityInterface, DatabaseEntityInterface
+final class Media implements EntityInterface, DatabaseEntityInterface, MediaInterface
 {
     use EntityTrait;
 

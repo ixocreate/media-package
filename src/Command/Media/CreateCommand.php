@@ -7,21 +7,25 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Command;
+namespace Ixocreate\Media\Command\Media;
 
 use Cocur\Slugify\Slugify;
 use Ixocreate\Admin\Entity\User;
 use Ixocreate\CommandBus\Command\AbstractCommand;
+use Ixocreate\Contract\Media\DelegatorInterface;
+use Ixocreate\Contract\Media\MediaCreateHandlerInterface;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Delegator\DelegatorInterface;
 use Ixocreate\Media\Delegator\DelegatorSubManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Exception\FileDuplicateException;
 use Ixocreate\Media\Exception\FileTypeNotSupportedException;
-use Ixocreate\Media\MediaCreateHandler\MediaCreateHandlerInterface;
+use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaCreatedRepository;
 use Ixocreate\Media\Repository\MediaRepository;
+use League\Flysystem\FilesystemInterface;
 
 class CreateCommand extends AbstractCommand
 {
@@ -66,23 +70,42 @@ class CreateCommand extends AbstractCommand
     private $publicStatus = true;
 
     /**
+     * @var StorageSubManager
+     */
+    private $storageSubManager;
+
+    /**
+     * @var FilesystemInterface
+     */
+    private $storage;
+
+    /**
+     * @var string
+     */
+    private $fileHash;
+
+    /**
      * CreateCommand constructor.
      *
      * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
      * @param DelegatorSubManager $delegatorSubManager
      * @param MediaConfig $mediaConfig
+     * @param StorageSubManager $storageSubManager
      */
     public function __construct(
         MediaCreatedRepository $mediaCreatedRepository,
         MediaRepository $mediaRepository,
         DelegatorSubManager $delegatorSubManager,
-        MediaConfig $mediaConfig
-    ) {
+        MediaConfig $mediaConfig,
+        StorageSubManager $storageSubManager
+    )
+    {
         $this->mediaCreatedRepository = $mediaCreatedRepository;
         $this->mediaRepository = $mediaRepository;
         $this->delegatorSubManager = $delegatorSubManager;
         $this->mediaConfig = $mediaConfig;
+        $this->storageSubManager = $storageSubManager;
     }
 
     /**
@@ -135,21 +158,29 @@ class CreateCommand extends AbstractCommand
      */
     public function execute(): bool
     {
-        if (!($this->checkWhitelist($this->mediaCreateHandler->tempFile()))) {
-            throw new FileTypeNotSupportedException();
+        if (!$this->storageSubManager->has('media')) {
+            throw new InvalidConfigException('Storage Config not set');
         }
 
-        if ($this->checkForDuplicates && $this->checkDuplicate($this->mediaCreateHandler->tempFile())) {
-            throw new FileDuplicateException();
+        $this->storage = $this->storageSubManager->get('media');
+
+        if (!($this->checkWhitelist($this->mediaCreateHandler->mimeType()))) {
+            throw new FileTypeNotSupportedException('Mime Type not supported');
+        }
+
+        $this->fileHash = $this->mediaCreateHandler->fileHash();
+
+        if ($this->checkForDuplicates && $this->checkDuplicate($this->fileHash)) {
+            throw new FileDuplicateException('File has already been uploaded');
         }
 
         $media = $this->prepareMedia();
 
         $this->mediaRepository->save($media);
 
-        foreach ($this->delegatorSubManager->getServiceManagerConfig()->getNamedServices() as $name => $delegator) {
+        foreach ($this->delegatorSubManager->getServiceManagerConfig()->getNamedServices() as $name => $delegatorClassName) {
             /** @var DelegatorInterface $delegator */
-            $delegator = $this->delegatorSubManager->get($delegator);
+            $delegator = $this->delegatorSubManager->get($delegatorClassName);
             if (!$delegator->isResponsible($media)) {
                 continue;
             }
@@ -173,23 +204,23 @@ class CreateCommand extends AbstractCommand
      */
     private function prepareMedia(): Media
     {
-        $storageDir = $this->publicStatus ? 'data/media/' : 'data/media_private/';
-        $basePath = $this->createDir($storageDir);
+        $mediaPath = $this->publicStatus ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
+        $basePath = $this->createDir($mediaPath);
         $filenameParts = \pathinfo($this->mediaCreateHandler->filename());
         $slugify = new Slugify();
         $filename = $slugify->slugify($filenameParts['filename']) . '.' . $filenameParts['extension'];
+        $destination = $mediaPath . $basePath . $filename;
 
-        $this->mediaCreateHandler->move($storageDir . $basePath . $filename);
-        $finfo = \finfo_open(FILEINFO_MIME_TYPE);
+        $this->mediaCreateHandler->move($this->storage, $destination);
 
         $media = new Media([
             'id' => $this->uuid(),
             'basePath' => $basePath,
             'filename' => $filename,
-            'mimeType' => \finfo_file($finfo, $storageDir . $basePath . $filename),
-            'size' => \sprintf('%u', \filesize($storageDir . $basePath . $filename)),
+            'mimeType' => $this->mediaCreateHandler->mimeType(),
+            'size' => $this->mediaCreateHandler->fileSize(),
             'publicStatus' => $this->publicStatus,
-            'hash' => \hash_file('sha256', $storageDir . $basePath . $filename),
+            'hash' => $this->fileHash,
             'createdAt' => new \DateTimeImmutable(),
             'updatedAt' => new \DateTimeImmutable(),
         ]);
@@ -198,40 +229,45 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
-     * @param string $directory
-     * @throws \Exception
+     * @param string $mediaPath
      * @return string
+     * @throws \Exception
      */
-    private function createDir(string $directory): string
+    private function createDir(string $mediaPath): string
     {
         do {
             $basePath = \implode('/', \str_split(\bin2hex(\random_bytes(3)), 2)) . '/';
-            $exists = \is_dir($directory . $basePath);
+
+            $folders = \explode('/', $basePath);
+
+            if (\in_array('ad', $folders)) {
+                continue;
+            }
+
+            $exists = $this->storage->has($mediaPath . $basePath);
+
         } while ($exists === true);
 
-        \mkdir($directory . $basePath, 0777, true);
+        $this->storage->createDir($mediaPath . $basePath);
 
         return $basePath;
     }
 
     /**
-     * @param string $file
+     * @param string $hash
      * @return bool
      */
-    private function checkDuplicate(string $file): bool
+    private function checkDuplicate(string $hash): bool
     {
-        $count = $this->mediaRepository->count(['hash' => \hash_file('sha256', $file)]);
-        return $count > 0;
+        return ($this->mediaRepository->count(['hash' => $hash])) > 0;
     }
 
     /**
-     * @param string $file
+     * @param string $mimeType
      * @return bool
      */
-    private function checkWhitelist(string $file): bool
+    private function checkWhitelist(string $mimeType): bool
     {
-        $finfo = \finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = \finfo_file($finfo, $file);
         return \in_array($mimeType, $this->mediaConfig->whitelist());
     }
 

@@ -22,7 +22,20 @@ class MediaConfigurator implements ConfiguratorInterface
         'global' => [],
     ];
 
+    /**
+     * @var string
+     */
+    private $driver = '';
+
+    /**
+     * @var bool
+     */
     private $publicStatus = false;
+
+    /**
+     * @var string
+     */
+    private $uri = '';
 
     /**
      * @return array
@@ -40,15 +53,52 @@ class MediaConfigurator implements ConfiguratorInterface
         return $this->publicStatus;
     }
 
+    /**
+     * @return string
+     */
+    public function driver(): string
+    {
+        return $this->driver;
+    }
+
+    /**
+     * @return string
+     */
+    public function uri():string
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @param string $driver
+     */
+    public function setDriver(string $driver)
+    {
+        $this->driver = $driver;
+    }
+
+    /**
+     * @param bool $bool
+     */
     public function setPublicStatus(bool $bool): void
     {
         $this->publicStatus = $bool;
     }
 
     /**
+     * @param string $uri
+     */
+    public function setUri(string $uri)
+    {
+        \ltrim($uri, '/');
+
+        $this->uri = '/' . $uri;
+    }
+
+    /**
      * @param array $whitelist
      */
-    public function setImageWhiteliste(array $whitelist): void
+    public function setImageWhitelist(array $whitelist): void
     {
         $this->whitelist['image'] = $whitelist;
     }

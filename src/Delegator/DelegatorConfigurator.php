@@ -11,6 +11,7 @@ namespace Ixocreate\Media\Delegator;
 
 use Ixocreate\Contract\Application\ConfiguratorInterface;
 use Ixocreate\Contract\Application\ServiceRegistryInterface;
+use Ixocreate\Contract\Media\DelegatorInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
 use Ixocreate\ServiceManager\SubManager\SubManagerConfigurator;
 

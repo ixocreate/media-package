@@ -10,7 +10,11 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
+use Ixocreate\Admin\Config\AdminConfig;
+use Ixocreate\Contract\Media\DelegatorInterface;
+use Ixocreate\Media\Delegator\DelegatorSubManager;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
 final class Uri
@@ -21,12 +25,25 @@ final class Uri
     private $packages;
 
     /**
+     * @var AdminConfig
+     */
+    private $adminConfig;
+    /**
+     * @var DelegatorSubManager
+     */
+    private $delegatorSubManager;
+
+    /**
      * Uri constructor.
      * @param Packages $packages
+     * @param AdminConfig $adminConfig
+     * @param DelegatorSubManager $delegatorSubManager
      */
-    public function __construct(Packages $packages)
+    public function __construct(Packages $packages, AdminConfig $adminConfig, DelegatorSubManager $delegatorSubManager)
     {
         $this->packages = $packages;
+        $this->adminConfig = $adminConfig;
+        $this->delegatorSubManager = $delegatorSubManager;
     }
 
     /**
@@ -48,6 +65,14 @@ final class Uri
      */
     public function imageUrl(Media $media, string $imageDefinition = null): string
     {
+        foreach ($this->delegatorSubManager->getServices() as $delegatorClassName) {
+            /** @var DelegatorInterface $delegator */
+            $delegator = $this->delegatorSubManager->get($delegatorClassName);
+            if (!$delegator->isResponsible($media)) {
+                $imageDefinition = null;
+            }
+        }
+
         if ($imageDefinition === null) {
             return $this->url($media);
         }
@@ -81,7 +106,7 @@ final class Uri
             return $this->generateUrl($basePath, $filename);
         }
 
-        return $this->packages->getUrl('/img/' . $imageDefinition . '/' . $basePath . $filename);
+        return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename);
     }
 
     /**
@@ -91,6 +116,8 @@ final class Uri
      */
     public function generateStreamUrl(Media $media, string $imageDefinition = null): string
     {
+        $jwt = null;
+
         try {
             $payload = [
                 'iat' => \time(),
@@ -101,7 +128,7 @@ final class Uri
                 ],
             ];
 
-            $jwt = JWT::encode($payload, 'secret', 'HS512');
+            $jwt = JWT::encode($payload, $this->adminConfig->secret(), 'HS512');
         } catch (\Exception $e) {
             // TODO
         }

@@ -11,7 +11,9 @@ namespace Ixocreate\Media\Config;
 
 use Ixocreate\Media\Exception\InvalidExtensionException;
 use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\ProjectUri\ProjectUri;
 use Psr\Http\Message\UriInterface;
+use Zend\Diactoros\Uri;
 
 final class MediaConfig
 {
@@ -31,17 +33,21 @@ final class MediaConfig
     private $uri;
 
     /**
-     * MediaConfig constructor.
-     * @param string $driver
-     * @param UriInterface $uri
-     * @param MediaProjectConfig $mediaProjectConfig
+     * @var ProjectUri
      */
-    public function __construct(string $driver, UriInterface $uri, MediaProjectConfig $mediaProjectConfig)
+    private $projectUri;
+
+    /**
+     * MediaConfig constructor.
+     * @param MediaProjectConfig $mediaProjectConfig
+     * @param ProjectUri $projectUri
+     */
+    public function __construct(MediaProjectConfig $mediaProjectConfig, ProjectUri $projectUri)
     {
-        $this->driver = $driver;
-        $this->uri = $uri;
         $this->mediaProjectConfig = $mediaProjectConfig;
+        $this->projectUri = $projectUri;
         $this->assertDriver();
+        $this->assertUri();
     }
 
     /**
@@ -126,6 +132,22 @@ final class MediaConfig
         return $this->mediaProjectConfig->documentWhitelist();
     }
 
+
+    private function assertUri(): void
+    {
+        $uri = new Uri($this->mediaProjectConfig->uri());
+        if (empty($uri->getHost())) {
+            /** @var ProjectUri $projectUri */
+            $projectUri = $this->projectUri;
+
+            $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim($uri->getPath(), '/'));
+            $uri = $uri->withHost($projectUri->getMainUri()->getHost());
+            $uri = $uri->withScheme($projectUri->getMainUri()->getScheme());
+            $uri = $uri->withPort($projectUri->getMainUri()->getPort());
+        }
+        $this->uri = $uri;
+    }
+
     /**
      * @throws \Ixocreate\Media\Exception\InvalidExtensionException
      * @throws \Ixocreate\Media\Exception\InvalidConfigException
@@ -133,6 +155,8 @@ final class MediaConfig
     private function assertDriver(): void
     {
         $allowedConfigParameter = ['automatic', 'gd', 'imagick'];
+
+        $this->driver = $this->mediaProjectConfig->driver();
 
         if (empty($driver)) {
             $this->driver = 'automatic';

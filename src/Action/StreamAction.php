@@ -10,10 +10,14 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Action;
 
 use Firebase\JWT\JWT;
+use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\ApplicationHttp\ErrorHandling\Response\NotFoundHandler;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
+use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -34,17 +38,39 @@ final class StreamAction implements MiddlewareInterface
     private $notFoundHandler;
 
     /**
+     * @var StorageSubManager
+     */
+    private $storageSubManager;
+
+    /**
+     * @var AdminConfig
+     */
+    private $adminConfig;
+
+    /**
+     * @var FilesystemInterface
+     */
+    private $storage;
+
+
+    /**
      * UploadAction constructor.
      *
      * @param MediaRepository $mediaRepository
      * @param NotFoundHandler $notFoundHandler
+     * @param StorageSubManager $storageSubManager
+     * @param AdminConfig $adminConfig
      */
     public function __construct(
         MediaRepository $mediaRepository,
-        NotFoundHandler $notFoundHandler
+        NotFoundHandler $notFoundHandler,
+        StorageSubManager $storageSubManager,
+        AdminConfig $adminConfig
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->notFoundHandler = $notFoundHandler;
+        $this->storageSubManager = $storageSubManager;
+        $this->adminConfig = $adminConfig;
     }
 
     /**
@@ -61,11 +87,18 @@ final class StreamAction implements MiddlewareInterface
             return new ApiErrorResponse("bad_request");
         }
 
-        /**
-         * TODO: get secret from config
-         */
+        if (empty($this->adminConfig->secret())) {
+            return new ApiErrorResponse('Secret is not set in AdminConfig');
+        }
+
+        if (!$this->storageSubManager->has('media')) {
+            return new ApiErrorResponse('Storage Config not set');
+        }
+
+        $this->storage = $this->storageSubManager->get('media');
+
         try {
-            $jwt = JWT::decode($token, 'secret', ['HS512']);
+            $jwt = JWT::decode($token, $this->adminConfig->secret(), ['HS512']);
         } catch (\Exception $e) {
             /**
              * TODO: do we want not founds or error response
@@ -77,23 +110,25 @@ final class StreamAction implements MiddlewareInterface
         /** @var Media $media */
         $media = $this->mediaRepository->find($jwt->data->mediaId);
 
-        $storagePath = $media->publicStatus() ? 'data/media/' : 'data/media_private/';
-
+        $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
+        $storagePath = null;
         /**
          * make it work with delegator outputs
          */
         if (!empty($jwt->data->imageDefinition)) {
-            $storagePath .= 'img/' . $jwt->data->imageDefinition . '/';
+            $storagePath = MediaPaths::IMAGE_DEFINITION_PATH . $jwt->data->imageDefinition . '/';
         }
-        $filePath = $storagePath . $media->basePath() . $media->filename();
+        $fileSize = $this->storage->getSize($mediaPath . $storagePath . $media->basePath() . $media->filename());
+
+        $fileStream = $this->storage->readStream($mediaPath . $storagePath . $media->basePath() . $media->filename());
 
         /**
          * stream file
          */
         return (new Response())
             ->withHeader('Content-Type', $media->mimeType())
-            ->withHeader('Content-Length', (string)\filesize($filePath))
+            ->withHeader('Content-Length', (string)$fileSize)
             ->withHeader('Content-Disposition', 'inline; filename=' . $media->filename())
-            ->withBody(new Stream($filePath));
+            ->withBody(new Stream($fileStream));
     }
 }

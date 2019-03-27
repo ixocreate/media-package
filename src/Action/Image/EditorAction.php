@@ -12,20 +12,19 @@ namespace Ixocreate\Media\Action\Image;
 use Assert\Assertion;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
-use Ixocreate\Entity\Entity\EntityInterface;
+use Ixocreate\CommandBus\CommandBus;
+use Ixocreate\Contract\Media\ImageDefinitionInterface;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Media\Command\Image\EditorCommand;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaCrop;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\Processor\EditorImageProcessor;
 use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Ramsey\Uuid\Uuid;
 
 final class EditorAction implements MiddlewareInterface
 {
@@ -50,22 +49,38 @@ final class EditorAction implements MiddlewareInterface
     private $mediaCropRepository;
 
     /**
+     * @var StorageSubManager
+     */
+    private $storageSubManager;
+
+    /**
+     * @var CommandBus
+     */
+    private $commandBus;
+
+    /**
      * EditorAction constructor.
+     * @param CommandBus $commandBus
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaCropRepository $mediaCropRepository
+     * @param StorageSubManager $storageSubManager
      */
     public function __construct(
+        CommandBus $commandBus,
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaCropRepository $mediaCropRepository
+        MediaCropRepository $mediaCropRepository,
+        StorageSubManager $storageSubManager
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaCropRepository = $mediaCropRepository;
+        $this->storageSubManager = $storageSubManager;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -77,69 +92,60 @@ final class EditorAction implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!Assertion::isJsonString($request->getBody()->getContents())) {
-            return new ApiErrorResponse('data_need_to_be_json');
-        }
-
         if (empty($request->getBody()->getContents())) {
             return new ApiErrorResponse('no_parameters_passed_to_editor');
         }
 
+        if (!Assertion::isJsonString($request->getBody()->getContents())) {
+            return new ApiErrorResponse('data_need_to_be_json');
+        }
+
         $requestData = \json_decode($request->getBody()->getContents(), true);
 
+        /** @var Media $media */
         $media = $this->media($requestData);
+        /** @var ImageDefinitionInterface $imageDefinition */
         $imageDefinition = $this->imageDefinition($requestData);
 
-        $entity = null;
+        $data = [
+            'media' => $media,
+            'imageDefinition' => $imageDefinition,
+            'requestData' => $requestData
+        ];
 
-        if (!empty($this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]))) {
-            /** @var EntityInterface $entity */
-            $entity = $this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+        $commandResult = $this->commandBus->command(EditorCommand::class, $data);
 
-            if ($entity::getDefinitions()->has('updatedAt')) {
-                $entity = $entity->with('updatedAt', new \DateTime());
-            }
-
-            if ($entity::getDefinitions()->has('cropParameters')) {
-                $entity = $entity->with('cropParameters', $requestData['crop']);
-            }
+        if (!$commandResult->isSuccessful()) {
+            return new ApiErrorResponse('media-media-delete', $commandResult->messages());
         }
-
-        if (empty($this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]))) {
-            $entity = new MediaCrop([
-                'id' => Uuid::uuid4(),
-                'mediaId' => $media->id(),
-                'imageDefinition' => $imageDefinition::serviceName(),
-                'cropParameters' => $requestData['crop'],
-                'createdAt' => new \DateTimeImmutable(),
-                'updatedAt' => new \DateTimeImmutable(),
-            ]);
-        }
-
-        (new EditorImageProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig))->process();
-
-        $this->mediaCropRepository->save($entity);
 
         return new ApiSuccessResponse();
+
     }
 
     /**
      * @param array $requestData
-     * @return ImageDefinitionInterface
+     * @return ApiErrorResponse|mixed
      */
-    private function imageDefinition(array $requestData): ImageDefinitionInterface
+    private function imageDefinition(array $requestData)
     {
-        //TODO EXIST CHECK
+        if (!$this->imageDefinitionSubManager->has($requestData['imageDefinition'])) {
+            return new ApiErrorResponse('Given ImageDefinition does not exist');
+        }
+
         return $this->imageDefinitionSubManager->get($requestData['imageDefinition']);
     }
 
     /**
      * @param array $requestData
-     * @return Media
+     * @return ApiErrorResponse|object|null
      */
-    private function media(array $requestData): Media
+    private function media(array $requestData)
     {
-        //TODO EXIST CHECK
+        if ($this->mediaRepository->count(['id' => $requestData['id']]) === null) {
+            return new ApiErrorResponse('Given Media Id does not exist');
+        }
+
         return $this->mediaRepository->find($requestData['id']);
     }
 }
