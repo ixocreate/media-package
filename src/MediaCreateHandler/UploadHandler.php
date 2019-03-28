@@ -48,7 +48,8 @@ final class UploadHandler implements MediaCreateHandlerInterface
      */
     public function tempFile(): string
     {
-        return $this->uploadedFile->getStream()->getMetadata()['uri'];
+        $metadata = \stream_get_meta_data($this->stream);
+        return $metadata['uri'];
     }
 
     /**
