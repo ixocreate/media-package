@@ -137,6 +137,8 @@ class MediaProjectConfig implements SerializableServiceInterface
         return \serialize([
             'whitelist' => $this->whitelist,
             'publicStatus' => $this->publicStatus,
+            'driver' => $this->driver,
+            'uri' => $this->uri,
         ]);
     }
 
@@ -148,5 +150,7 @@ class MediaProjectConfig implements SerializableServiceInterface
         $unserialized = \unserialize($serialized);
         $this->whitelist = $unserialized['whitelist'];
         $this->publicStatus = $unserialized['publicStatus'];
+        $this->driver = $unserialized['driver'];
+        $this->uri = $unserialized['uri'];
     }
 }
