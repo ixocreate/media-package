@@ -11,6 +11,7 @@ namespace Ixocreate\Media\Config;
 
 use Ixocreate\Contract\Application\ConfiguratorInterface;
 use Ixocreate\Contract\Application\ServiceRegistryInterface;
+use Zend\Diactoros\Uri;
 
 class MediaConfigurator implements ConfiguratorInterface
 {
@@ -90,9 +91,13 @@ class MediaConfigurator implements ConfiguratorInterface
      */
     public function setUri(string $uri)
     {
-        \ltrim($uri, '/');
-
-        $this->uri = '/' . $uri;
+        $uriObj = new Uri($uri);
+        if (empty($uriObj->getHost())) {
+            \ltrim($uri, '/');
+            $uri = '/' . $uri;
+        }
+        
+        $this->uri = $uri;
     }
 
     /**
