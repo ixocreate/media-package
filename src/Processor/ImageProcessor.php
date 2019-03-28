@@ -109,9 +109,13 @@ final class ImageProcessor implements ProcessorInterface
 
         $this->checkMode($image, $this->imageParameters);
 
-        /** @var Image $tempImage */
-        $this->storage->put($mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename(), $image->response());
+        $filename = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
 
+        /** @var Image $tempImage */
+        $this->storage->put(
+            $filename,
+            $image->encode(pathinfo($filename, PATHINFO_EXTENSION))
+        );
         $image->destroy();
     }
 
