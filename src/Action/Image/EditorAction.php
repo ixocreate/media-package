@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Action\Image;
 
-use Assert\Assertion;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
@@ -86,7 +85,6 @@ final class EditorAction implements MiddlewareInterface
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
-     * @throws \Assert\AssertionFailedException
      * @throws \Exception
      * @return ResponseInterface
      */
@@ -96,11 +94,10 @@ final class EditorAction implements MiddlewareInterface
             return new ApiErrorResponse('no_parameters_passed_to_editor');
         }
 
-        if (!Assertion::isJsonString($request->getBody()->getContents())) {
+        $requestData = \json_decode($request->getBody()->getContents(), true);
+        if ($requestData === null) {
             return new ApiErrorResponse('data_need_to_be_json');
         }
-
-        $requestData = \json_decode($request->getBody()->getContents(), true);
 
         /** @var Media $media */
         $media = $this->media($requestData);
