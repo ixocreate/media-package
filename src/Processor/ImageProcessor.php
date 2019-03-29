@@ -18,7 +18,7 @@ use Intervention\Image\Constraint;
 use Ixocreate\Media\MediaPaths;
 use League\Flysystem\FilesystemInterface;
 
-final class ImageProcessor implements ProcessorInterface
+final class ImageProcessor
 {
     /**
      * @var MediaInterface
@@ -102,6 +102,7 @@ final class ImageProcessor implements ProcessorInterface
 
         $mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
+        /** @var Image $image */
         $image = ($this->image != null) ? $this->image : $imageManager->make($this->storage->read($mediaPath . $this->media->basePath() . $this->media->filename()));
 
         $this->imageParameters['imageWidth'] = $image->width();
@@ -111,7 +112,6 @@ final class ImageProcessor implements ProcessorInterface
 
         $filename = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
 
-        /** @var Image $tempImage */
         $this->storage->put(
             $filename,
             $image->encode(pathinfo($filename, PATHINFO_EXTENSION))

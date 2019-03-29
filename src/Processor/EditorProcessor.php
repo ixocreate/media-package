@@ -17,7 +17,7 @@ use Intervention\Image\Size;
 use Ixocreate\Media\MediaPaths;
 use League\Flysystem\FilesystemInterface;
 
-final class EditorProcessor implements ProcessorInterface
+final class EditorProcessor
 {
     /**
      * @var Media
