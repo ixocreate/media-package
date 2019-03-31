@@ -96,7 +96,7 @@ class MediaConfigurator implements ConfiguratorInterface
             \ltrim($uri, '/');
             $uri = '/' . $uri;
         }
-        
+
         $this->uri = $uri;
     }
 

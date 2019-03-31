@@ -114,7 +114,7 @@ final class ImageProcessor
 
         $this->storage->put(
             $filename,
-            $image->encode(pathinfo($filename, PATHINFO_EXTENSION))
+            $image->encode(\pathinfo($filename, PATHINFO_EXTENSION))
         );
         $image->destroy();
     }
