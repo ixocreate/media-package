@@ -14,13 +14,14 @@ use Ixocreate\Contract\Schema\ElementProviderInterface;
 use Ixocreate\Contract\Type\DatabaseTypeInterface;
 use Ixocreate\Entity\Type\AbstractType;
 use Doctrine\DBAL\Types\GuidType;
+use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Schema\Elements\MediaElement;
 use Ixocreate\Contract\Schema\ElementInterface;
 use Ixocreate\Media\Repository\MediaRepository;
 use Ixocreate\Media\Uri\Uri;
 
-class MediaType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface
+class MediaType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
     /**
      * @var MediaRepository
@@ -121,5 +122,23 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
     public function provideElement(BuilderInterface $builder): ElementInterface
     {
         return $builder->get(MediaElement::class);
+    }
+
+    /**
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        /** @var MediaType $mediaType */
+        $mediaType = Type::get(MediaType::serviceName());
+
+        $this->mediaRepository = $mediaType->mediaRepository;
+        $this->uri = $mediaType->uri;
+
+        $this->value = null;
+        $unserialized = unserialize($serialized);
+        if (!empty($unserialized['value']) && $unserialized['value'] instanceof Media) {
+            $this->value = $unserialized['value'];
+        }
     }
 }

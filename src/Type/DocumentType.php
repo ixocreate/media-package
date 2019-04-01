@@ -22,7 +22,7 @@ use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Uri\Uri;
 use Ixocreate\Schema\Elements\DocumentElement;
 
-final class DocumentType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface
+final class DocumentType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
     /**
      * @var MediaType
@@ -135,5 +135,31 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
     public function provideElement(BuilderInterface $builder): ElementInterface
     {
         return $builder->get(DocumentElement::class);
+    }
+
+    /**
+     * @return string|void
+     */
+    public function serialize()
+    {
+        return serialize([
+            'mediaType' => $this->mediaType
+        ]);
+    }
+
+    /**
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        /** @var DocumentType $type */
+        $type = Type::get(DocumentType::serviceName());
+        $this->uri = $type->uri;
+        $this->mediaConfig = $type->mediaConfig;
+
+        $unserialized = unserialize($serialized);
+        if (!empty($unserialized['mediaType']) && $unserialized['mediaType'] instanceof MediaType) {
+            $this->mediaType = $unserialized['mediaType'];
+        }
     }
 }

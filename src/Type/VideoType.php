@@ -22,7 +22,7 @@ use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Uri\Uri;
 use Ixocreate\Schema\Elements\VideoElement;
 
-final class VideoType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface
+final class VideoType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
     /**
      * @var MediaType
@@ -135,5 +135,31 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Ele
     public function provideElement(BuilderInterface $builder): ElementInterface
     {
         return $builder->get(VideoElement::class);
+    }
+
+    /**
+     * @return string|void
+     */
+    public function serialize()
+    {
+        return serialize([
+            'mediaType' => $this->mediaType
+        ]);
+    }
+
+    /**
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        /** @var VideoType $type */
+        $type = Type::get(VideoType::serviceName());
+        $this->uri = $type->uri;
+        $this->mediaConfig = $type->mediaConfig;
+
+        $unserialized = unserialize($serialized);
+        if (!empty($unserialized['mediaType']) && $unserialized['mediaType'] instanceof MediaType) {
+            $this->mediaType = $unserialized['mediaType'];
+        }
     }
 }
