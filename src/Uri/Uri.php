@@ -12,6 +12,7 @@ namespace Ixocreate\Media\Uri;
 use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Contract\Media\DelegatorInterface;
+use Ixocreate\Media\Delegator\Delegators\Image;
 use Ixocreate\Media\Delegator\DelegatorSubManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\MediaPaths;
@@ -66,12 +67,10 @@ final class Uri
      */
     public function imageUrl(Media $media, string $imageDefinition = null): string
     {
-        foreach ($this->delegatorSubManager->getServices() as $delegatorClassName) {
-            /** @var DelegatorInterface $delegator */
-            $delegator = $this->delegatorSubManager->get($delegatorClassName);
-            if (!$delegator->isResponsible($media)) {
-                $imageDefinition = null;
-            }
+        /** @var DelegatorInterface $imageDelegator */
+        $imageDelegator = $this->delegatorSubManager->get(Image::serviceName());
+        if (!$imageDelegator->isResponsible($media)) {
+            $imageDefinition = null;
         }
 
         if ($imageDefinition === null) {
