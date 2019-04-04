@@ -85,6 +85,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
         }
         $array = $this->value()->toPublicArray();
         $array['original'] = $this->getUrl();
+        $array['thumb'] = $this->getUrl('admin-thumb');
 
         return $array;
     }
@@ -103,7 +104,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
         return GuidType::class;
     }
 
-    public function getUrl(): string
+    public function getUrl(?string $definition = null): string
     {
         /** @var Media $media */
         $media = $this->value();
@@ -111,7 +112,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
             return "";
         }
 
-        return $this->uri->imageUrl($media);
+        return $this->uri->imageUrl($media, $definition);
     }
 
     public static function serviceName(): string
