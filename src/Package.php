@@ -7,15 +7,15 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media;
+namespace Ixocreate\Media\Package;
 
 use Ixocreate\Application\ConfiguratorRegistryInterface;
-use Ixocreate\Application\PackageInterface;
+use Ixocreate\Application\Package\PackageInterface;
 use Ixocreate\Application\ServiceRegistryInterface;
 use Ixocreate\ServiceManager\ServiceManagerInterface;
-use Ixocreate\Package\Media\BootstrapItem\DelegatorBootstrapItem;
-use Ixocreate\Package\Media\BootstrapItem\ImageDefinitionBootstrapItem;
-use Ixocreate\Package\Media\BootstrapItem\MediaBootstrapItem;
+use Ixocreate\Media\Package\Bootstrap\DelegatorBootstrapItem;
+use Ixocreate\Media\Package\Bootstrap\ImageDefinitionBootstrapItem;
+use Ixocreate\Media\Package\Bootstrap\MediaBootstrapItem;
 
 final class Package implements PackageInterface
 {

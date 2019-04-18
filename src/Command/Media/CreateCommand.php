@@ -7,24 +7,24 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Command\Media;
+namespace Ixocreate\Media\Package\Command\Media;
 
 use Cocur\Slugify\Slugify;
-use Ixocreate\Package\Admin\Entity\User;
-use Ixocreate\Package\CommandBus\Command\AbstractCommand;
-use Ixocreate\Package\Media\DelegatorInterface;
-use Ixocreate\Package\Media\MediaCreateHandlerInterface;
-use Ixocreate\Package\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Package\Media\Config\MediaConfig;
-use Ixocreate\Package\Media\Delegator\DelegatorSubManager;
-use Ixocreate\Package\Media\Entity\Media;
-use Ixocreate\Package\Media\Entity\MediaCreated;
-use Ixocreate\Package\Media\Exception\FileDuplicateException;
-use Ixocreate\Package\Media\Exception\FileTypeNotSupportedException;
-use Ixocreate\Package\Media\Exception\InvalidConfigException;
-use Ixocreate\Package\Media\MediaPaths;
-use Ixocreate\Package\Media\Repository\MediaCreatedRepository;
-use Ixocreate\Package\Media\Repository\MediaRepository;
+use Ixocreate\Admin\Package\Entity\User;
+use Ixocreate\CommandBus\Package\Command\AbstractCommand;
+use Ixocreate\Media\Package\DelegatorInterface;
+use Ixocreate\Media\Package\MediaCreateHandlerInterface;
+use Ixocreate\Filesystem\Package\Storage\StorageSubManager;
+use Ixocreate\Media\Package\Config\MediaConfig;
+use Ixocreate\Media\Package\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Package\Entity\Media;
+use Ixocreate\Media\Package\Entity\MediaCreated;
+use Ixocreate\Media\Package\Exception\FileDuplicateException;
+use Ixocreate\Media\Package\Exception\FileTypeNotSupportedException;
+use Ixocreate\Media\Package\Exception\InvalidConfigException;
+use Ixocreate\Media\Package\MediaPaths;
+use Ixocreate\Media\Package\Repository\MediaCreatedRepository;
+use Ixocreate\Media\Package\Repository\MediaRepository;
 use League\Flysystem\FilesystemInterface;
 
 class CreateCommand extends AbstractCommand

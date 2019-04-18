@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\BootstrapItem;
+namespace Ixocreate\Media\Package\BootstrapItem;
 
-use Ixocreate\Application\BootstrapItemInterface;
+use Ixocreate\Application\Bootstrap\BootstrapItemInterface;
 use Ixocreate\Application\ConfiguratorInterface;
-use Ixocreate\Package\Media\Config\MediaConfigurator;
+use Ixocreate\Media\Package\Config\MediaConfigurator;
 
 final class MediaBootstrapItem implements BootstrapItemInterface
 {

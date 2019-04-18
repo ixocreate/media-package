@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Config;
+namespace Ixocreate\Media\Package\Config;
 
-use Ixocreate\Package\Media\Exception\InvalidExtensionException;
-use Ixocreate\Package\Media\Exception\InvalidConfigException;
-use Ixocreate\Package\ProjectUri\ProjectUri;
+use Ixocreate\Media\Package\Exception\InvalidExtensionException;
+use Ixocreate\Media\Package\Exception\InvalidConfigException;
+use Ixocreate\Application\Uri\ApplicationUri;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Uri;
 
@@ -33,16 +33,17 @@ final class MediaConfig
     private $uri;
 
     /**
-     * @var ProjectUri
+     * @var Uri
      */
     private $projectUri;
 
     /**
      * MediaConfig constructor.
+     *
      * @param MediaProjectConfig $mediaProjectConfig
-     * @param ProjectUri $projectUri
+     * @param Uri $projectUri
      */
-    public function __construct(MediaProjectConfig $mediaProjectConfig, ProjectUri $projectUri)
+    public function __construct(MediaProjectConfig $mediaProjectConfig, Uri $projectUri)
     {
         $this->mediaProjectConfig = $mediaProjectConfig;
         $this->projectUri = $projectUri;
@@ -136,7 +137,7 @@ final class MediaConfig
     {
         $uri = new Uri($this->mediaProjectConfig->uri());
         if (empty($uri->getHost())) {
-            /** @var ProjectUri $projectUri */
+            /** @var Uri $projectUri */
             $projectUri = $this->projectUri;
 
             $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim($uri->getPath(), '/'));
@@ -148,8 +149,8 @@ final class MediaConfig
     }
 
     /**
-     * @throws \Ixocreate\Package\Media\Exception\InvalidExtensionException
-     * @throws \Ixocreate\Package\Media\Exception\InvalidConfigException
+     * @throws \Ixocreate\Media\Package\Exception\InvalidExtensionException
+     * @throws \Ixocreate\Media\Package\Exception\InvalidConfigException
      */
     private function assertDriver(): void
     {

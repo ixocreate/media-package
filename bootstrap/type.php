@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media;
+namespace Ixocreate\Media\Package;
 
 
-use Ixocreate\Package\Media\Type\DocumentType;
-use Ixocreate\Package\Media\Type\AudioType;
-use Ixocreate\Package\Media\Type\ImageType;
-use Ixocreate\Package\Media\Type\MediaType;
-use Ixocreate\Package\Entity\Type\TypeConfigurator;
-use Ixocreate\Package\Media\Type\VideoType;
+use Ixocreate\Media\Package\Type\DocumentType;
+use Ixocreate\Media\Package\Type\AudioType;
+use Ixocreate\Media\Package\Type\ImageType;
+use Ixocreate\Media\Package\Type\MediaType;
+use Ixocreate\Entity\Package\Type\TypeConfigurator;
+use Ixocreate\Media\Package\Type\VideoType;
 
 /** @var TypeConfigurator $type */
 

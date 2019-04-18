@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media;
+namespace Ixocreate\Media\Package;
 
-use Ixocreate\Package\Media\Delegator\DelegatorConfigurator;
+use Ixocreate\Media\Package\Delegator\DelegatorConfigurator;
 
 /** @var DelegatorConfigurator $delegator */
-$delegator->addDelegator(\Ixocreate\Package\Media\Delegator\Delegators\Image::class);
+$delegator->addDelegator(\Ixocreate\Media\Package\Delegator\Delegators\Image::class);

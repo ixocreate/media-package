@@ -6,7 +6,7 @@ namespace Ixocreate\Migration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\Migrations\AbstractMigration;
-use Ixocreate\Package\Type\Entity\DateTimeType;
+use Ixocreate\Type\Package\Entity\DateTimeType;
 
 /**
  * Auto-generated Migration: Please modify to your needs!

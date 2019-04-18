@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\ImageDefinition;
+namespace Ixocreate\Media\Package\ImageDefinition;
 
 use Ixocreate\Application\ConfiguratorInterface;
 use Ixocreate\Application\ServiceRegistryInterface;
-use Ixocreate\Package\Media\ImageDefinitionInterface;
+use Ixocreate\Media\Package\ImageDefinitionInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
 use Ixocreate\ServiceManager\SubManager\SubManagerConfigurator;
 

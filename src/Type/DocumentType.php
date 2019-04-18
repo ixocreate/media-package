@@ -7,20 +7,20 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Type;
+namespace Ixocreate\Media\Package\Type;
 
 use Doctrine\DBAL\Types\GuidType;
-use Ixocreate\Package\Schema\BuilderInterface;
-use Ixocreate\Package\Schema\ElementInterface;
-use Ixocreate\Package\Schema\ElementProviderInterface;
-use Ixocreate\Package\Type\DatabaseTypeInterface;
-use Ixocreate\Package\Type\TypeInterface;
-use Ixocreate\Package\Entity\Type\AbstractType;
-use Ixocreate\Package\Entity\Type\Type;
-use Ixocreate\Package\Media\Config\MediaConfig;
-use Ixocreate\Package\Media\Entity\Media;
-use Ixocreate\Package\Media\Uri\Uri;
-use Ixocreate\Package\Schema\Elements\DocumentElement;
+use Ixocreate\Schema\Package\BuilderInterface;
+use Ixocreate\Schema\Package\ElementInterface;
+use Ixocreate\Schema\Package\ElementProviderInterface;
+use Ixocreate\Type\Package\DatabaseTypeInterface;
+use Ixocreate\Type\Package\TypeInterface;
+use Ixocreate\Entity\Package\Type\AbstractType;
+use Ixocreate\Entity\Package\Type\Type;
+use Ixocreate\Media\Package\Config\MediaConfig;
+use Ixocreate\Media\Package\Entity\Media;
+use Ixocreate\Media\Package\Uri\Uri;
+use Ixocreate\Schema\Package\Elements\DocumentElement;
 
 final class DocumentType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {

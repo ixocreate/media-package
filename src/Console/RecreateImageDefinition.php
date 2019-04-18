@@ -7,28 +7,28 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Console;
+namespace Ixocreate\Media\Package\Console;
 
-use Ixocreate\Package\Media\ImageDefinitionInterface;
-use Ixocreate\Package\Entity\Entity\EntityCollection;
-use Ixocreate\Package\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Package\Media\Delegator\Delegators\Image;
-use Ixocreate\Package\Media\Entity\Media;
-use Ixocreate\Package\Media\Exception\InvalidConfigException;
-use Ixocreate\Package\Media\MediaPaths;
+use Ixocreate\Media\Package\ImageDefinitionInterface;
+use Ixocreate\Entity\Package\Entity\EntityCollection;
+use Ixocreate\Filesystem\Package\Storage\StorageSubManager;
+use Ixocreate\Media\Package\Delegator\Delegators\Image;
+use Ixocreate\Media\Package\Entity\Media;
+use Ixocreate\Media\Package\Exception\InvalidConfigException;
+use Ixocreate\Media\Package\MediaPaths;
 use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Console\Command\Command;
 use Ixocreate\Application\Console\CommandInterface;;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Ixocreate\Package\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Package\Media\Config\MediaConfig;
-use Ixocreate\Package\Media\Repository\MediaRepository;
+use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Package\Config\MediaConfig;
+use Ixocreate\Media\Package\Repository\MediaRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
-use Ixocreate\Package\Media\Processor\ImageProcessor;
-use Ixocreate\Package\Media\Exception\InvalidArgumentException;
+use Ixocreate\Media\Package\Processor\ImageProcessor;
+use Ixocreate\Media\Package\Exception\InvalidArgumentException;
 
 final class RecreateImageDefinition extends Command implements CommandInterface
 {

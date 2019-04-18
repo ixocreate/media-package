@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Config\Factory;
+namespace Ixocreate\Media\Package\Config\Factory;
 
 use Ixocreate\ServiceManager\FactoryInterface;
 use Ixocreate\ServiceManager\ServiceManagerInterface;
-use Ixocreate\Package\Media\Config\MediaConfig;
-use Ixocreate\Package\Media\Config\MediaProjectConfig;
-use Ixocreate\Package\ProjectUri\ProjectUri;
+use Ixocreate\Media\Package\Config\MediaConfig;
+use Ixocreate\Media\Package\Config\MediaProjectConfig;
+use Ixocreate\Application\Uri\ApplicationUri;
 
 final class MediaConfigFactory implements FactoryInterface
 {
@@ -27,6 +27,6 @@ final class MediaConfigFactory implements FactoryInterface
      */
     public function __invoke(ServiceManagerInterface $container, $requestedName, array $options = null)
     {
-        return new MediaConfig($container->get(MediaProjectConfig::class), $container->get(ProjectUri::class));
+        return new MediaConfig($container->get(MediaProjectConfig::class), $container->get(ApplicationUri::class));
     }
 }

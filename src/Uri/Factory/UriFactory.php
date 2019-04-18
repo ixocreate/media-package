@@ -7,16 +7,16 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Uri\Factory;
+namespace Ixocreate\Media\Package\Uri\Factory;
 
-use Ixocreate\Package\Admin\Config\AdminConfig;
+use Ixocreate\Admin\Package\Config\AdminConfig;
 use Ixocreate\ServiceManager\FactoryInterface;
 use Ixocreate\ServiceManager\ServiceManagerInterface;
-use Ixocreate\Package\Media\Config\MediaConfig;
-use Ixocreate\Package\Media\Delegator\DelegatorSubManager;
-use Ixocreate\Package\Media\MediaPaths;
-use Ixocreate\Package\Media\Uri\Uri;
-use Ixocreate\Package\ProjectUri\ProjectUri;
+use Ixocreate\Media\Package\Config\MediaConfig;
+use Ixocreate\Media\Package\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Package\MediaPaths;
+use Ixocreate\Media\Package\Uri\Uri;
+use Ixocreate\Application\Uri\ApplicationUri;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Asset\UrlPackage;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
@@ -44,7 +44,7 @@ final class UriFactory implements FactoryInterface
         $packages->setDefaultPackage($urlPackage);
 
         $urlPackage = new UrlPackage(
-            (string)$container->get(ProjectUri::class)->getMainUrl() . '/' . MediaPaths::STREAM_PATH,
+            (string)$container->get(Uri::class)->getMainUrl() . '/' . MediaPaths::STREAM_PATH,
             new EmptyVersionStrategy()
         );
         $packages->addPackage('streamMedia', $urlPackage);

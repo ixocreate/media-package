@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\MediaCreateHandler;
+namespace Ixocreate\Media\Package\MediaCreateHandler;
 
-use Ixocreate\Package\Media\MediaCreateHandlerInterface;
+use Ixocreate\Media\Package\MediaCreateHandlerInterface;
 use League\Flysystem\FilesystemInterface;
 
 final class LocalFileHandler implements MediaCreateHandlerInterface

@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Console;
+namespace Ixocreate\Media\Package\Console;
 
 use Ixocreate\CommandBus\CommandBus;
 use Ixocreate\Application\Console\CommandInterface;;
-use Ixocreate\Package\Media\Command\Media\UpdateCommand;
-use Ixocreate\Package\Media\Repository\MediaRepository;
+use Ixocreate\Media\Package\Command\Media\UpdateCommand;
+use Ixocreate\Media\Package\Repository\MediaRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

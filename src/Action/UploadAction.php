@@ -7,14 +7,14 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Action;
+namespace Ixocreate\Media\Package\Action;
 
-use Ixocreate\Package\Admin\Entity\User;
+use Ixocreate\Admin\Package\Entity\User;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Package\Media\Command\Media\CreateCommand;
-use Ixocreate\Package\Media\MediaCreateHandler\UploadHandler;
-use Ixocreate\Package\Admin\Response\ApiErrorResponse;
-use Ixocreate\Package\Admin\Response\ApiSuccessResponse;
+use Ixocreate\Media\Package\Command\Media\CreateCommand;
+use Ixocreate\Media\Package\MediaCreateHandler\UploadHandler;
+use Ixocreate\Admin\Package\Response\ApiErrorResponse;
+use Ixocreate\Admin\Package\Response\ApiSuccessResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

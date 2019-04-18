@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Admin\Config\Client\Provider;
+namespace Ixocreate\Media\Package\Admin\Config\Client\Provider;
 
 use Ixocreate\Admin\ClientConfigProviderInterface;
 use Ixocreate\Admin\UserInterface;
-use Ixocreate\Package\Media\ImageDefinitionInterface;
-use Ixocreate\Package\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Package\ImageDefinitionInterface;
+use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionSubManager;
 
 final class MediaProvider implements ClientConfigProviderInterface
 {

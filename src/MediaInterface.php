@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media;
+namespace Ixocreate\Media\Package;
 
 interface MediaInterface
 {

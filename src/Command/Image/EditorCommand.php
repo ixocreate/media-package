@@ -7,19 +7,19 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Command\Image;
+namespace Ixocreate\Media\Package\Command\Image;
 
-use Ixocreate\Package\CommandBus\Command\AbstractCommand;
-use Ixocreate\Package\Media\ImageDefinitionInterface;
-use Ixocreate\Package\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Package\Media\Config\MediaConfig;
-use Ixocreate\Package\Media\Entity\Media;
-use Ixocreate\Package\Media\Entity\MediaCrop;
-use Ixocreate\Package\Media\Exception\InvalidConfigException;
-use Ixocreate\Package\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Package\Media\Processor\EditorProcessor;
-use Ixocreate\Package\Media\Repository\MediaCropRepository;
-use Ixocreate\Package\Media\Repository\MediaRepository;
+use Ixocreate\CommandBus\Package\Command\AbstractCommand;
+use Ixocreate\Media\Package\ImageDefinitionInterface;
+use Ixocreate\Filesystem\Package\Storage\StorageSubManager;
+use Ixocreate\Media\Package\Config\MediaConfig;
+use Ixocreate\Media\Package\Entity\Media;
+use Ixocreate\Media\Package\Entity\MediaCrop;
+use Ixocreate\Media\Package\Exception\InvalidConfigException;
+use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Package\Processor\EditorProcessor;
+use Ixocreate\Media\Package\Repository\MediaCropRepository;
+use Ixocreate\Media\Package\Repository\MediaRepository;
 use Ramsey\Uuid\Uuid;
 
 final class EditorCommand extends AbstractCommand

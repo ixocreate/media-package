@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Repository;
+namespace Ixocreate\Media\Package\Repository;
 
-use Ixocreate\Package\Media\Entity\MediaCreated;
-use Ixocreate\Package\Database\Repository\AbstractRepository;
+use Ixocreate\Media\Package\Entity\MediaCreated;
+use Ixocreate\Database\Package\Repository\AbstractRepository;
 
 final class MediaCreatedRepository extends AbstractRepository
 {

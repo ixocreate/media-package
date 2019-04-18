@@ -7,14 +7,14 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Processor;
+namespace Ixocreate\Media\Package\Processor;
 
 use Intervention\Image\ImageManager;
-use Ixocreate\Package\Media\ImageDefinitionInterface;
-use Ixocreate\Package\Media\Config\MediaConfig;
-use Ixocreate\Package\Media\Entity\Media;
+use Ixocreate\Media\Package\ImageDefinitionInterface;
+use Ixocreate\Media\Package\Config\MediaConfig;
+use Ixocreate\Media\Package\Entity\Media;
 use Intervention\Image\Size;
-use Ixocreate\Package\Media\MediaPaths;
+use Ixocreate\Media\Package\MediaPaths;
 use League\Flysystem\FilesystemInterface;
 
 final class EditorProcessor

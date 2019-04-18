@@ -7,18 +7,18 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Package\Media\Command\Media;
+namespace Ixocreate\Media\Package\Command\Media;
 
-use Ixocreate\Package\CommandBus\Command\AbstractCommand;
-use Ixocreate\Package\Media\DelegatorInterface;
-use Ixocreate\Package\Media\MediaInterface;
-use Ixocreate\Package\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Package\Media\Config\MediaConfig;
-use Ixocreate\Package\Media\Delegator\DelegatorSubManager;
-use Ixocreate\Package\Media\Exception\InvalidConfigException;
-use Ixocreate\Package\Media\MediaPaths;
-use Ixocreate\Package\Media\Repository\MediaRepository;
-use Ixocreate\Package\Media\Entity\Media;
+use Ixocreate\CommandBus\Package\Command\AbstractCommand;
+use Ixocreate\Media\Package\DelegatorInterface;
+use Ixocreate\Media\Package\MediaInterface;
+use Ixocreate\Filesystem\Package\Storage\StorageSubManager;
+use Ixocreate\Media\Package\Config\MediaConfig;
+use Ixocreate\Media\Package\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Package\Exception\InvalidConfigException;
+use Ixocreate\Media\Package\MediaPaths;
+use Ixocreate\Media\Package\Repository\MediaRepository;
+use Ixocreate\Media\Package\Entity\Media;
 use League\Flysystem\FilesystemInterface;
 
 class UpdateCommand extends AbstractCommand

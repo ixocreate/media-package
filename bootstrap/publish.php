@@ -1,5 +1,5 @@
 <?php
-namespace Ixocreate\Package\Media;
+namespace Ixocreate\Media\Package;
 
 /** @var PublishConfigurator $publish */
 use Ixocreate\Application\Publish\PublishConfigurator;
