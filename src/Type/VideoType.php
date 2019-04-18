@@ -19,7 +19,7 @@ use Ixocreate\Entity\Type\AbstractType;
 use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Media\Uri\MediaUri;
 use Ixocreate\Schema\Elements\VideoElement;
 
 final class VideoType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
@@ -30,7 +30,7 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Ele
     private $mediaType;
 
     /**
-     * @var Uri
+     * @var MediaUri
      */
     private $uri;
 
@@ -39,7 +39,7 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Ele
      */
     private $mediaConfig;
 
-    public function __construct(Uri $uri, MediaConfig $mediaConfig)
+    public function __construct(MediaUri $uri, MediaConfig $mediaConfig)
     {
         $this->uri = $uri;
         $this->mediaConfig = $mediaConfig;

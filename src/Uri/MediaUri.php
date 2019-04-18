@@ -11,14 +11,14 @@ namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
-use Ixocreate\Media\DelegatorInterface;
-use Ixocreate\Media\Delegator\Delegators\Image;
-use Ixocreate\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Handler\HandlerInterface;
+use Ixocreate\Media\Handler\ImageHandler;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
-final class Uri
+final class MediaUri
 {
     /**
      * @var Packages
@@ -31,17 +31,18 @@ final class Uri
     private $adminConfig;
 
     /**
-     * @var DelegatorSubManager
+     * @var MediaHandlerSubManager
      */
     private $delegatorSubManager;
 
     /**
      * ApplicationUri constructor.
+     *
      * @param Packages $packages
      * @param AdminConfig $adminConfig
-     * @param DelegatorSubManager $delegatorSubManager
+     * @param MediaHandlerSubManager $delegatorSubManager
      */
-    public function __construct(Packages $packages, AdminConfig $adminConfig, DelegatorSubManager $delegatorSubManager)
+    public function __construct(Packages $packages, AdminConfig $adminConfig, MediaHandlerSubManager $delegatorSubManager)
     {
         $this->packages = $packages;
         $this->adminConfig = $adminConfig;
@@ -67,9 +68,9 @@ final class Uri
      */
     public function imageUrl(Media $media, string $imageDefinition = null): string
     {
-        /** @var DelegatorInterface $imageDelegator */
-        $imageDelegator = $this->delegatorSubManager->get(Image::serviceName());
-        if (!$imageDelegator->isResponsible($media)) {
+        /** @var HandlerInterface $imageHandler */
+        $imageHandler = $this->delegatorSubManager->get(ImageHandler::serviceName());
+        if (!$imageHandler->isResponsible($media)) {
             $imageDefinition = null;
         }
 

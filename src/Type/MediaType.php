@@ -19,7 +19,7 @@ use Ixocreate\Media\Entity\Media;
 use Ixocreate\Schema\Elements\MediaElement;
 use Ixocreate\Schema\ElementInterface;
 use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Media\Uri\MediaUri;
 
 class MediaType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
@@ -29,16 +29,17 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
     protected $mediaRepository;
 
     /**
-     * @var Uri
+     * @var MediaUri
      */
     protected $uri;
 
     /**
      * ImageType constructor.
+     *
      * @param MediaRepository $mediaRepository
-     * @param Uri $uri
+     * @param MediaUri $uri
      */
-    public function __construct(MediaRepository $mediaRepository, Uri $uri)
+    public function __construct(MediaRepository $mediaRepository, MediaUri $uri)
     {
         $this->mediaRepository = $mediaRepository;
         $this->uri = $uri;

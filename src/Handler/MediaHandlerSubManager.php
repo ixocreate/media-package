@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Delegator;
+namespace Ixocreate\Media\Handler;
 
 use Ixocreate\ServiceManager\SubManager\SubManager;
 
-final class DelegatorSubManager extends SubManager
+final class MediaHandlerSubManager extends SubManager
 {
 }

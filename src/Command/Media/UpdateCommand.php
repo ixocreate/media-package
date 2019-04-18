@@ -10,11 +10,11 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Media;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Media\DelegatorInterface;
+use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Media\MediaInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
@@ -34,7 +34,7 @@ class UpdateCommand extends AbstractCommand
     private $mediaConfig;
 
     /**
-     * @var DelegatorSubManager
+     * @var MediaHandlerSubManager
      */
     private $delegatorSubManager;
 
@@ -65,13 +65,14 @@ class UpdateCommand extends AbstractCommand
 
     /**
      * UpdateCommand constructor.
-     * @param DelegatorSubManager $delegatorSubManager
+     *
+     * @param MediaHandlerSubManager $delegatorSubManager
      * @param StorageSubManager $storageSubManager
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      */
     public function __construct(
-        DelegatorSubManager $delegatorSubManager,
+        MediaHandlerSubManager $delegatorSubManager,
         StorageSubManager $storageSubManager,
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig
@@ -183,7 +184,7 @@ class UpdateCommand extends AbstractCommand
     {
         $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
         foreach ($this->delegatorSubManager->getServices() as $delegatorClassName) {
-            /** @var DelegatorInterface $delegator */
+            /** @var HandlerInterface $delegator */
             $delegator = $this->delegatorSubManager->get($delegatorClassName);
             if ($delegator->isResponsible($media)) {
                 foreach ($delegator->directories() as $directory) {
@@ -215,7 +216,7 @@ class UpdateCommand extends AbstractCommand
          * move output files from delegators as well
          */
         foreach ($this->delegatorSubManager->getServices() as $delegatorClassName) {
-            /** @var DelegatorInterface $delegator */
+            /** @var HandlerInterface $delegator */
             $delegator = $this->delegatorSubManager->get($delegatorClassName);
 
             if (!$delegator->isResponsible($media)) {

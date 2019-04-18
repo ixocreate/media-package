@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Config;
 
+use Ixocreate\Application\Uri\ApplicationUri;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Exception\InvalidExtensionException;
 use Psr\Http\Message\UriInterface;
@@ -32,7 +33,7 @@ final class MediaConfig
     private $uri;
 
     /**
-     * @var Uri
+     * @var ApplicationUri
      */
     private $projectUri;
 
@@ -40,9 +41,9 @@ final class MediaConfig
      * MediaConfig constructor.
      *
      * @param MediaProjectConfig $mediaProjectConfig
-     * @param Uri $projectUri
+     * @param ApplicationUri $projectUri
      */
-    public function __construct(MediaProjectConfig $mediaProjectConfig, Uri $projectUri)
+    public function __construct(MediaProjectConfig $mediaProjectConfig, ApplicationUri $projectUri)
     {
         $this->mediaProjectConfig = $mediaProjectConfig;
         $this->projectUri = $projectUri;

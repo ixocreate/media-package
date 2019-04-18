@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Config\Factory;
 
-use Ixocreate\ServiceManager\FactoryInterface;
-use Ixocreate\ServiceManager\ServiceManagerInterface;
+use Ixocreate\Application\Uri\ApplicationUri;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaProjectConfig;
-use Ixocreate\Application\Uri\ApplicationUri;
+use Ixocreate\ServiceManager\FactoryInterface;
+use Ixocreate\ServiceManager\ServiceManagerInterface;
 
 final class MediaConfigFactory implements FactoryInterface
 {
@@ -21,9 +21,9 @@ final class MediaConfigFactory implements FactoryInterface
      * @param ServiceManagerInterface $container
      * @param $requestedName
      * @param array|null $options
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
      * @return MediaConfig|mixed
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
      */
     public function __invoke(ServiceManagerInterface $container, $requestedName, array $options = null)
     {

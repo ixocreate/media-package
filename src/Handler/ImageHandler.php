@@ -7,18 +7,17 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Delegator\Delegators;
+namespace Ixocreate\Media\Handler;
 
-use Ixocreate\Media\DelegatorInterface;
-use Ixocreate\Media\ImageDefinitionInterface;
-use Ixocreate\Media\MediaInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
 
-final class Image implements DelegatorInterface
+final class ImageHandler implements HandlerInterface
 {
     /**
      * @var array

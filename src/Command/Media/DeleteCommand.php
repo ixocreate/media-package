@@ -10,9 +10,9 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Media;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Media\DelegatorInterface;
+use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\MediaPaths;
@@ -27,7 +27,7 @@ class DeleteCommand extends AbstractCommand
     private $mediaRepository;
 
     /**
-     * @var DelegatorSubManager
+     * @var MediaHandlerSubManager
      */
     private $delegatorSubManager;
 
@@ -45,12 +45,12 @@ class DeleteCommand extends AbstractCommand
      * CreateCommand constructor.
      *
      * @param MediaRepository $mediaRepository
-     * @param DelegatorSubManager $delegatorSubManager
+     * @param MediaHandlerSubManager $delegatorSubManager
      * @param StorageSubManager $storageSubManager
      */
     public function __construct(
         MediaRepository $mediaRepository,
-        DelegatorSubManager $delegatorSubManager,
+        MediaHandlerSubManager $delegatorSubManager,
         StorageSubManager $storageSubManager
     ) {
         $this->mediaRepository = $mediaRepository;
@@ -82,7 +82,7 @@ class DeleteCommand extends AbstractCommand
          * move output files from delegators as well
          */
         foreach ($this->delegatorSubManager->getServices() as $key => $delegatorClassName) {
-            /** @var DelegatorInterface $delegator */
+            /** @var HandlerInterface $delegator */
             $delegator = $this->delegatorSubManager->get($delegatorClassName);
 
             foreach ($delegator->directories() as $directory) {

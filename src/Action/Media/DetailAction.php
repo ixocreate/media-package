@@ -14,14 +14,14 @@ use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Entity\Type\Type;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Media\Delegator\Delegators\Image;
+use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Type\MediaType;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Media\Uri\MediaUri;
 use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,14 +31,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class DetailAction implements MiddlewareInterface
 {
     /**
-     * @var Uri
+     * @var MediaUri
      */
     private $uri;
 
     /**
-     * @var Image
+     * @var ImageHandler
      */
-    private $imageDelegator;
+    private $imageHandler;
 
     /**
      * @var ImageDefinitionSubManager
@@ -62,21 +62,22 @@ final class DetailAction implements MiddlewareInterface
 
     /**
      * DetailAction constructor.
-     * @param Uri $uri
-     * @param Image $imageDelegator
+     *
+     * @param MediaUri $uri
+     * @param ImageHandler $imageHandler
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaCropRepository $mediaCropRepository
      * @param StorageSubManager $storageSubManager
      */
     public function __construct(
-        Uri $uri,
-        Image $imageDelegator,
+        MediaUri $uri,
+        ImageHandler $imageHandler,
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaCropRepository $mediaCropRepository,
         StorageSubManager $storageSubManager
     ) {
         $this->uri = $uri;
-        $this->imageDelegator = $imageDelegator;
+        $this->imageHandler = $imageHandler;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaCropRepository = $mediaCropRepository;
         $this->storageSubManager = $storageSubManager;
@@ -102,7 +103,7 @@ final class DetailAction implements MiddlewareInterface
             return new ApiErrorResponse('given_media_Id_does_not_exist');
         }
 
-        $isCropable = $this->imageDelegator->isResponsible($media->value());
+        $isCropable = $this->imageHandler->isResponsible($media->value());
 
         $result = [
             'media' => $media->jsonSerialize(),

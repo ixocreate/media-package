@@ -7,12 +7,13 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media;
+namespace Ixocreate\Media\Handler;
 
+use Ixocreate\Media\MediaInterface;
 use Ixocreate\ServiceManager\NamedServiceInterface;
 use League\Flysystem\FilesystemInterface;
 
-interface DelegatorInterface extends NamedServiceInterface
+interface HandlerInterface extends NamedServiceInterface
 {
     /**
      * @param MediaInterface $media

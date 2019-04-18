@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Entity;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
-use Ixocreate\Entity\DatabaseEntityInterface;
+use Ixocreate\Database\DatabaseEntityInterface;
 use Ixocreate\Media\MediaInterface;
 use Ixocreate\Type\TypeInterface;
 use Ixocreate\Entity\Definition;

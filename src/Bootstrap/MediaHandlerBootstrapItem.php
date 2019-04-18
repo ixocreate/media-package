@@ -11,24 +11,16 @@ namespace Ixocreate\Media\Bootstrap;
 
 use Ixocreate\Application\Service\Bootstrap\BootstrapItemInterface;
 use Ixocreate\Application\Service\Configurator\ConfiguratorInterface;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionConfigurator;
+use Ixocreate\Media\Handler\MediaHandlerConfigurator;
 
-final class MediaDefinitionBootstrapItem implements BootstrapItemInterface
+final class MediaHandlerBootstrapItem implements BootstrapItemInterface
 {
     /**
-     * @return ConfiguratorInterface
+     * @return mixed
      */
     public function getConfigurator(): ConfiguratorInterface
     {
-        return new ImageDefinitionConfigurator();
-    }
-
-    /**
-     * @return string
-     */
-    public function getVariableName(): string
-    {
-        return 'imageDefinition';
+        return new MediaHandlerConfigurator();
     }
 
     /**
@@ -36,6 +28,14 @@ final class MediaDefinitionBootstrapItem implements BootstrapItemInterface
      */
     public function getFileName(): string
     {
-        return 'media-definition.php';
+        return 'media-handler.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function getVariableName(): string
+    {
+        return 'media';
     }
 }

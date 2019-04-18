@@ -12,7 +12,7 @@ namespace Ixocreate\Media\Console;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Entity\EntityCollection;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Media\Delegator\Delegators\Image;
+use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\MediaPaths;
@@ -48,9 +48,9 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     private $mediaRepository;
 
     /**
-     * @var Image
+     * @var ImageHandler
      */
-    private $imageDelegator;
+    private $imageHandler;
 
     /**
      * @var StorageSubManager
@@ -64,24 +64,25 @@ final class RecreateImageDefinition extends Command implements CommandInterface
 
     /**
      * RefactorImageDefinition constructor.
+     *
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
      * @param MediaRepository $mediaRepository
-     * @param Image $imageDelegator
+     * @param ImageHandler $imageHandler
      * @param StorageSubManager $storageSubManager
      */
     public function __construct(
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaConfig $mediaConfig,
         MediaRepository $mediaRepository,
-        Image $imageDelegator,
+        ImageHandler $imageHandler,
         StorageSubManager $storageSubManager
     ) {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->mediaRepository = $mediaRepository;
-        $this->imageDelegator = $imageDelegator;
+        $this->imageHandler = $imageHandler;
         $this->storageSubManager = $storageSubManager;
     }
 
@@ -235,7 +236,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                 !$this->storage->has(MediaPaths::PUBLIC_PATH . $imageDefinition->directory() . '/' . $media->basePath() . $media->filename()) &&
                 !$this->storage->has(MediaPaths::PRIVATE_PATH . $imageDefinition->directory() . '/' . $media->basePath() . $media->filename())
             ) {
-                if (!$this->imageDelegator->isResponsible($media)) {
+                if (!$this->imageHandler->isResponsible($media)) {
                     continue;
                 }
                 $mediaCollection [] = $media;
@@ -307,7 +308,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $array = $mediaEntityCollection->toArray();
 
         foreach ($array as $media) {
-            if (!$this->imageDelegator->isResponsible($media)) {
+            if (!$this->imageHandler->isResponsible($media)) {
                 continue;
             }
 

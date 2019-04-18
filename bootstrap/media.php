@@ -6,6 +6,7 @@ namespace Ixocreate\Media;
 use Ixocreate\Media\Config\MediaConfigurator;
 
 /** @var MediaConfigurator $media */
+
 $media->setImageWhitelist([
     'image/jpeg',
     'image/gif',

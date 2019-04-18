@@ -12,11 +12,11 @@ namespace Ixocreate\Media\Command\Media;
 use Cocur\Slugify\Slugify;
 use Ixocreate\Admin\Entity\User;
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Media\DelegatorInterface;
+use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Media\MediaCreateHandlerInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Exception\FileDuplicateException;
@@ -40,7 +40,7 @@ class CreateCommand extends AbstractCommand
     private $mediaRepository;
 
     /**
-     * @var DelegatorSubManager
+     * @var MediaHandlerSubManager
      */
     private $delegatorSubManager;
 
@@ -89,14 +89,14 @@ class CreateCommand extends AbstractCommand
      *
      * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
-     * @param DelegatorSubManager $delegatorSubManager
+     * @param MediaHandlerSubManager $delegatorSubManager
      * @param MediaConfig $mediaConfig
      * @param StorageSubManager $storageSubManager
      */
     public function __construct(
         MediaCreatedRepository $mediaCreatedRepository,
         MediaRepository $mediaRepository,
-        DelegatorSubManager $delegatorSubManager,
+        MediaHandlerSubManager $delegatorSubManager,
         MediaConfig $mediaConfig,
         StorageSubManager $storageSubManager
     ) {
@@ -178,7 +178,7 @@ class CreateCommand extends AbstractCommand
         $this->mediaRepository->save($media);
 
         foreach ($this->delegatorSubManager->getServiceManagerConfig()->getNamedServices() as $name => $delegatorClassName) {
-            /** @var DelegatorInterface $delegator */
+            /** @var HandlerInterface $delegator */
             $delegator = $this->delegatorSubManager->get($delegatorClassName);
             if (!$delegator->isResponsible($media)) {
                 continue;

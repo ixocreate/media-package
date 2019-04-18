@@ -18,7 +18,7 @@ use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Repository\MediaCreatedRepository;
 use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Media\Uri\MediaUri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -32,7 +32,7 @@ final class IndexAction implements MiddlewareInterface
     private $mediaRepository;
 
     /**
-     * @var Uri
+     * @var MediaUri
      */
     private $uri;
 
@@ -48,14 +48,15 @@ final class IndexAction implements MiddlewareInterface
 
     /**
      * IndexAction constructor.
+     *
      * @param MediaRepository $mediaRepository
-     * @param Uri $uri
+     * @param MediaUri $uri
      * @param MediaConfig $mediaConfig
      * @param MediaCreatedRepository $mediaCreatedRepository
      */
     public function __construct(
         MediaRepository $mediaRepository,
-        Uri $uri,
+        MediaUri $uri,
         MediaConfig $mediaConfig,
         MediaCreatedRepository $mediaCreatedRepository
     ) {
