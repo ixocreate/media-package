@@ -7,16 +7,16 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\Delegator\Delegators;
+namespace Ixocreate\Media\Delegator\Delegators;
 
-use Ixocreate\Media\Package\DelegatorInterface;
-use Ixocreate\Media\Package\ImageDefinitionInterface;
-use Ixocreate\Media\Package\MediaInterface;
-use Ixocreate\Filesystem\Package\Storage\StorageSubManager;
-use Ixocreate\Media\Package\Config\MediaConfig;
-use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\Package\MediaPaths;
-use Ixocreate\Media\Package\Processor\ImageProcessor;
+use Ixocreate\Media\DelegatorInterface;
+use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\MediaInterface;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Processor\ImageProcessor;
 
 final class Image implements DelegatorInterface
 {

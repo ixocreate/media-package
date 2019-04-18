@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\Config;
+namespace Ixocreate\Media\Config;
 
-use Ixocreate\Media\Package\Exception\InvalidConfigException;
-use Ixocreate\Media\Package\Exception\InvalidExtensionException;
+use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\Exception\InvalidExtensionException;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Uri;
 
@@ -151,8 +151,8 @@ final class MediaConfig
     }
 
     /**
-     * @throws \Ixocreate\Media\Package\Exception\InvalidExtensionException
-     * @throws \Ixocreate\Media\Package\Exception\InvalidConfigException
+     * @throws \Ixocreate\Media\Exception\InvalidExtensionException
+     * @throws \Ixocreate\Media\Exception\InvalidConfigException
      */
     private function assertDriver(): void
     {

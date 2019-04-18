@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package;
+namespace Ixocreate\Media;
 
 /** @var PipeConfigurator $pipe */
 
-use Ixocreate\Admin\Package\Config\AdminConfig;
+use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Application\Http\Pipe\GroupPipeConfigurator;
 use Ixocreate\Application\Http\Pipe\PipeConfigurator;
-use Ixocreate\Media\Package\Action\Image\EditorAction;
-use Ixocreate\Media\Package\Action\Media\DeleteAction;
-use Ixocreate\Media\Package\Action\Media\DetailAction;
-use Ixocreate\Media\Package\Action\Media\IndexAction;
-use Ixocreate\Media\Package\Action\Media\UpdateAction;
-use Ixocreate\Media\Package\Action\StreamAction;
-use Ixocreate\Media\Package\Action\UploadAction;
+use Ixocreate\Media\Action\Image\EditorAction;
+use Ixocreate\Media\Action\Media\DeleteAction;
+use Ixocreate\Media\Action\Media\DetailAction;
+use Ixocreate\Media\Action\Media\IndexAction;
+use Ixocreate\Media\Action\Media\UpdateAction;
+use Ixocreate\Media\Action\StreamAction;
+use Ixocreate\Media\Action\UploadAction;
 
 $pipe->get('/media/stream/{token}', StreamAction::class, 'media.stream');
 

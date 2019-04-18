@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package;
+namespace Ixocreate\Media;
 
-use Ixocreate\Media\Package\Repository\MediaCreatedRepository;
-use Ixocreate\Media\Package\Repository\MediaCropRepository;
-use Ixocreate\Media\Package\Repository\MediaRepository;
+use Ixocreate\Media\Repository\MediaCreatedRepository;
+use Ixocreate\Media\Repository\MediaCropRepository;
+use Ixocreate\Media\Repository\MediaRepository;
 
-/** @var \Ixocreate\Database\Package\Repository\RepositoryConfigurator $repository */
+/** @var \Ixocreate\Database\Repository\RepositoryConfigurator $repository */
 $repository->addRepository(MediaRepository::class);
 $repository->addRepository(MediaCropRepository::class);
 $repository->addRepository(MediaCreatedRepository::class);

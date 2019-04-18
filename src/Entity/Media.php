@@ -7,18 +7,18 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\Entity;
+namespace Ixocreate\Media\Entity;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Ixocreate\Entity\DatabaseEntityInterface;
-use Ixocreate\Media\Package\MediaInterface;
-use Ixocreate\Type\Package\TypeInterface;
-use Ixocreate\Entity\Package\Definition;
-use Ixocreate\Entity\Package\DefinitionCollection;
-use Ixocreate\Entity\Package\EntityInterface;
-use Ixocreate\Entity\Package\EntityTrait;
-use Ixocreate\Type\Package\Entity\UuidType;
-use Ixocreate\Type\Package\Entity\DateTimeType;
+use Ixocreate\Media\MediaInterface;
+use Ixocreate\Type\TypeInterface;
+use Ixocreate\Entity\Definition;
+use Ixocreate\Entity\DefinitionCollection;
+use Ixocreate\Entity\EntityInterface;
+use Ixocreate\Entity\EntityTrait;
+use Ixocreate\Type\Entity\UuidType;
+use Ixocreate\Type\Entity\DateTimeType;
 
 final class Media implements EntityInterface, DatabaseEntityInterface, MediaInterface
 {

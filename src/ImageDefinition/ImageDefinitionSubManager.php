@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\ImageDefinition;
+namespace Ixocreate\Media\ImageDefinition;
 
 use Ixocreate\ServiceManager\SubManager\SubManager;
 

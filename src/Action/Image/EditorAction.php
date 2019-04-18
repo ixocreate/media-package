@@ -7,19 +7,19 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\Action\Image;
+namespace Ixocreate\Media\Action\Image;
 
-use Ixocreate\Admin\Package\Response\ApiErrorResponse;
-use Ixocreate\Admin\Package\Response\ApiSuccessResponse;
+use Ixocreate\Admin\Response\ApiErrorResponse;
+use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Media\Package\ImageDefinitionInterface;
-use Ixocreate\Filesystem\Package\Storage\StorageSubManager;
-use Ixocreate\Media\Package\Command\Image\EditorCommand;
-use Ixocreate\Media\Package\Config\MediaConfig;
-use Ixocreate\Media\Package\Entity\Media;
-use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\Package\Repository\MediaCropRepository;
-use Ixocreate\Media\Package\Repository\MediaRepository;
+use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Media\Command\Image\EditorCommand;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Repository\MediaCropRepository;
+use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

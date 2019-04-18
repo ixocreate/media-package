@@ -7,15 +7,15 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\Entity;
+namespace Ixocreate\Media\Entity;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Ixocreate\Entity\DatabaseEntityInterface;
-use Ixocreate\Entity\Package\DefinitionCollection;
-use Ixocreate\Entity\Package\EntityInterface;
-use Ixocreate\Entity\Package\EntityTrait;
-use Ixocreate\Entity\Package\Definition;
-use Ixocreate\Type\Package\Entity\UuidType;
+use Ixocreate\Entity\DefinitionCollection;
+use Ixocreate\Entity\EntityInterface;
+use Ixocreate\Entity\EntityTrait;
+use Ixocreate\Entity\Definition;
+use Ixocreate\Type\Entity\UuidType;
 
 final class MediaCreated implements EntityInterface, DatabaseEntityInterface
 {

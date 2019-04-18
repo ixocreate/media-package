@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\Exception;
+namespace Ixocreate\Media\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {

@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Ixocreate\\Media\\Package\\": "src/"
+            "Ixocreate\\Media\\": "src/"
         }
     },
     "autoload-dev": {

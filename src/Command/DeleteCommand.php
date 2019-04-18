@@ -7,14 +7,14 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\Command;
+namespace Ixocreate\Media\Command;
 
-use Ixocreate\CommandBus\Package\Command\AbstractCommand;
-use Ixocreate\Media\Package\Config\MediaConfig;
-use Ixocreate\Media\Package\Delegator\DelegatorInterface;
-use Ixocreate\Media\Package\Delegator\DelegatorSubManager;
-use Ixocreate\Media\Package\Entity\Media;
-use Ixocreate\Media\Package\Repository\MediaRepository;
+use Ixocreate\CommandBus\Command\AbstractCommand;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Delegator\DelegatorInterface;
+use Ixocreate\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Repository\MediaRepository;
 
 class DeleteCommand extends AbstractCommand
 {

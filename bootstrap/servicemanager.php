@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package;
+namespace Ixocreate\Media;
 
-use Ixocreate\Media\Package\Uri\Factory\UriFactory;
-use Ixocreate\Media\Package\Uri\Uri;
+use Ixocreate\Media\Uri\Factory\UriFactory;
+use Ixocreate\Media\Uri\Uri;
 use Ixocreate\ServiceManager\ServiceManagerConfigurator;
-use Ixocreate\Media\Package\Config\MediaConfig;
-use Ixocreate\Media\Package\Config\Factory\MediaConfigFactory;
-use Ixocreate\Media\Package\Delegator\DelegatorSubManager;
-use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Config\Factory\MediaConfigFactory;
+use Ixocreate\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 
 /** @var ServiceManagerConfigurator $serviceManager */
 $serviceManager->addFactory(MediaConfig::class, MediaConfigFactory::class);

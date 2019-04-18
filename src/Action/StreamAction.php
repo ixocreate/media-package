@@ -7,16 +7,16 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\Action;
+namespace Ixocreate\Media\Action;
 
 use Firebase\JWT\JWT;
-use Ixocreate\Admin\Package\Config\AdminConfig;
-use Ixocreate\Admin\Package\Response\ApiErrorResponse;
+use Ixocreate\Admin\Config\AdminConfig;
+use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Application\Http\ErrorHandling\Response\NotFoundHandler;
-use Ixocreate\Filesystem\Package\Storage\StorageSubManager;
-use Ixocreate\Media\Package\Entity\Media;
-use Ixocreate\Media\Package\MediaPaths;
-use Ixocreate\Media\Package\Repository\MediaRepository;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Repository\MediaRepository;
 use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

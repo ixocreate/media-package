@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package;
+namespace Ixocreate\Media;
 
-use Ixocreate\Media\Package\Config\MediaConfigurator;
+use Ixocreate\Media\Config\MediaConfigurator;
 
 /** @var MediaConfigurator $media */
 $media->setImageWhitelist([
