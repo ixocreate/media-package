@@ -142,8 +142,8 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
      */
     public function serialize()
     {
-        return serialize([
-            'mediaType' => $this->mediaType
+        return \serialize([
+            'mediaType' => $this->mediaType,
         ]);
     }
 
@@ -157,7 +157,7 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
         $this->uri = $type->uri;
         $this->mediaConfig = $type->mediaConfig;
 
-        $unserialized = unserialize($serialized);
+        $unserialized = \unserialize($serialized);
         if (!empty($unserialized['mediaType']) && $unserialized['mediaType'] instanceof MediaType) {
             $this->mediaType = $unserialized['mediaType'];
         }

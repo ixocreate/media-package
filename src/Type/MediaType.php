@@ -137,7 +137,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
         $this->uri = $mediaType->uri;
 
         $this->value = null;
-        $unserialized = unserialize($serialized);
+        $unserialized = \unserialize($serialized);
         if (!empty($unserialized['value']) && $unserialized['value'] instanceof Media) {
             $this->value = $unserialized['value'];
         }

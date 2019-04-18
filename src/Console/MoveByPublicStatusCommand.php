@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Package\Console;
 
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Application\Console\CommandInterface;;
+use Ixocreate\Application\Console\CommandInterface;
 use Ixocreate\Media\Package\Command\Media\UpdateCommand;
 use Ixocreate\Media\Package\Repository\MediaRepository;
 use Symfony\Component\Console\Command\Command;

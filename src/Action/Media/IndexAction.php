@@ -12,7 +12,7 @@ namespace Ixocreate\Media\Package\Action\Media;
 use Doctrine\Common\Collections\Criteria;
 use Ixocreate\Admin\Package\Entity\User;
 use Ixocreate\Admin\Package\Response\ApiSuccessResponse;
-use Ixocreate\Admin\RoleInterface;
+use Ixocreate\Admin\Package\RoleInterface;
 use Ixocreate\Media\Package\Config\MediaConfig;
 use Ixocreate\Media\Package\Entity\Media;
 use Ixocreate\Media\Package\Entity\MediaCreated;

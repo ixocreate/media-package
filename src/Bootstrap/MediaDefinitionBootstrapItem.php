@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Package\BootstrapItem;
+namespace Ixocreate\Media\Package\Bootstrap;
 
-use Ixocreate\Application\Bootstrap\BootstrapItemInterface;
-use Ixocreate\Application\ConfiguratorInterface;
+use Ixocreate\Application\Service\Bootstrap\BootstrapItemInterface;
+use Ixocreate\Application\Service\Configurator\ConfiguratorInterface;
 use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionConfigurator;
 
-final class ImageDefinitionBootstrapItem implements BootstrapItemInterface
+final class MediaDefinitionBootstrapItem implements BootstrapItemInterface
 {
     /**
      * @return ConfiguratorInterface
@@ -36,6 +36,6 @@ final class ImageDefinitionBootstrapItem implements BootstrapItemInterface
      */
     public function getFileName(): string
     {
-        return 'image-definition.php';
+        return 'media-definition.php';
     }
 }

@@ -14,7 +14,7 @@ use Ixocreate\Entity\DatabaseEntityInterface;
 use Ixocreate\Entity\Package\DefinitionCollection;
 use Ixocreate\Entity\Package\EntityInterface;
 use Ixocreate\Entity\Package\EntityTrait;
-use Ixocreate\Entity\Package\Entity\Definition;
+use Ixocreate\Entity\Package\Definition;
 use Ixocreate\Type\Package\Entity\UuidType;
 
 final class MediaCreated implements EntityInterface, DatabaseEntityInterface

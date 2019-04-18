@@ -38,6 +38,7 @@ class MediaProjectConfig implements SerializableServiceInterface
 
     /**
      * MediaProjectConfig constructor.
+     *
      * @param MediaConfigurator $mediaConfigurator
      */
     public function __construct(MediaConfigurator $mediaConfigurator)

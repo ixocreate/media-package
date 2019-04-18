@@ -16,7 +16,6 @@ use Ixocreate\Media\Package\Config\MediaConfig;
 use Ixocreate\Media\Package\Delegator\DelegatorSubManager;
 use Ixocreate\Media\Package\MediaPaths;
 use Ixocreate\Media\Package\Uri\Uri;
-use Ixocreate\Application\Uri\ApplicationUri;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Asset\UrlPackage;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;

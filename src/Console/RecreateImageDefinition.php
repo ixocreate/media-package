@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Package\Console;
 
 use Ixocreate\Media\Package\ImageDefinitionInterface;
-use Ixocreate\Entity\Package\Entity\EntityCollection;
+use Ixocreate\Entity\Package\EntityCollection;
 use Ixocreate\Filesystem\Package\Storage\StorageSubManager;
 use Ixocreate\Media\Package\Delegator\Delegators\Image;
 use Ixocreate\Media\Package\Entity\Media;
@@ -18,7 +18,7 @@ use Ixocreate\Media\Package\Exception\InvalidConfigException;
 use Ixocreate\Media\Package\MediaPaths;
 use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Console\Command\Command;
-use Ixocreate\Application\Console\CommandInterface;;
+use Ixocreate\Application\Console\CommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionSubManager;

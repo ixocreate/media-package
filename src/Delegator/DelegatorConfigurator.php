@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Package\Delegator;
 
-use Ixocreate\Application\ConfiguratorInterface;
-use Ixocreate\Application\ServiceRegistryInterface;
+use Ixocreate\Application\Service\Configurator\ConfiguratorInterface;
+use Ixocreate\Application\Service\Registry\ServiceRegistryInterface;
 use Ixocreate\Media\Package\DelegatorInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
-use Ixocreate\ServiceManager\SubManager\SubManagerConfigurator;
+use Ixocreate\Application\Service\SubManagerConfigurator;
 
 final class DelegatorConfigurator implements ConfiguratorInterface
 {

@@ -11,7 +11,7 @@ namespace Ixocreate\Media\Package\Console;
 
 use Ixocreate\Media\Package\ImageDefinition\ImageDefinitionInterface;
 use Symfony\Component\Console\Command\Command;
-use Ixocreate\Application\Console\CommandInterface;;
+use Ixocreate\Application\Console\CommandInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

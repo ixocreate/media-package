@@ -9,9 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Package\Config;
 
-use Ixocreate\Media\Package\Exception\InvalidExtensionException;
 use Ixocreate\Media\Package\Exception\InvalidConfigException;
-use Ixocreate\Application\Uri\ApplicationUri;
+use Ixocreate\Media\Package\Exception\InvalidExtensionException;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Uri;
 
@@ -140,7 +139,10 @@ final class MediaConfig
             /** @var Uri $projectUri */
             $projectUri = $this->projectUri;
 
-            $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim($uri->getPath(), '/'));
+            $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim(
+                $uri->getPath(),
+                '/'
+            ));
             $uri = $uri->withHost($projectUri->getMainUri()->getHost());
             $uri = $uri->withScheme($projectUri->getMainUri()->getScheme());
             $uri = $uri->withPort($projectUri->getMainUri()->getPort());

@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Package\Config;
 
-use Ixocreate\Application\ConfiguratorInterface;
-use Ixocreate\Application\ServiceRegistryInterface;
+use Ixocreate\Application\Service\Configurator\ConfiguratorInterface;
+use Ixocreate\Application\Service\Registry\ServiceRegistryInterface;
 use Zend\Diactoros\Uri;
 
 class MediaConfigurator implements ConfiguratorInterface

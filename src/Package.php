@@ -9,13 +9,13 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Package;
 
-use Ixocreate\Application\ConfiguratorRegistryInterface;
-use Ixocreate\Application\Package\PackageInterface;
-use Ixocreate\Application\ServiceRegistryInterface;
-use Ixocreate\ServiceManager\ServiceManagerInterface;
-use Ixocreate\Media\Package\Bootstrap\DelegatorBootstrapItem;
-use Ixocreate\Media\Package\Bootstrap\ImageDefinitionBootstrapItem;
+use Ixocreate\Application\PackageInterface;
+use Ixocreate\Application\Service\Configurator\ConfiguratorRegistryInterface;
+use Ixocreate\Application\Service\Registry\ServiceRegistryInterface;
 use Ixocreate\Media\Package\Bootstrap\MediaBootstrapItem;
+use Ixocreate\Media\Package\Bootstrap\MediaDefinitionBootstrapItem;
+use Ixocreate\Media\Package\Bootstrap\MediaDelegatorBootstrapItem;
+use Ixocreate\ServiceManager\ServiceManagerInterface;
 
 final class Package implements PackageInterface
 {
@@ -70,8 +70,8 @@ final class Package implements PackageInterface
     public function getBootstrapItems(): ?array
     {
         return [
-            DelegatorBootstrapItem::class,
-            ImageDefinitionBootstrapItem::class,
+            MediaDelegatorBootstrapItem::class,
+            MediaDefinitionBootstrapItem::class,
             MediaBootstrapItem::class,
         ];
     }
