@@ -12,12 +12,12 @@ namespace Ixocreate\Media\Action\Image;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Command\Image\EditorCommand;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
@@ -59,6 +59,7 @@ final class EditorAction implements MiddlewareInterface
 
     /**
      * EditorAction constructor.
+     *
      * @param CommandBus $commandBus
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig

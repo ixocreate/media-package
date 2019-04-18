@@ -11,9 +11,9 @@ namespace Ixocreate\Media\Command;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Repository\MediaRepository;
 
 class DeleteCommand extends AbstractCommand

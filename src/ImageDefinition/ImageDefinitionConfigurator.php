@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\ImageDefinition;
 
-use Ixocreate\Application\Service\Configurator\ConfiguratorInterface;
-use Ixocreate\Application\Service\Registry\ServiceRegistryInterface;
+use Ixocreate\Application\ConfiguratorInterface;
+use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Application\Service\SubManagerConfigurator;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
-use Ixocreate\Application\Service\Manager\SubManagerConfigurator;
 
 final class ImageDefinitionConfigurator implements ConfiguratorInterface
 {
@@ -27,7 +27,10 @@ final class ImageDefinitionConfigurator implements ConfiguratorInterface
      */
     public function __construct()
     {
-        $this->subManagerConfigurator = new SubManagerConfigurator(ImageDefinitionSubManager::class, ImageDefinitionInterface::class);
+        $this->subManagerConfigurator = new SubManagerConfigurator(
+            ImageDefinitionSubManager::class,
+            ImageDefinitionInterface::class
+        );
     }
 
     /**

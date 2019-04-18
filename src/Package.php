@@ -9,12 +9,11 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
+use Ixocreate\Application\ConfiguratorRegistryInterface;
 use Ixocreate\Application\PackageInterface;
-use Ixocreate\Application\Service\Configurator\ConfiguratorRegistryInterface;
-use Ixocreate\Application\Service\Registry\ServiceRegistryInterface;
-use Ixocreate\Media\Bootstrap\MediaBootstrapItem;
-use Ixocreate\Media\Bootstrap\ImageDefinitionBootstrapItem;
-use Ixocreate\Media\Bootstrap\MediaHandlerBootstrapItem;
+use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Media\Handler\MediaHandlerBootstrapItem;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionBootstrapItem;
 use Ixocreate\ServiceManager\ServiceManagerInterface;
 
 final class Package implements PackageInterface

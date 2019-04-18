@@ -34,6 +34,7 @@ final class UpdateAction implements MiddlewareInterface
 
     /**
      * UpdateAction constructor.
+     *
      * @param MediaRepository $mediaRepository
      * @param CommandBus $commandBus
      */

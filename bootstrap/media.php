@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
-use Ixocreate\Media\Config\MediaConfigurator;
-
 /** @var MediaConfigurator $media */
 
 $media->setImageWhitelist([
@@ -14,6 +12,7 @@ $media->setImageWhitelist([
     'image/svg+xml',
     'image/svg',
 ]);
+
 $media->setVideoWhitelist([
     'video/mpeg',
     'video/mp4',
@@ -23,11 +22,13 @@ $media->setVideoWhitelist([
     'video/x-msvideo',
     'video/x-wav',
 ]);
+
 $media->setAudioWhitelist([
     'audio/basic',
     'audio/mid',
     'audio/mp3',
 ]);
+
 $media->setDocumentWhitelist([
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/msword',
@@ -68,6 +69,7 @@ $media->setDocumentWhitelist([
     'text/plain',
     'application/rtf',
 ]);
+
 $media->setGlobalWhitelist([
 
 ]);

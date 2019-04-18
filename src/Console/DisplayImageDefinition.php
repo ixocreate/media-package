@@ -9,13 +9,13 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Console;
 
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
-use Symfony\Component\Console\Command\Command;
 use Ixocreate\Application\Console\CommandInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 
 final class DisplayImageDefinition extends Command implements CommandInterface
 {
@@ -26,6 +26,7 @@ final class DisplayImageDefinition extends Command implements CommandInterface
 
     /**
      * RefactorImageDefinition constructor.
+     *
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      */
     public function __construct(
@@ -63,8 +64,7 @@ final class DisplayImageDefinition extends Command implements CommandInterface
         $table = new Table($output);
         $table
             ->setHeaders(['Name', 'Width', 'Height', 'Mode', 'Upscale', 'directory'])
-            ->setRows($rows)
-        ;
+            ->setRows($rows);
         $table->render();
     }
 

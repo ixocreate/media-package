@@ -23,7 +23,7 @@ final class MediaConfig
     private $driver;
 
     /**
-     * @var MediaProjectConfig
+     * @var MediaPackageConfig
      */
     private $mediaProjectConfig;
 
@@ -40,10 +40,10 @@ final class MediaConfig
     /**
      * MediaConfig constructor.
      *
-     * @param MediaProjectConfig $mediaProjectConfig
+     * @param MediaPackageConfig $mediaProjectConfig
      * @param ApplicationUri $projectUri
      */
-    public function __construct(MediaProjectConfig $mediaProjectConfig, ApplicationUri $projectUri)
+    public function __construct(MediaPackageConfig $mediaProjectConfig, ApplicationUri $projectUri)
     {
         $this->mediaProjectConfig = $mediaProjectConfig;
         $this->projectUri = $projectUri;
@@ -143,7 +143,7 @@ final class MediaConfig
             $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim(
                 $uri->getPath(),
                 '/'
-            ));
+                ));
             $uri = $uri->withHost($projectUri->getMainUri()->getHost());
             $uri = $uri->withScheme($projectUri->getMainUri()->getScheme());
             $uri = $uri->withPort($projectUri->getMainUri()->getPort());

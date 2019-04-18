@@ -1,9 +1,11 @@
 <?php
+
 namespace Ixocreate\Media;
 
-/** @var \Ixocreate\Admin\Config\AdminConfigurator $admin */
-
+use Ixocreate\Admin\AdminConfigurator;
 use Ixocreate\Media\Admin\Config\Client\Provider\MediaProvider;
+
+/** @var AdminConfigurator $admin */
 
 $admin->addClientProvider(MediaProvider::class);
 

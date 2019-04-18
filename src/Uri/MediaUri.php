@@ -11,10 +11,10 @@ namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
+use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
@@ -42,8 +42,11 @@ final class MediaUri
      * @param AdminConfig $adminConfig
      * @param MediaHandlerSubManager $delegatorSubManager
      */
-    public function __construct(Packages $packages, AdminConfig $adminConfig, MediaHandlerSubManager $delegatorSubManager)
-    {
+    public function __construct(
+        Packages $packages,
+        AdminConfig $adminConfig,
+        MediaHandlerSubManager $delegatorSubManager
+    ) {
         $this->packages = $packages;
         $this->adminConfig = $adminConfig;
         $this->delegatorSubManager = $delegatorSubManager;

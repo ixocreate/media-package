@@ -10,13 +10,13 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Image;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCrop;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\Processor\EditorProcessor;
 use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Repository\MediaRepository;
@@ -84,9 +84,15 @@ final class EditorCommand extends AbstractCommand
 
         $mediaCrop = null;
 
-        if (!empty($this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]))) {
+        if (!empty($this->mediaCropRepository->findOneBy([
+            'mediaId' => $media->id(),
+            'imageDefinition' => $imageDefinition::serviceName(),
+        ]))) {
             /** @var MediaCrop $mediaCrop */
-            $mediaCrop = $this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+            $mediaCrop = $this->mediaCropRepository->findOneBy([
+                'mediaId' => $media->id(),
+                'imageDefinition' => $imageDefinition::serviceName(),
+            ]);
 
             if ($mediaCrop::getDefinitions()->has('updatedAt')) {
                 $mediaCrop = $mediaCrop->with('updatedAt', new \DateTime());
@@ -97,7 +103,10 @@ final class EditorCommand extends AbstractCommand
             }
         }
 
-        if (empty($this->mediaCropRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]))) {
+        if (empty($this->mediaCropRepository->findOneBy([
+            'mediaId' => $media->id(),
+            'imageDefinition' => $imageDefinition::serviceName(),
+        ]))) {
             $mediaCrop = new MediaCrop([
                 'id' => Uuid::uuid4(),
                 'mediaId' => $media->id(),

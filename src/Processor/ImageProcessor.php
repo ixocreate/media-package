@@ -9,12 +9,12 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Processor;
 
+use Intervention\Image\Constraint;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
+use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaInterface;
-use Ixocreate\Media\Config\MediaConfig;
-use Intervention\Image\Constraint;
 use Ixocreate\Media\MediaPaths;
 use League\Flysystem\FilesystemInterface;
 
@@ -52,6 +52,7 @@ final class ImageProcessor
 
     /**
      * ImageProcessor constructor.
+     *
      * @param MediaInterface $media
      * @param ImageDefinitionInterface $imageDefinition
      * @param MediaConfig $mediaConfig
@@ -151,12 +152,16 @@ final class ImageProcessor
         /** @var $definitionWidth int */
         /** @var $definitionHeight int */
         /** @var $definitionUpscale bool */
-        $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-            if ($definitionUpscale === false) {
-                $constraint->upsize();
+        $image->resize(
+            $definitionWidth,
+            $definitionHeight,
+            function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                if ($definitionUpscale === false) {
+                    $constraint->upsize();
+                }
+                $constraint->aspectRatio();
             }
-            $constraint->aspectRatio();
-        });
+        );
     }
 
     /**
@@ -170,11 +175,15 @@ final class ImageProcessor
         /** @var $definitionHeight int */
         /** @var $definitionUpscale bool */
         if ($definitionWidth != null && $definitionHeight != null) {
-            $image->fit($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-                if ($definitionUpscale === false) {
-                    $constraint->upsize();
+            $image->fit(
+                $definitionWidth,
+                $definitionHeight,
+                function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                    if ($definitionUpscale === false) {
+                        $constraint->upsize();
+                    }
                 }
-            });
+            );
         }
     }
 
@@ -188,12 +197,16 @@ final class ImageProcessor
         /** @var $definitionWidth int */
         /** @var $definitionHeight int */
         /** @var $definitionUpscale bool */
-        $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-            if ($definitionUpscale === false) {
-                $constraint->upsize();
+        $image->resize(
+            $definitionWidth,
+            $definitionHeight,
+            function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                if ($definitionUpscale === false) {
+                    $constraint->upsize();
+                }
+                $constraint->aspectRatio();
             }
-            $constraint->aspectRatio();
-        });
+        );
 
         if (($image->width() != $definitionWidth) || ($image->height() != $definitionHeight)) {
             $image->resizeCanvas($definitionWidth, $definitionHeight);

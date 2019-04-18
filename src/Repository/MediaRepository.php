@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Repository;
 
-use Ixocreate\Media\Entity\Media;
 use Ixocreate\Database\Repository\AbstractRepository;
+use Ixocreate\Media\Entity\Media;
 
 final class MediaRepository extends AbstractRepository
 {

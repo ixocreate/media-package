@@ -27,9 +27,9 @@ final class MediaUriFactory implements FactoryInterface
      * @param ServiceManagerInterface $container
      * @param $requestedName
      * @param array|null $options
-     * @return MediaUri|mixed
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \Psr\Container\ContainerExceptionInterface
+     * @return MediaUri|mixed
      */
     public function __invoke(ServiceManagerInterface $container, $requestedName, array $options = null)
     {

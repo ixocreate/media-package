@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Handler;
 
-use Ixocreate\Application\Service\Configurator\ConfiguratorInterface;
-use Ixocreate\Application\Service\Registry\ServiceRegistryInterface;
+use Ixocreate\Application\ConfiguratorInterface;
+use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Application\Service\SubManagerConfigurator;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
-use Ixocreate\Application\Service\Manager\SubManagerConfigurator;
 
 final class MediaHandlerConfigurator implements ConfiguratorInterface
 {
@@ -26,7 +26,10 @@ final class MediaHandlerConfigurator implements ConfiguratorInterface
      */
     public function __construct()
     {
-        $this->subManagerConfigurator = new SubManagerConfigurator(MediaHandlerSubManager::class, HandlerInterface::class);
+        $this->subManagerConfigurator = new SubManagerConfigurator(
+            MediaHandlerSubManager::class,
+            HandlerInterface::class
+        );
     }
 
     /**

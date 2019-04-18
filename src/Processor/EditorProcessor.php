@@ -10,10 +10,9 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Processor;
 
 use Intervention\Image\ImageManager;
-use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Intervention\Image\Size;
+use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaPaths;
 use League\Flysystem\FilesystemInterface;
 
@@ -56,6 +55,7 @@ final class EditorProcessor
 
     /**
      * EditorProcessor constructor.
+     *
      * @param array $requestData
      * @param ImageDefinitionInterface $imageDefinition
      * @param Media $media
@@ -109,7 +109,13 @@ final class EditorProcessor
 
         $image->crop($this->requestWidth, $this->requestHeight, $this->requestData['x1'], $this->requestData['y1']);
 
-        (new ImageProcessor($this->media, $this->imageDefinition, $this->mediaConfig, $this->storage, $image))->process();
+        (new ImageProcessor(
+            $this->media,
+            $this->imageDefinition,
+            $this->mediaConfig,
+            $this->storage,
+            $image
+        ))->process();
     }
 
     /**
@@ -125,6 +131,7 @@ final class EditorProcessor
 
     /**
      * Gauges X and Y Position
+     *
      * @param $imageWidth
      * @param $imageHeight
      */

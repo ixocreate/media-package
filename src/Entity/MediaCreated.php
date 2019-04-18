@@ -11,10 +11,10 @@ namespace Ixocreate\Media\Entity;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Ixocreate\Database\DatabaseEntityInterface;
+use Ixocreate\Entity\Definition;
 use Ixocreate\Entity\DefinitionCollection;
 use Ixocreate\Entity\EntityInterface;
 use Ixocreate\Entity\EntityTrait;
-use Ixocreate\Entity\Definition;
 use Ixocreate\Type\Entity\UuidType;
 
 final class MediaCreated implements EntityInterface, DatabaseEntityInterface

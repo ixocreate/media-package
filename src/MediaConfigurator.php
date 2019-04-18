@@ -7,10 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Config;
+namespace Ixocreate\Media;
 
-use Ixocreate\Application\Service\Configurator\ConfiguratorInterface;
-use Ixocreate\Application\Service\Registry\ServiceRegistryInterface;
+use Ixocreate\Application\ConfiguratorInterface;
+use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Media\Config\MediaPackageConfig;
 use Zend\Diactoros\Uri;
 
 class MediaConfigurator implements ConfiguratorInterface
@@ -65,7 +66,7 @@ class MediaConfigurator implements ConfiguratorInterface
     /**
      * @return string
      */
-    public function uri():string
+    public function uri(): string
     {
         return $this->uri;
     }
@@ -142,6 +143,6 @@ class MediaConfigurator implements ConfiguratorInterface
 
     public function registerService(ServiceRegistryInterface $serviceRegistry): void
     {
-        $serviceRegistry->add(MediaProjectConfig::class, new MediaProjectConfig($this));
+        $serviceRegistry->add(MediaPackageConfig::class, new MediaPackageConfig($this));
     }
 }

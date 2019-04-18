@@ -13,12 +13,12 @@ use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
 use Ixocreate\Media\Command\Media\DeleteCommand;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Media\Entity\Media;
 
 final class DeleteAction implements MiddlewareInterface
 {
@@ -34,6 +34,7 @@ final class DeleteAction implements MiddlewareInterface
 
     /**
      * DeleteAction constructor.
+     *
      * @param MediaRepository $mediaRepository
      * @param CommandBus $commandBus
      */

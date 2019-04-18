@@ -9,26 +9,26 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Console;
 
-use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Application\Console\CommandInterface;
 use Ixocreate\Entity\EntityCollection;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Media\Handler\ImageHandler;
+use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Exception\InvalidArgumentException;
 use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\Handler\ImageHandler;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Processor\ImageProcessor;
+use Ixocreate\Media\Repository\MediaRepository;
 use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Console\Command\Command;
-use Ixocreate\Application\Console\CommandInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Repository\MediaRepository;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Input\InputArgument;
-use Ixocreate\Media\Processor\ImageProcessor;
-use Ixocreate\Media\Exception\InvalidArgumentException;
 
 final class RecreateImageDefinition extends Command implements CommandInterface
 {
@@ -99,8 +99,8 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
+     * @throws \League\Flysystem\FileExistsException
      * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -190,8 +190,12 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
      */
-    private function generateFiles(ImageDefinitionInterface $imageDefinition, InputInterface $input, OutputInterface $output, SymfonyStyle $io)
-    {
+    private function generateFiles(
+        ImageDefinitionInterface $imageDefinition,
+        InputInterface $input,
+        OutputInterface $output,
+        SymfonyStyle $io
+    ) {
         $mediaEntityCollection = null;
         $progressBar = null;
 
@@ -199,7 +203,10 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         if ($input->getOption('missing')) {
             $mediaEntityCollection = $this->handleMissing($imageDefinition);
             if ($mediaEntityCollection->count() === 0) {
-                $io->writeln(\sprintf('There are no missing Images in ImageDefinition: %s', $imageDefinition::serviceName()));
+                $io->writeln(\sprintf(
+                    'There are no missing Images in ImageDefinition: %s',
+                    $imageDefinition::serviceName()
+                ));
                 return;
             }
             // If Option "changed" is assigned
@@ -253,8 +260,12 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
      */
-    private function handleChanges(ImageDefinitionInterface $imageDefinition, EntityCollection $mediaEntityCollection, SymfonyStyle $io, ProgressBar $progressBar)
-    {
+    private function handleChanges(
+        ImageDefinitionInterface $imageDefinition,
+        EntityCollection $mediaEntityCollection,
+        SymfonyStyle $io,
+        ProgressBar $progressBar
+    ) {
         $jsonFiles = [
             'publicJsonFile' => MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
             'privateJsonFile' => MediaPaths::PRIVATE_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
@@ -301,8 +312,12 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param ProgressBar $progressBar
      * @throws \League\Flysystem\FileNotFoundException
      */
-    private function processImages(ImageDefinitionInterface $imageDefinition, EntityCollection $mediaEntityCollection, SymfonyStyle $io, ProgressBar $progressBar)
-    {
+    private function processImages(
+        ImageDefinitionInterface $imageDefinition,
+        EntityCollection $mediaEntityCollection,
+        SymfonyStyle $io,
+        ProgressBar $progressBar
+    ) {
         $progressBar->start();
 
         $array = $mediaEntityCollection->toArray();

@@ -10,8 +10,9 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Config;
 
 use Ixocreate\Application\Service\SerializableServiceInterface;
+use Ixocreate\Media\MediaConfigurator;
 
-class MediaProjectConfig implements SerializableServiceInterface
+class MediaPackageConfig implements SerializableServiceInterface
 {
     private $whitelist = [
         'image' => [],
@@ -37,7 +38,7 @@ class MediaProjectConfig implements SerializableServiceInterface
     private $uri;
 
     /**
-     * MediaProjectConfig constructor.
+     * MediaPackageConfig constructor.
      *
      * @param MediaConfigurator $mediaConfigurator
      */

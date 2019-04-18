@@ -26,6 +26,7 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
 
     /**
      * TempFileHandler constructor.
+     *
      * @param string $file
      * @param string $filename
      */

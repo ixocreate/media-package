@@ -9,17 +9,17 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Type;
 
-use Ixocreate\Schema\BuilderInterface;
-use Ixocreate\Schema\ElementProviderInterface;
-use Ixocreate\Type\DatabaseTypeInterface;
-use Ixocreate\Entity\Type\AbstractType;
 use Doctrine\DBAL\Types\GuidType;
+use Ixocreate\Entity\Type\AbstractType;
 use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Schema\Elements\MediaElement;
-use Ixocreate\Schema\ElementInterface;
 use Ixocreate\Media\Repository\MediaRepository;
 use Ixocreate\Media\Uri\MediaUri;
+use Ixocreate\Schema\BuilderInterface;
+use Ixocreate\Schema\ElementInterface;
+use Ixocreate\Schema\ElementProviderInterface;
+use Ixocreate\Schema\Elements\MediaElement;
+use Ixocreate\Type\DatabaseTypeInterface;
 
 class MediaType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
@@ -73,7 +73,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
             return "";
         }
 
-        return (string) $this->value()->id();
+        return (string)$this->value()->id();
     }
 
     /**
@@ -97,7 +97,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
             return null;
         }
 
-        return (string) $this->value()->id();
+        return (string)$this->value()->id();
     }
 
     public static function baseDatabaseType(): string

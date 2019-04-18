@@ -90,13 +90,13 @@ final class IndexAction implements MiddlewareInterface
                 }
                 continue;
             } elseif ($key === "offset") {
-                $value = (int) $value;
+                $value = (int)$value;
                 if (!empty($value)) {
                     $criteria->setFirstResult($value);
                 }
                 continue;
             } elseif ($key === "limit") {
-                $value = (int) $value;
+                $value = (int)$value;
                 if (!empty($value)) {
                     $criteria->setMaxResults(\min($value, 500));
                 }
@@ -133,7 +133,7 @@ final class IndexAction implements MiddlewareInterface
             $mediaCreatedArray = [];
             /** @var MediaCreated $mediaCreated */
             foreach ($createdResult as $mediaCreated) {
-                $mediaCreatedArray[] = (string) $mediaCreated->mediaId();
+                $mediaCreatedArray[] = (string)$mediaCreated->mediaId();
             }
 
             $criteria->andWhere(Criteria::expr()->in('id', $mediaCreatedArray));

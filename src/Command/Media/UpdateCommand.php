@@ -10,15 +10,15 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Media;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Media\Handler\HandlerInterface;
-use Ixocreate\Media\MediaInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Handler\MediaHandlerSubManager;
+use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\Handler\HandlerInterface;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
+use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Media\Entity\Media;
 use League\Flysystem\FilesystemInterface;
 
 class UpdateCommand extends AbstractCommand
@@ -117,9 +117,9 @@ class UpdateCommand extends AbstractCommand
     }
 
     /**
-     * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
      * @throws \Exception
+     * @throws \League\Flysystem\FileExistsException
      * @return bool
      */
     public function execute(): bool
@@ -176,8 +176,8 @@ class UpdateCommand extends AbstractCommand
      * @param MediaInterface $media
      * @param string $newFilename
      * @param array $fileInfo
-     * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
+     * @throws \League\Flysystem\FileExistsException
      * @return MediaInterface
      */
     private function renameFiles(MediaInterface $media, string $newFilename, array $fileInfo): MediaInterface
@@ -188,11 +188,17 @@ class UpdateCommand extends AbstractCommand
             $delegator = $this->delegatorSubManager->get($delegatorClassName);
             if ($delegator->isResponsible($media)) {
                 foreach ($delegator->directories() as $directory) {
-                    $this->storage->rename($mediaPath . $directory . $media->basePath() . $media->filename(), $mediaPath . $directory . $media->basePath() . $newFilename . '.' . $fileInfo['extension']);
+                    $this->storage->rename(
+                        $mediaPath . $directory . $media->basePath() . $media->filename(),
+                        $mediaPath . $directory . $media->basePath() . $newFilename . '.' . $fileInfo['extension']
+                    );
                 }
             }
         }
-        $this->storage->rename($mediaPath . $media->basePath() . $media->filename(), $mediaPath . $media->basePath() . $newFilename . '.' . $fileInfo['extension']);
+        $this->storage->rename(
+            $mediaPath . $media->basePath() . $media->filename(),
+            $mediaPath . $media->basePath() . $newFilename . '.' . $fileInfo['extension']
+        );
 
         return $media;
     }
@@ -201,8 +207,8 @@ class UpdateCommand extends AbstractCommand
      * @param MediaInterface $media
      * @param string $fromMediaPath
      * @param string $toMediaPath
-     * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
+     * @throws \League\Flysystem\FileExistsException
      * @return MediaInterface
      */
     private function moveMedia(MediaInterface $media, string $fromMediaPath, string $toMediaPath): MediaInterface
@@ -210,7 +216,10 @@ class UpdateCommand extends AbstractCommand
         /**
          * move source file
          */
-        $this->storage->rename($fromMediaPath . $media->basePath() . $media->filename(), $toMediaPath . $media->basePath() . $media->filename());
+        $this->storage->rename(
+            $fromMediaPath . $media->basePath() . $media->filename(),
+            $toMediaPath . $media->basePath() . $media->filename()
+        );
 
         /**
          * move output files from delegators as well
@@ -224,7 +233,10 @@ class UpdateCommand extends AbstractCommand
             }
 
             foreach ($delegator->directories() as $directory) {
-                $this->storage->rename($fromMediaPath . $directory . $media->basePath() . $media->filename(), $toMediaPath . $directory . $media->basePath() . $media->filename());
+                $this->storage->rename(
+                    $fromMediaPath . $directory . $media->basePath() . $media->filename(),
+                    $toMediaPath . $directory . $media->basePath() . $media->filename()
+                );
             }
         }
 

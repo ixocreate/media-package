@@ -11,13 +11,13 @@ namespace Ixocreate\Media\Action\Media;
 
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
-use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Entity\Type\Type;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Type\MediaType;
@@ -167,7 +167,11 @@ final class DetailAction implements MiddlewareInterface
         foreach ($this->imageDefinitionSubManager->getServices() as $key => $name) {
             $imageDefinition = $this->imageDefinitionSubManager->get($name);
             $validSize = $this->checkValidSize($media, $imageDefinition);
-            $definitions[] = ['name' => $imageDefinition::serviceName(), 'isCropable' => $validSize, 'cropParameter' => ''];
+            $definitions[] = [
+                'name' => $imageDefinition::serviceName(),
+                'isCropable' => $validSize,
+                'cropParameter' => '',
+            ];
 
             foreach ($mediaCropArray as $mediaCrop) {
                 if ($mediaCrop->cropParameters() != null && $imageDefinition::serviceName() === $mediaCrop->imageDefinition()) {

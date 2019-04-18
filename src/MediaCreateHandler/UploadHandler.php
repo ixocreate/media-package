@@ -27,6 +27,7 @@ final class UploadHandler implements MediaCreateHandlerInterface
 
     /**
      * UploadHandler constructor.
+     *
      * @param UploadedFile $uploadedFile
      */
     public function __construct(UploadedFile $uploadedFile)

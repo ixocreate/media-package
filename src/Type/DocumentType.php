@@ -10,17 +10,17 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Type;
 
 use Doctrine\DBAL\Types\GuidType;
-use Ixocreate\Schema\BuilderInterface;
-use Ixocreate\Schema\ElementInterface;
-use Ixocreate\Schema\ElementProviderInterface;
-use Ixocreate\Type\DatabaseTypeInterface;
-use Ixocreate\Type\TypeInterface;
 use Ixocreate\Entity\Type\AbstractType;
 use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Uri\MediaUri;
+use Ixocreate\Schema\BuilderInterface;
+use Ixocreate\Schema\ElementInterface;
+use Ixocreate\Schema\ElementProviderInterface;
 use Ixocreate\Schema\Elements\DocumentElement;
+use Ixocreate\Type\DatabaseTypeInterface;
+use Ixocreate\Type\TypeInterface;
 
 final class DocumentType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
@@ -55,7 +55,10 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
         $type = clone $this;
         $mediaType = Type::create($value, MediaType::class);
 
-        if (!empty($mediaType->value()) && \in_array($mediaType->value()->mimeType(), $this->mediaConfig->documentWhitelist())) {
+        if (!empty($mediaType->value()) && \in_array(
+            $mediaType->value()->mimeType(),
+            $this->mediaConfig->documentWhitelist()
+        )) {
             $type->mediaType = $mediaType;
         }
 
@@ -84,7 +87,7 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
             return "";
         }
 
-        return (string) $this->value()->id();
+        return (string)$this->value()->id();
     }
 
     /**

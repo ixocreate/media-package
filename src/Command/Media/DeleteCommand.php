@@ -10,11 +10,11 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Media;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\Handler\HandlerInterface;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
 use League\Flysystem\FilesystemInterface;
