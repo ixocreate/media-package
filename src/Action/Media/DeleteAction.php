@@ -7,18 +7,18 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Action\Media;
+namespace Ixocreate\Package\Media\Action\Media;
 
-use Ixocreate\Admin\Response\ApiErrorResponse;
-use Ixocreate\Admin\Response\ApiSuccessResponse;
+use Ixocreate\Package\Admin\Response\ApiErrorResponse;
+use Ixocreate\Package\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Media\Command\Media\DeleteCommand;
+use Ixocreate\Package\Media\Command\Media\DeleteCommand;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Media\Entity\Media;
+use Ixocreate\Package\Media\Repository\MediaRepository;
+use Ixocreate\Package\Media\Entity\Media;
 
 final class DeleteAction implements MiddlewareInterface
 {

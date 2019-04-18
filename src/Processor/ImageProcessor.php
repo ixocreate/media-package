@@ -7,15 +7,15 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Processor;
+namespace Ixocreate\Package\Media\Processor;
 
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
-use Ixocreate\Contract\Media\ImageDefinitionInterface;
-use Ixocreate\Contract\Media\MediaInterface;
-use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Package\Media\ImageDefinitionInterface;
+use Ixocreate\Package\Media\MediaInterface;
+use Ixocreate\Package\Media\Config\MediaConfig;
 use Intervention\Image\Constraint;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Package\Media\MediaPaths;
 use League\Flysystem\FilesystemInterface;
 
 final class ImageProcessor

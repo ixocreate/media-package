@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Config;
+namespace Ixocreate\Package\Media\Config;
 
-use Ixocreate\Contract\Application\SerializableServiceInterface;
+use Ixocreate\Application\SerializableServiceInterface;
 
 class MediaProjectConfig implements SerializableServiceInterface
 {

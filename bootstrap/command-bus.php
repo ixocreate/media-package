@@ -1,5 +1,5 @@
 <?php
-namespace Ixocreate\Media;
+namespace Ixocreate\Package\Media;
 
-/** @var \Ixocreate\CommandBus\Configurator $commandBus */
+/** @var \Ixocreate\Package\CommandBus\Configurator $commandBus */
 $commandBus->addCommandDirectory(__DIR__ . '/../src/Command', true);

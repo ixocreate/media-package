@@ -7,15 +7,15 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Console;
+namespace Ixocreate\Package\Media\Console;
 
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Package\Media\ImageDefinition\ImageDefinitionInterface;
 use Symfony\Component\Console\Command\Command;
-use Ixocreate\Contract\Command\CommandInterface;
+use Ixocreate\Application\Console\CommandInterface;;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Package\Media\ImageDefinition\ImageDefinitionSubManager;
 
 final class DisplayImageDefinition extends Command implements CommandInterface
 {

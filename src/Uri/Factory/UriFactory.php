@@ -7,16 +7,16 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Uri\Factory;
+namespace Ixocreate\Package\Media\Uri\Factory;
 
-use Ixocreate\Admin\Config\AdminConfig;
-use Ixocreate\Contract\ServiceManager\FactoryInterface;
-use Ixocreate\Contract\ServiceManager\ServiceManagerInterface;
-use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Delegator\DelegatorSubManager;
-use Ixocreate\Media\MediaPaths;
-use Ixocreate\Media\Uri\Uri;
-use Ixocreate\ProjectUri\ProjectUri;
+use Ixocreate\Package\Admin\Config\AdminConfig;
+use Ixocreate\ServiceManager\FactoryInterface;
+use Ixocreate\ServiceManager\ServiceManagerInterface;
+use Ixocreate\Package\Media\Config\MediaConfig;
+use Ixocreate\Package\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Package\Media\MediaPaths;
+use Ixocreate\Package\Media\Uri\Uri;
+use Ixocreate\Package\ProjectUri\ProjectUri;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Asset\UrlPackage;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;

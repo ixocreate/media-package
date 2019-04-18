@@ -7,21 +7,21 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Action\Media;
+namespace Ixocreate\Package\Media\Action\Media;
 
-use Ixocreate\Admin\Response\ApiErrorResponse;
-use Ixocreate\Admin\Response\ApiSuccessResponse;
-use Ixocreate\Contract\Media\ImageDefinitionInterface;
-use Ixocreate\Entity\Type\Type;
-use Ixocreate\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Media\Delegator\Delegators\Image;
-use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Exception\InvalidConfigException;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\MediaPaths;
-use Ixocreate\Media\Repository\MediaCropRepository;
-use Ixocreate\Media\Type\MediaType;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Package\Admin\Response\ApiErrorResponse;
+use Ixocreate\Package\Admin\Response\ApiSuccessResponse;
+use Ixocreate\Package\Media\ImageDefinitionInterface;
+use Ixocreate\Package\Entity\Type\Type;
+use Ixocreate\Package\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Package\Media\Delegator\Delegators\Image;
+use Ixocreate\Package\Media\Entity\Media;
+use Ixocreate\Package\Media\Exception\InvalidConfigException;
+use Ixocreate\Package\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Package\Media\MediaPaths;
+use Ixocreate\Package\Media\Repository\MediaCropRepository;
+use Ixocreate\Package\Media\Type\MediaType;
+use Ixocreate\Package\Media\Uri\Uri;
 use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

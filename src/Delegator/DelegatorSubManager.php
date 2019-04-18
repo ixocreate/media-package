@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Delegator;
+namespace Ixocreate\Package\Media\Delegator;
 
 use Ixocreate\ServiceManager\SubManager\SubManager;
 

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media;
+namespace Ixocreate\Package\Media;
 
 final class MediaPaths
 {

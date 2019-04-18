@@ -7,16 +7,16 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Command\Media;
+namespace Ixocreate\Package\Media\Command\Media;
 
-use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Contract\Media\DelegatorInterface;
-use Ixocreate\Filesystem\Storage\StorageSubManager;
-use Ixocreate\Media\Delegator\DelegatorSubManager;
-use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Exception\InvalidConfigException;
-use Ixocreate\Media\MediaPaths;
-use Ixocreate\Media\Repository\MediaRepository;
+use Ixocreate\Package\CommandBus\Command\AbstractCommand;
+use Ixocreate\Package\Media\DelegatorInterface;
+use Ixocreate\Package\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Package\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Package\Media\Entity\Media;
+use Ixocreate\Package\Media\Exception\InvalidConfigException;
+use Ixocreate\Package\Media\MediaPaths;
+use Ixocreate\Package\Media\Repository\MediaRepository;
 use League\Flysystem\FilesystemInterface;
 
 class DeleteCommand extends AbstractCommand

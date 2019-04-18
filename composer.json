@@ -1,6 +1,6 @@
 {
-    "name": "ixocreate/media",
-    "description": "IXOCREATE Media",
+    "name": "ixocreate/media-package",
+    "description": "IXOCREATE Media Package",
     "license": "MIT",
     "type": "library",
     "authors": [
@@ -14,30 +14,27 @@
         "php": "^7.1",
         "intervention/image": "^2.4.1",
         "firebase/php-jwt": "^5.0",
-        "ixocreate/media-contract": "dev-develop",
-        "ixocreate/contract": "dev-develop",
-        "ixocreate/admin": "dev-develop",
-        "ixocreate/filesystem": "dev-develop",
-        "ixocreate/collection": "dev-develop",
+        "ixocreate/application": "dev-consolidate",
+        "ixocreate/collection": "dev-consolidate",
         "symfony/asset": "^4.1",
         "cocur/slugify": "^3.1"
     },
     "require-dev": {
         "ext-gd": ">=2.0",
         "ext-imagick": "*",
-        "ixocreate/coding-standard": "^1.0.1",
+        "ixocreate/coding-standard": "^1.0",
         "php-coveralls/php-coveralls": "^2.1",
         "phpunit/phpunit": "^7.0"
     },
     "autoload": {
         "psr-4": {
-            "Ixocreate\\Media\\": "src/"
+            "Ixocreate\\Package\\Media\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "IxocreateMisc\\Media\\": "tests/misc/",
-            "IxocreateTest\\Media\\": "tests/src/"
+            "Ixocreate\\Misc\\Media\\": "tests/misc/",
+            "Ixocreate\\Test\\Media\\": "tests/src/"
         }
     },
     "scripts": {

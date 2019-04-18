@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Exception;
+namespace Ixocreate\Package\Media\Exception;
 
 use Psr\Container\ContainerExceptionInterface;
 

@@ -7,15 +7,15 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Uri;
+namespace Ixocreate\Package\Media\Uri;
 
 use Firebase\JWT\JWT;
-use Ixocreate\Admin\Config\AdminConfig;
-use Ixocreate\Contract\Media\DelegatorInterface;
-use Ixocreate\Media\Delegator\Delegators\Image;
-use Ixocreate\Media\Delegator\DelegatorSubManager;
-use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Package\Admin\Config\AdminConfig;
+use Ixocreate\Package\Media\DelegatorInterface;
+use Ixocreate\Package\Media\Delegator\Delegators\Image;
+use Ixocreate\Package\Media\Delegator\DelegatorSubManager;
+use Ixocreate\Package\Media\Entity\Media;
+use Ixocreate\Package\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
 final class Uri

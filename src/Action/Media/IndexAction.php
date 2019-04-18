@@ -7,18 +7,18 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Action\Media;
+namespace Ixocreate\Package\Media\Action\Media;
 
 use Doctrine\Common\Collections\Criteria;
-use Ixocreate\Admin\Entity\User;
-use Ixocreate\Admin\Response\ApiSuccessResponse;
-use Ixocreate\Contract\Admin\RoleInterface;
-use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaCreated;
-use Ixocreate\Media\Repository\MediaCreatedRepository;
-use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Package\Admin\Entity\User;
+use Ixocreate\Package\Admin\Response\ApiSuccessResponse;
+use Ixocreate\Admin\RoleInterface;
+use Ixocreate\Package\Media\Config\MediaConfig;
+use Ixocreate\Package\Media\Entity\Media;
+use Ixocreate\Package\Media\Entity\MediaCreated;
+use Ixocreate\Package\Media\Repository\MediaCreatedRepository;
+use Ixocreate\Package\Media\Repository\MediaRepository;
+use Ixocreate\Package\Media\Uri\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

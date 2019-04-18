@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Delegator;
+namespace Ixocreate\Package\Media\Delegator;
 
-use Ixocreate\Contract\Application\ConfiguratorInterface;
-use Ixocreate\Contract\Application\ServiceRegistryInterface;
-use Ixocreate\Contract\Media\DelegatorInterface;
+use Ixocreate\Application\ConfiguratorInterface;
+use Ixocreate\Application\ServiceRegistryInterface;
+use Ixocreate\Package\Media\DelegatorInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
 use Ixocreate\ServiceManager\SubManager\SubManagerConfigurator;
 

@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\BootstrapItem;
+namespace Ixocreate\Package\Media\BootstrapItem;
 
-use Ixocreate\Contract\Application\BootstrapItemInterface;
-use Ixocreate\Contract\Application\ConfiguratorInterface;
-use Ixocreate\Media\Delegator\DelegatorConfigurator;
+use Ixocreate\Application\BootstrapItemInterface;
+use Ixocreate\Application\ConfiguratorInterface;
+use Ixocreate\Package\Media\Delegator\DelegatorConfigurator;
 
 final class DelegatorBootstrapItem implements BootstrapItemInterface
 {

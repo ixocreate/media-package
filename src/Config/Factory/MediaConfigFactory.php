@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Config\Factory;
+namespace Ixocreate\Package\Media\Config\Factory;
 
-use Ixocreate\Contract\ServiceManager\FactoryInterface;
-use Ixocreate\Contract\ServiceManager\ServiceManagerInterface;
-use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Config\MediaProjectConfig;
-use Ixocreate\ProjectUri\ProjectUri;
+use Ixocreate\ServiceManager\FactoryInterface;
+use Ixocreate\ServiceManager\ServiceManagerInterface;
+use Ixocreate\Package\Media\Config\MediaConfig;
+use Ixocreate\Package\Media\Config\MediaProjectConfig;
+use Ixocreate\Package\ProjectUri\ProjectUri;
 
 final class MediaConfigFactory implements FactoryInterface
 {
