@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Handler;
 
-use Ixocreate\Application\ConfiguratorInterface;
+use Ixocreate\Application\Configurator\ConfiguratorInterface;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Application\Service\SubManagerConfigurator;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;

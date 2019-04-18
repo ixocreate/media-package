@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
-use Ixocreate\Application\ConfiguratorInterface;
+use Ixocreate\Application\Configurator\ConfiguratorInterface;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Media\Config\MediaPackageConfig;
 use Zend\Diactoros\Uri;
