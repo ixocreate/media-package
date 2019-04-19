@@ -10,12 +10,10 @@ cache:
   directories:
     - $HOME/.composer/cache
 
-before_script:
+install:
   - pear config-set preferred_state beta
   - pecl channel-update pecl.php.net
   - yes | pecl install imagick
-
-install:
   - composer install --prefer-dist --no-interaction
 
 script:
