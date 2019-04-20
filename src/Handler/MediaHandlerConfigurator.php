@@ -1,20 +1,20 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Delegator;
+namespace Ixocreate\Media\Handler;
 
-use Ixocreate\Contract\Application\ConfiguratorInterface;
-use Ixocreate\Contract\Application\ServiceRegistryInterface;
+use Ixocreate\Application\Configurator\ConfiguratorInterface;
+use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Application\Service\SubManagerConfigurator;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
-use Ixocreate\ServiceManager\SubManager\SubManagerConfigurator;
 
-final class DelegatorConfigurator implements ConfiguratorInterface
+final class MediaHandlerConfigurator implements ConfiguratorInterface
 {
     /**
      * @var SubManagerConfigurator
@@ -22,11 +22,14 @@ final class DelegatorConfigurator implements ConfiguratorInterface
     private $subManagerConfigurator;
 
     /**
-     * DelegatorConfigurator constructor.
+     * HandlerConfigurator constructor.
      */
     public function __construct()
     {
-        $this->subManagerConfigurator = new SubManagerConfigurator(DelegatorSubManager::class, DelegatorInterface::class);
+        $this->subManagerConfigurator = new SubManagerConfigurator(
+            MediaHandlerSubManager::class,
+            HandlerInterface::class
+        );
     }
 
     /**
@@ -50,7 +53,7 @@ final class DelegatorConfigurator implements ConfiguratorInterface
      * @param string $action
      * @param string $factory
      */
-    public function addDelegator(string $action, string $factory = AutowireFactory::class)
+    public function addHandler(string $action, string $factory = AutowireFactory::class)
     {
         $this->subManagerConfigurator->addFactory($action, $factory);
     }

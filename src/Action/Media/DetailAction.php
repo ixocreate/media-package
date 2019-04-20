@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -12,13 +12,17 @@ namespace Ixocreate\Media\Action\Media;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\Entity\Type\Type;
-use Ixocreate\Media\Delegator\Delegators\Image;
+use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Type\MediaType;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Media\Uri\MediaUri;
+use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -27,14 +31,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class DetailAction implements MiddlewareInterface
 {
     /**
-     * @var Uri
+     * @var MediaUri
      */
     private $uri;
 
     /**
-     * @var Image
+     * @var ImageHandler
      */
-    private $imageDelegator;
+    private $imageHandler;
 
     /**
      * @var ImageDefinitionSubManager
@@ -47,39 +51,59 @@ final class DetailAction implements MiddlewareInterface
     private $mediaCropRepository;
 
     /**
+     * @var StorageSubManager
+     */
+    private $storageSubManager;
+
+    /**
+     * @var FilesystemInterface
+     */
+    private $storage;
+
+    /**
      * DetailAction constructor.
-     * @param Uri $uri
-     * @param Image $imageDelegator
+     *
+     * @param MediaUri $uri
+     * @param ImageHandler $imageHandler
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaCropRepository $mediaCropRepository
+     * @param StorageSubManager $storageSubManager
      */
     public function __construct(
-        Uri $uri,
-        Image $imageDelegator,
+        MediaUri $uri,
+        ImageHandler $imageHandler,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaCropRepository $mediaCropRepository
+        MediaCropRepository $mediaCropRepository,
+        StorageSubManager $storageSubManager
     ) {
         $this->uri = $uri;
-        $this->imageDelegator = $imageDelegator;
+        $this->imageHandler = $imageHandler;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaCropRepository = $mediaCropRepository;
+        $this->storageSubManager = $storageSubManager;
     }
 
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
+     * @throws \League\Flysystem\FileNotFoundException
      * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        if (!$this->storageSubManager->has('media')) {
+            throw new InvalidConfigException('Storage Config not set');
+        }
+
+        $this->storage = $this->storageSubManager->get('media');
+
         /** @var MediaType $media */
         $media = Type::create($request->getAttribute("id"), MediaType::class);
         if (empty($media->value())) {
             return new ApiErrorResponse('given_media_Id_does_not_exist');
         }
 
-
-        $isCropable = $this->imageDelegator->isResponsible($media->value());
+        $isCropable = $this->imageHandler->isResponsible($media->value());
 
         $result = [
             'media' => $media->jsonSerialize(),
@@ -101,15 +125,19 @@ final class DetailAction implements MiddlewareInterface
     /**
      * @param Media $media
      * @param ImageDefinitionInterface $imageDefinition
+     * @throws \League\Flysystem\FileNotFoundException
      * @return bool
      */
     private function checkValidSize(Media $media, ImageDefinitionInterface $imageDefinition): bool
     {
         $state = false;
 
-        $storagePath = $media->publicStatus() ? 'data/media/' : 'data/media_private/';
+        $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
-        $size = \getimagesize($storagePath . $media->basePath() . $media->filename());
+        $file = $this->storage->read($mediaPath . $media->basePath() . $media->filename());
+
+        $size = \getimagesizefromstring($file);
+
         $width = $size[0];
         $height = $size[1];
 
@@ -129,6 +157,7 @@ final class DetailAction implements MiddlewareInterface
     /**
      * @param Media $media
      * @param array $mediaCropArray
+     * @throws \League\Flysystem\FileNotFoundException
      * @return array
      */
     private function determineDefinitions(Media $media, array $mediaCropArray)
@@ -138,7 +167,11 @@ final class DetailAction implements MiddlewareInterface
         foreach ($this->imageDefinitionSubManager->getServices() as $key => $name) {
             $imageDefinition = $this->imageDefinitionSubManager->get($name);
             $validSize = $this->checkValidSize($media, $imageDefinition);
-            $definitions[] = ['name' => $imageDefinition::serviceName(), 'isCropable' => $validSize, 'cropParameter' => ''];
+            $definitions[] = [
+                'name' => $imageDefinition::serviceName(),
+                'isCropable' => $validSize,
+                'cropParameter' => '',
+            ];
 
             foreach ($mediaCropArray as $mediaCrop) {
                 if ($mediaCrop->cropParameters() != null && $imageDefinition::serviceName() === $mediaCrop->imageDefinition()) {

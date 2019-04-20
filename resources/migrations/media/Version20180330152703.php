@@ -1,13 +1,19 @@
 <?php
+/**
+ * @link https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
-namespace IxocreateMigration;
+namespace Ixocreate\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\Migrations\AbstractMigration;
-use Ixocreate\CommonTypes\Entity\DateTimeType;
-use Ixocreate\CommonTypes\Entity\UuidType;
+use Ixocreate\Type\Entity\DateTimeType;
+use Ixocreate\Type\Entity\UuidType;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -22,7 +28,10 @@ final class Version20180330152703 extends AbstractMigration
         $table->addColumn('filename', Type::STRING);
         $table->addColumn('mimeType', Type::STRING);
         $table->addColumn('size', Type::INTEGER);
+        $table->addColumn('hash', Type::STRING);
+        $table->addColumn('publicStatus', Type::BOOLEAN);
         $table->addColumn('createdAt', DateTimeType::serviceName());
+        $table->addColumn('updatedAt', DateTimeType::serviceName());
         $table->setPrimaryKey(["id"]);
     }
 

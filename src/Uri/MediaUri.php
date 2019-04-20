@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -10,10 +10,15 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
+use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Handler\HandlerInterface;
+use Ixocreate\Media\Handler\ImageHandler;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
+use Ixocreate\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
-final class Uri
+final class MediaUri
 {
     /**
      * @var Packages
@@ -21,12 +26,30 @@ final class Uri
     private $packages;
 
     /**
-     * Uri constructor.
-     * @param Packages $packages
+     * @var AdminConfig
      */
-    public function __construct(Packages $packages)
-    {
+    private $adminConfig;
+
+    /**
+     * @var MediaHandlerSubManager
+     */
+    private $delegatorSubManager;
+
+    /**
+     * ApplicationUri constructor.
+     *
+     * @param Packages $packages
+     * @param AdminConfig $adminConfig
+     * @param MediaHandlerSubManager $delegatorSubManager
+     */
+    public function __construct(
+        Packages $packages,
+        AdminConfig $adminConfig,
+        MediaHandlerSubManager $delegatorSubManager
+    ) {
         $this->packages = $packages;
+        $this->adminConfig = $adminConfig;
+        $this->delegatorSubManager = $delegatorSubManager;
     }
 
     /**
@@ -48,6 +71,12 @@ final class Uri
      */
     public function imageUrl(Media $media, string $imageDefinition = null): string
     {
+        /** @var HandlerInterface $imageHandler */
+        $imageHandler = $this->delegatorSubManager->get(ImageHandler::serviceName());
+        if (!$imageHandler->isResponsible($media)) {
+            $imageDefinition = null;
+        }
+
         if ($imageDefinition === null) {
             return $this->url($media);
         }
@@ -81,7 +110,7 @@ final class Uri
             return $this->generateUrl($basePath, $filename);
         }
 
-        return $this->packages->getUrl('/img/' . $imageDefinition . '/' . $basePath . $filename);
+        return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename);
     }
 
     /**
@@ -91,6 +120,8 @@ final class Uri
      */
     public function generateStreamUrl(Media $media, string $imageDefinition = null): string
     {
+        $jwt = null;
+
         try {
             $payload = [
                 'iat' => \time(),
@@ -101,7 +132,7 @@ final class Uri
                 ],
             ];
 
-            $jwt = JWT::encode($payload, 'secret', 'HS512');
+            $jwt = JWT::encode($payload, $this->adminConfig->secret(), 'HS512');
         } catch (\Exception $e) {
             // TODO
         }

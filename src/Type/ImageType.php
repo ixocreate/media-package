@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -10,19 +10,19 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Type;
 
 use Doctrine\DBAL\Types\GuidType;
-use Ixocreate\Contract\Schema\ElementInterface;
-use Ixocreate\Contract\Type\DatabaseTypeInterface;
-use Ixocreate\Contract\Type\SchemaElementInterface;
-use Ixocreate\Contract\Type\TypeInterface;
 use Ixocreate\Entity\Type\AbstractType;
 use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Media\Uri\MediaUri;
+use Ixocreate\Schema\BuilderInterface;
+use Ixocreate\Schema\ElementInterface;
+use Ixocreate\Schema\ElementProviderInterface;
 use Ixocreate\Schema\Elements\ImageElement;
-use Ixocreate\Schema\ElementSubManager;
+use Ixocreate\Type\DatabaseTypeInterface;
+use Ixocreate\Type\TypeInterface;
 
-final class ImageType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+final class ImageType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
     /**
      * @var MediaType
@@ -30,7 +30,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
     private $mediaType;
 
     /**
-     * @var Uri
+     * @var MediaUri
      */
     private $uri;
 
@@ -39,7 +39,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
      */
     private $mediaConfig;
 
-    public function __construct(Uri $uri, MediaConfig $mediaConfig)
+    public function __construct(MediaUri $uri, MediaConfig $mediaConfig)
     {
         $this->uri = $uri;
         $this->mediaConfig = $mediaConfig;
@@ -55,7 +55,10 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
         $type = clone $this;
         $mediaType = Type::create($value, MediaType::class);
 
-        if (!empty($mediaType->value()) && \in_array($mediaType->value()->mimeType(), $this->mediaConfig->imageWhitelist())) {
+        if (!empty($mediaType->value()) && \in_array(
+            $mediaType->value()->mimeType(),
+            $this->mediaConfig->imageWhitelist()
+        )) {
             $type->mediaType = $mediaType;
         }
 
@@ -84,7 +87,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
             return "";
         }
 
-        return (string) $this->value()->id();
+        return (string)$this->value()->id();
     }
 
     /**
@@ -127,13 +130,39 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Sch
         return GuidType::class;
     }
 
-    public function schemaElement(ElementSubManager $elementSubManager): ElementInterface
-    {
-        return $elementSubManager->get(ImageElement::class);
-    }
-
     public static function serviceName(): string
     {
         return 'image';
+    }
+
+    public function provideElement(BuilderInterface $builder): ElementInterface
+    {
+        return $builder->get(ImageElement::class);
+    }
+
+    /**
+     * @return string|void
+     */
+    public function serialize()
+    {
+        return \serialize([
+            'mediaType' => $this->mediaType,
+        ]);
+    }
+
+    /**
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        /** @var ImageType $type */
+        $type = Type::get(ImageType::serviceName());
+        $this->uri = $type->uri;
+        $this->mediaConfig = $type->mediaConfig;
+
+        $unserialized = \unserialize($serialized);
+        if (!empty($unserialized['mediaType']) && $unserialized['mediaType'] instanceof MediaType) {
+            $this->mediaType = $unserialized['mediaType'];
+        }
     }
 }

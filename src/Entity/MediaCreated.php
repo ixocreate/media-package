@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -10,12 +10,12 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Entity;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
-use Ixocreate\Contract\Entity\DatabaseEntityInterface;
-use Ixocreate\Entity\Entity\DefinitionCollection;
-use Ixocreate\Entity\Entity\EntityInterface;
-use Ixocreate\Entity\Entity\EntityTrait;
-use Ixocreate\Entity\Entity\Definition;
-use Ixocreate\CommonTypes\Entity\UuidType;
+use Ixocreate\Database\DatabaseEntityInterface;
+use Ixocreate\Entity\Definition;
+use Ixocreate\Entity\DefinitionCollection;
+use Ixocreate\Entity\EntityInterface;
+use Ixocreate\Entity\EntityTrait;
+use Ixocreate\Type\Entity\UuidType;
 
 final class MediaCreated implements EntityInterface, DatabaseEntityInterface
 {

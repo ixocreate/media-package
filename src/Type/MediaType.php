@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -9,18 +9,19 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Type;
 
-use Ixocreate\Contract\Type\DatabaseTypeInterface;
-use Ixocreate\Contract\Type\SchemaElementInterface;
-use Ixocreate\Entity\Type\AbstractType;
 use Doctrine\DBAL\Types\GuidType;
+use Ixocreate\Entity\Type\AbstractType;
+use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Schema\Elements\MediaElement;
-use Ixocreate\Contract\Schema\ElementInterface;
 use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Schema\ElementSubManager;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Media\Uri\MediaUri;
+use Ixocreate\Schema\BuilderInterface;
+use Ixocreate\Schema\ElementInterface;
+use Ixocreate\Schema\ElementProviderInterface;
+use Ixocreate\Schema\Elements\MediaElement;
+use Ixocreate\Type\DatabaseTypeInterface;
 
-class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaElementInterface
+class MediaType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
     /**
      * @var MediaRepository
@@ -28,16 +29,17 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
     protected $mediaRepository;
 
     /**
-     * @var Uri
+     * @var MediaUri
      */
     protected $uri;
 
     /**
      * ImageType constructor.
+     *
      * @param MediaRepository $mediaRepository
-     * @param Uri $uri
+     * @param MediaUri $uri
      */
-    public function __construct(MediaRepository $mediaRepository, Uri $uri)
+    public function __construct(MediaRepository $mediaRepository, MediaUri $uri)
     {
         $this->mediaRepository = $mediaRepository;
         $this->uri = $uri;
@@ -71,7 +73,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
             return "";
         }
 
-        return (string) $this->value()->id();
+        return (string)$this->value()->id();
     }
 
     /**
@@ -84,6 +86,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
         }
         $array = $this->value()->toPublicArray();
         $array['original'] = $this->getUrl();
+        $array['thumb'] = $this->getUrl('admin-thumb');
 
         return $array;
     }
@@ -94,7 +97,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
             return null;
         }
 
-        return (string) $this->value()->id();
+        return (string)$this->value()->id();
     }
 
     public static function baseDatabaseType(): string
@@ -102,7 +105,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
         return GuidType::class;
     }
 
-    public function getUrl(): string
+    public function getUrl(?string $definition = null): string
     {
         /** @var Media $media */
         $media = $this->value();
@@ -110,20 +113,34 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, SchemaEle
             return "";
         }
 
-        return $this->uri->imageUrl($media);
-    }
-
-    /**
-     * @param ElementSubManager $elementSubManager
-     * @return ElementInterface
-     */
-    public function schemaElement(ElementSubManager $elementSubManager): ElementInterface
-    {
-        return $elementSubManager->get(MediaElement::class);
+        return $this->uri->imageUrl($media, $definition);
     }
 
     public static function serviceName(): string
     {
         return 'media';
+    }
+
+    public function provideElement(BuilderInterface $builder): ElementInterface
+    {
+        return $builder->get(MediaElement::class);
+    }
+
+    /**
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        /** @var MediaType $mediaType */
+        $mediaType = Type::get(MediaType::serviceName());
+
+        $this->mediaRepository = $mediaType->mediaRepository;
+        $this->uri = $mediaType->uri;
+
+        $this->value = null;
+        $unserialized = \unserialize($serialized);
+        if (!empty($unserialized['value']) && $unserialized['value'] instanceof Media) {
+            $this->value = $unserialized['value'];
+        }
     }
 }

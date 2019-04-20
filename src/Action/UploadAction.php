@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -10,11 +10,11 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Action;
 
 use Ixocreate\Admin\Entity\User;
-use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Media\Command\CreateCommand;
-use Ixocreate\Media\MediaCreateHandler\UploadHandler;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
+use Ixocreate\CommandBus\CommandBus;
+use Ixocreate\Media\Command\Media\CreateCommand;
+use Ixocreate\Media\MediaCreateHandler\UploadHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -30,6 +30,7 @@ final class UploadAction implements MiddlewareInterface
 
     /**
      * UploadAction constructor.
+     *
      * @param CommandBus $commandBus
      */
     public function __construct(CommandBus $commandBus)

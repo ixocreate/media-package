@@ -1,13 +1,19 @@
 <?php
+/**
+ * @link https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
-namespace IxocreateMigration;
+namespace Ixocreate\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\Migrations\AbstractMigration;
-use Ixocreate\CommonTypes\Entity\DateTimeType;
-use Ixocreate\CommonTypes\Entity\UuidType;
+use Ixocreate\Type\Entity\DateTimeType;
+use Ixocreate\Type\Entity\UuidType;
 
 /**
  * Auto-generated Migration: Please modify to your needs!

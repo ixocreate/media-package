@@ -1,23 +1,18 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
 declare(strict_types=1);
-/**
- * Created by PhpStorm.
- * User: afriedrich
- * Date: 10.08.18
- * Time: 10:08
- */
 
 namespace Ixocreate\Media\Config;
 
-use Ixocreate\Contract\Application\SerializableServiceInterface;
+use Ixocreate\Application\Service\SerializableServiceInterface;
+use Ixocreate\Media\MediaConfigurator;
 
-class MediaProjectConfig implements SerializableServiceInterface
+class MediaPackageConfig implements SerializableServiceInterface
 {
     private $whitelist = [
         'image' => [],
@@ -27,10 +22,24 @@ class MediaProjectConfig implements SerializableServiceInterface
         'document' => [],
     ];
 
+    /**
+     * @var string
+     */
+    private $driver;
+
+    /*
+     * @var bool
+     */
     private $publicStatus;
 
     /**
-     * MediaProjectConfig constructor.
+     * @var string
+     */
+    private $uri;
+
+    /**
+     * MediaPackageConfig constructor.
+     *
      * @param MediaConfigurator $mediaConfigurator
      */
     public function __construct(MediaConfigurator $mediaConfigurator)
@@ -53,8 +62,9 @@ class MediaProjectConfig implements SerializableServiceInterface
                 )
             )
         );
-
+        $this->driver = $mediaConfigurator->driver();
         $this->publicStatus = $mediaConfigurator->publicStatus();
+        $this->uri = $mediaConfigurator->uri();
     }
 
     /**
@@ -66,11 +76,27 @@ class MediaProjectConfig implements SerializableServiceInterface
     }
 
     /**
+     * @return string
+     */
+    public function driver(): string
+    {
+        return $this->driver;
+    }
+
+    /**
      * @return bool
      */
     public function publicStatus(): bool
     {
         return $this->publicStatus;
+    }
+
+    /**
+     * @return string
+     */
+    public function uri(): string
+    {
+        return $this->uri;
     }
 
     /**
@@ -110,7 +136,12 @@ class MediaProjectConfig implements SerializableServiceInterface
      */
     public function serialize()
     {
-        return \serialize($this->whitelist);
+        return \serialize([
+            'whitelist' => $this->whitelist,
+            'publicStatus' => $this->publicStatus,
+            'driver' => $this->driver,
+            'uri' => $this->uri,
+        ]);
     }
 
     /**
@@ -118,6 +149,10 @@ class MediaProjectConfig implements SerializableServiceInterface
      */
     public function unserialize($serialized)
     {
-        $this->whitelist = \unserialize($serialized);
+        $unserialized = \unserialize($serialized);
+        $this->whitelist = $unserialized['whitelist'];
+        $this->publicStatus = $unserialized['publicStatus'];
+        $this->driver = $unserialized['driver'];
+        $this->uri = $unserialized['uri'];
     }
 }

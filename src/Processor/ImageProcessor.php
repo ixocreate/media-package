@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -9,22 +9,19 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Processor;
 
+use Intervention\Image\Constraint;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 use Ixocreate\Media\Config\MediaConfig;
-use Intervention\Image\Constraint;
-use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\MediaInterface;
+use Ixocreate\Media\MediaPaths;
+use League\Flysystem\FilesystemInterface;
 
-final class ImageProcessor implements ProcessorInterface
+final class ImageProcessor
 {
     /**
-     * @var array
-     */
-    private $imageParameters = [];
-
-    /**
-     * @var Media
+     * @var MediaInterface
      */
     private $media;
 
@@ -39,22 +36,40 @@ final class ImageProcessor implements ProcessorInterface
     private $mediaConfig;
 
     /**
+     * @var FilesystemInterface
+     */
+    private $storage;
+
+    /**
      * @var Image
      */
     private $image;
 
     /**
+     * @var array
+     */
+    private $imageParameters = [];
+
+    /**
      * ImageProcessor constructor.
-     * @param Media $media
+     *
+     * @param MediaInterface $media
      * @param ImageDefinitionInterface $imageDefinition
      * @param MediaConfig $mediaConfig
+     * @param FilesystemInterface $storage
      * @param Image|null $image
      */
-    public function __construct(Media $media, ImageDefinitionInterface $imageDefinition, MediaConfig $mediaConfig, Image $image = null)
-    {
+    public function __construct(
+        MediaInterface $media,
+        ImageDefinitionInterface $imageDefinition,
+        MediaConfig $mediaConfig,
+        FilesystemInterface $storage,
+        Image $image = null
+    ) {
         $this->media = $media;
         $this->imageDefinition = $imageDefinition;
         $this->mediaConfig = $mediaConfig;
+        $this->storage = $storage;
         $this->image = $image;
         $this->setParameters();
     }
@@ -67,42 +82,41 @@ final class ImageProcessor implements ProcessorInterface
         return 'ImageProcessor';
     }
 
-    private function setParameters()
+    private function setParameters(): void
     {
         $this->imageParameters = [
-            'imagePath'      => 'data/media/' . $this->media->basePath(),
-            'imageFilename'  => $this->media->filename(),
-            'definitionSavingDir' => 'data/media/img/' . $this->imageDefinition->directory() . '/' . $this->media->basePath(),
-            'definitionWidth'     => $this->imageDefinition->width(),
-            'definitionHeight'    => $this->imageDefinition->height(),
-            'definitionMode'      => $this->imageDefinition->mode(),
-            'definitionUpscale'   => $this->imageDefinition->upscale(),
+            'definitionWidth' => $this->imageDefinition->width(),
+            'definitionHeight' => $this->imageDefinition->height(),
+            'definitionMode' => $this->imageDefinition->mode(),
+            'definitionUpscale' => $this->imageDefinition->upscale(),
         ];
-
-        if ($this->media->publicStatus() === false) {
-            $this->imageParameters['imagePath'] = 'data/media_private/' . $this->media->basePath();
-            $this->imageParameters['definitionSavingDir'] = 'data/media_private/img/' . $this->imageDefinition->directory() . '/' . $this->media->basePath();
-        }
     }
 
     /**
      * Processes UploadAction Images
+     *
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    public function process()
+    public function process(): void
     {
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
 
-        if (!\is_dir($this->imageParameters['definitionSavingDir'])) {
-            \mkdir($this->imageParameters['definitionSavingDir'], 0777, true);
-        }
-        $image = ($this->image != null) ? $this->image : $imageManager->make($this->imageParameters['imagePath'] . $this->imageParameters['imageFilename']);
+        $mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
+
+        /** @var Image $image */
+        $image = ($this->image != null) ? $this->image : $imageManager->make($this->storage->read($mediaPath . $this->media->basePath() . $this->media->filename()));
 
         $this->imageParameters['imageWidth'] = $image->width();
         $this->imageParameters['imageHeight'] = $image->height();
 
         $this->checkMode($image, $this->imageParameters);
 
-        $image->save($this->imageParameters['definitionSavingDir'] . $this->imageParameters['imageFilename']);
+        $filename = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
+
+        $this->storage->put(
+            $filename,
+            $image->encode(\pathinfo($filename, PATHINFO_EXTENSION))
+        );
         $image->destroy();
     }
 
@@ -135,14 +149,19 @@ final class ImageProcessor implements ProcessorInterface
     private function fit(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
-
-
-        $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-            if ($definitionUpscale === false) {
-                $constraint->upsize();
+        /** @var $definitionWidth int */
+        /** @var $definitionHeight int */
+        /** @var $definitionUpscale bool */
+        $image->resize(
+            $definitionWidth,
+            $definitionHeight,
+            function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                if ($definitionUpscale === false) {
+                    $constraint->upsize();
+                }
+                $constraint->aspectRatio();
             }
-            $constraint->aspectRatio();
-        });
+        );
     }
 
     /**
@@ -152,13 +171,19 @@ final class ImageProcessor implements ProcessorInterface
     private function fitCrop(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
-
+        /** @var $definitionWidth int */
+        /** @var $definitionHeight int */
+        /** @var $definitionUpscale bool */
         if ($definitionWidth != null && $definitionHeight != null) {
-            $image->fit($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-                if ($definitionUpscale === false) {
-                    $constraint->upsize();
+            $image->fit(
+                $definitionWidth,
+                $definitionHeight,
+                function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                    if ($definitionUpscale === false) {
+                        $constraint->upsize();
+                    }
                 }
-            });
+            );
         }
     }
 
@@ -169,13 +194,19 @@ final class ImageProcessor implements ProcessorInterface
     private function canvas(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
-
-        $image->resize($definitionWidth, $definitionHeight, function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
-            if ($definitionUpscale === false) {
-                $constraint->upsize();
+        /** @var $definitionWidth int */
+        /** @var $definitionHeight int */
+        /** @var $definitionUpscale bool */
+        $image->resize(
+            $definitionWidth,
+            $definitionHeight,
+            function (Constraint $constraint) use ($definitionWidth, $definitionHeight, $definitionUpscale) {
+                if ($definitionUpscale === false) {
+                    $constraint->upsize();
+                }
+                $constraint->aspectRatio();
             }
-            $constraint->aspectRatio();
-        });
+        );
 
         if (($image->width() != $definitionWidth) || ($image->height() != $definitionHeight)) {
             $image->resizeCanvas($definitionWidth, $definitionHeight);
@@ -189,7 +220,11 @@ final class ImageProcessor implements ProcessorInterface
     private function canvasFitCrop(Image $image, array $imageParameters)
     {
         \extract($imageParameters);
-
+        /** @var $definitionWidth int */
+        /** @var $definitionHeight int */
+        /** @var $definitionUpscale bool */
+        /** @var $imageWidth int */
+        /** @var $imageHeight int */
         if ($imageWidth >= $definitionWidth && $imageHeight >= $definitionHeight) {
             $image->fit($definitionWidth, $definitionHeight);
         } elseif ($imageWidth >= $definitionWidth || $imageHeight >= $definitionHeight) {

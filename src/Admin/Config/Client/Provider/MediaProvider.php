@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Admin\Config\Client\Provider;
 
-use Ixocreate\Contract\Admin\ClientConfigProviderInterface;
-use Ixocreate\Contract\Admin\RoleInterface;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Admin\ClientConfigProviderInterface;
+use Ixocreate\Admin\UserInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinitionInterface;
 
 final class MediaProvider implements ClientConfigProviderInterface
 {
@@ -26,13 +26,18 @@ final class MediaProvider implements ClientConfigProviderInterface
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
     }
 
+    public static function serviceName(): string
+    {
+        return 'media';
+    }
+
     /**
-     * @param RoleInterface|null $role
+     * @param UserInterface|null $user
      * @return array
      */
-    public function clientConfig(?RoleInterface $role = null): array
+    public function clientConfig(?UserInterface $user = null): array
     {
-        if (empty($role)) {
+        if (empty($user)) {
             return [];
         }
 
@@ -53,10 +58,5 @@ final class MediaProvider implements ClientConfigProviderInterface
         }
 
         return $result;
-    }
-
-    public static function serviceName(): string
-    {
-        return 'media';
     }
 }

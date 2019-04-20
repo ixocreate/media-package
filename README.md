@@ -1,18 +1,30 @@
-# IXOCREATE media
+# IXOCREATE Media Package
 
-[![Build Status](https://travis-ci.com/ixocreate/media.svg?branch=master)](https://travis-ci.com/ixocreate/media)
-[![Coverage Status](https://coveralls.io/repos/github/ixocreate/config/badge.svg?branch=master)](https://coveralls.io/github/ixocreate/config?branch=master)
-[![Packagist](https://img.shields.io/packagist/v/ixocreate/config.svg)](https://packagist.org/packages/ixocreate/config)
-[![Packagist Pre Release](https://img.shields.io/packagist/vpre/ixocreate/config.svg)](https://packagist.org/packages/ixocreate/config)
-[![Packagist](https://img.shields.io/packagist/l/ixocreate/config.svg)](https://packagist.org/packages/ixocreate/config)
+[![Build Status](https://travis-ci.com/ixocreate/media-package.svg?branch=master)](https://travis-ci.com/ixocreate/media-package)
+[![Coverage Status](https://coveralls.io/repos/github/ixocreate/media-package/badge.svg?branch=master)](https://coveralls.io/github/ixocreate/media-package?branch=master)
+[![Packagist](https://img.shields.io/packagist/v/ixocreate/media-package.svg)](https://packagist.org/packages/ixocreate/media-package)
+[![PHP Version](https://img.shields.io/packagist/php-v/ixocreate/media-package.svg)](https://packagist.org/packages/ixocreate/media-package)
+[![License](https://img.shields.io/github/license/ixocreate/media-package.svg)](LICENSE)
 
 ## Installation
 
 Install the package via composer:
 
 ```sh
-composer require ixocreate/media
+composer require ixocreate/media-package
 ```
+
+## Documentation
+
+Learn more about IXOCREATE by reading its [Documentation](https://ixocreate.github.io/).
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Security Vulnerabilities
+
+If you discover security vulnerabilities, please address issues directly to opensource@ixocreate.com via e-mail.
 
 ## License
 

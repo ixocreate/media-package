@@ -1,9 +1,16 @@
 <?php
+/**
+ * @link https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
+ * @license MIT License
+ */
+
+declare(strict_types=1);
+
 namespace Ixocreate\Media;
 
-/** @var \Ixocreate\Admin\Config\AdminConfigurator $admin */
-
+use Ixocreate\Admin\AdminConfigurator;
 use Ixocreate\Media\Admin\Config\Client\Provider\MediaProvider;
 
+/** @var AdminConfigurator $admin */
 $admin->addClientProvider(MediaProvider::class);
-

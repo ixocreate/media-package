@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -12,13 +12,13 @@ namespace Ixocreate\Media\Action\Media;
 use Doctrine\Common\Collections\Criteria;
 use Ixocreate\Admin\Entity\User;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
-use Ixocreate\Contract\Admin\RoleInterface;
+use Ixocreate\Admin\RoleInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Repository\MediaCreatedRepository;
 use Ixocreate\Media\Repository\MediaRepository;
-use Ixocreate\Media\Uri\Uri;
+use Ixocreate\Media\Uri\MediaUri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -32,7 +32,7 @@ final class IndexAction implements MiddlewareInterface
     private $mediaRepository;
 
     /**
-     * @var Uri
+     * @var MediaUri
      */
     private $uri;
 
@@ -48,14 +48,15 @@ final class IndexAction implements MiddlewareInterface
 
     /**
      * IndexAction constructor.
+     *
      * @param MediaRepository $mediaRepository
-     * @param Uri $uri
+     * @param MediaUri $uri
      * @param MediaConfig $mediaConfig
      * @param MediaCreatedRepository $mediaCreatedRepository
      */
     public function __construct(
         MediaRepository $mediaRepository,
-        Uri $uri,
+        MediaUri $uri,
         MediaConfig $mediaConfig,
         MediaCreatedRepository $mediaCreatedRepository
     ) {
@@ -89,13 +90,13 @@ final class IndexAction implements MiddlewareInterface
                 }
                 continue;
             } elseif ($key === "offset") {
-                $value = (int) $value;
+                $value = (int)$value;
                 if (!empty($value)) {
                     $criteria->setFirstResult($value);
                 }
                 continue;
             } elseif ($key === "limit") {
-                $value = (int) $value;
+                $value = (int)$value;
                 if (!empty($value)) {
                     $criteria->setMaxResults(\min($value, 500));
                 }
@@ -132,7 +133,7 @@ final class IndexAction implements MiddlewareInterface
             $mediaCreatedArray = [];
             /** @var MediaCreated $mediaCreated */
             foreach ($createdResult as $mediaCreated) {
-                $mediaCreatedArray[] = (string) $mediaCreated->mediaId();
+                $mediaCreatedArray[] = (string)$mediaCreated->mediaId();
             }
 
             $criteria->andWhere(Criteria::expr()->in('id', $mediaCreatedArray));

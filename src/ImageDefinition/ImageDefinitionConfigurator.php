@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -9,10 +9,11 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\ImageDefinition;
 
-use Ixocreate\Contract\Application\ConfiguratorInterface;
-use Ixocreate\Contract\Application\ServiceRegistryInterface;
+use Ixocreate\Application\Configurator\ConfiguratorInterface;
+use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Application\Service\SubManagerConfigurator;
+use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
-use Ixocreate\ServiceManager\SubManager\SubManagerConfigurator;
 
 final class ImageDefinitionConfigurator implements ConfiguratorInterface
 {
@@ -26,7 +27,10 @@ final class ImageDefinitionConfigurator implements ConfiguratorInterface
      */
     public function __construct()
     {
-        $this->subManagerConfigurator = new SubManagerConfigurator(ImageDefinitionSubManager::class, ImageDefinitionInterface::class);
+        $this->subManagerConfigurator = new SubManagerConfigurator(
+            ImageDefinitionSubManager::class,
+            ImageDefinitionInterface::class
+        );
     }
 
     /**

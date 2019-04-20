@@ -1,15 +1,15 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\ImageDefinition;
+namespace Ixocreate\Media;
 
-use Ixocreate\Contract\ServiceManager\NamedServiceInterface;
+use Ixocreate\ServiceManager\NamedServiceInterface;
 
 interface ImageDefinitionInterface extends NamedServiceInterface
 {

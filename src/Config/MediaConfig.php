@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -9,9 +9,11 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Config;
 
-use Ixocreate\Media\Exception\InvalidExtensionException;
+use Ixocreate\Application\Uri\ApplicationUri;
 use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\Exception\InvalidExtensionException;
 use Psr\Http\Message\UriInterface;
+use Zend\Diactoros\Uri;
 
 final class MediaConfig
 {
@@ -21,7 +23,7 @@ final class MediaConfig
     private $driver;
 
     /**
-     * @var MediaProjectConfig
+     * @var MediaPackageConfig
      */
     private $mediaProjectConfig;
 
@@ -31,17 +33,22 @@ final class MediaConfig
     private $uri;
 
     /**
-     * MediaConfig constructor.
-     * @param string $driver
-     * @param UriInterface $uri
-     * @param MediaProjectConfig $mediaProjectConfig
+     * @var ApplicationUri
      */
-    public function __construct(string $driver, UriInterface $uri, MediaProjectConfig $mediaProjectConfig)
+    private $projectUri;
+
+    /**
+     * MediaConfig constructor.
+     *
+     * @param MediaPackageConfig $mediaProjectConfig
+     * @param ApplicationUri $projectUri
+     */
+    public function __construct(MediaPackageConfig $mediaProjectConfig, ApplicationUri $projectUri)
     {
-        $this->driver = $driver;
-        $this->uri = $uri;
         $this->mediaProjectConfig = $mediaProjectConfig;
+        $this->projectUri = $projectUri;
         $this->assertDriver();
+        $this->assertUri();
     }
 
     /**
@@ -126,6 +133,24 @@ final class MediaConfig
         return $this->mediaProjectConfig->documentWhitelist();
     }
 
+    private function assertUri(): void
+    {
+        $uri = new Uri($this->mediaProjectConfig->uri());
+        if (empty($uri->getHost())) {
+            /** @var Uri $projectUri */
+            $projectUri = $this->projectUri;
+
+            $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim(
+                $uri->getPath(),
+                '/'
+                ));
+            $uri = $uri->withHost($projectUri->getMainUri()->getHost());
+            $uri = $uri->withScheme($projectUri->getMainUri()->getScheme());
+            $uri = $uri->withPort($projectUri->getMainUri()->getPort());
+        }
+        $this->uri = $uri;
+    }
+
     /**
      * @throws \Ixocreate\Media\Exception\InvalidExtensionException
      * @throws \Ixocreate\Media\Exception\InvalidConfigException
@@ -133,6 +158,8 @@ final class MediaConfig
     private function assertDriver(): void
     {
         $allowedConfigParameter = ['automatic', 'gd', 'imagick'];
+
+        $this->driver = $this->mediaProjectConfig->driver();
 
         if (empty($driver)) {
             $this->driver = 'automatic';

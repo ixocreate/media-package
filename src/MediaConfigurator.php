@@ -1,16 +1,18 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Config;
+namespace Ixocreate\Media;
 
-use Ixocreate\Contract\Application\ConfiguratorInterface;
-use Ixocreate\Contract\Application\ServiceRegistryInterface;
+use Ixocreate\Application\Configurator\ConfiguratorInterface;
+use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Media\Config\MediaPackageConfig;
+use Zend\Diactoros\Uri;
 
 class MediaConfigurator implements ConfiguratorInterface
 {
@@ -22,7 +24,20 @@ class MediaConfigurator implements ConfiguratorInterface
         'global' => [],
     ];
 
+    /**
+     * @var string
+     */
+    private $driver = '';
+
+    /**
+     * @var bool
+     */
     private $publicStatus = false;
+
+    /**
+     * @var string
+     */
+    private $uri = '';
 
     /**
      * @return array
@@ -40,15 +55,56 @@ class MediaConfigurator implements ConfiguratorInterface
         return $this->publicStatus;
     }
 
+    /**
+     * @return string
+     */
+    public function driver(): string
+    {
+        return $this->driver;
+    }
+
+    /**
+     * @return string
+     */
+    public function uri(): string
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @param string $driver
+     */
+    public function setDriver(string $driver)
+    {
+        $this->driver = $driver;
+    }
+
+    /**
+     * @param bool $bool
+     */
     public function setPublicStatus(bool $bool): void
     {
         $this->publicStatus = $bool;
     }
 
     /**
+     * @param string $uri
+     */
+    public function setUri(string $uri)
+    {
+        $uriObj = new Uri($uri);
+        if (empty($uriObj->getHost())) {
+            \ltrim($uri, '/');
+            $uri = '/' . $uri;
+        }
+
+        $this->uri = $uri;
+    }
+
+    /**
      * @param array $whitelist
      */
-    public function setImageWhiteliste(array $whitelist): void
+    public function setImageWhitelist(array $whitelist): void
     {
         $this->whitelist['image'] = $whitelist;
     }
@@ -87,6 +143,6 @@ class MediaConfigurator implements ConfiguratorInterface
 
     public function registerService(ServiceRegistryInterface $serviceRegistry): void
     {
-        $serviceRegistry->add(MediaProjectConfig::class, new MediaProjectConfig($this));
+        $serviceRegistry->add(MediaPackageConfig::class, new MediaPackageConfig($this));
     }
 }

@@ -12,7 +12,7 @@ namespace Ixocreate\Media\Action\Media;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Media\Command\Media\DeleteCommand;
+use Ixocreate\Media\Command\Media\UpdateCommand;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
@@ -20,35 +20,30 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-final class DeleteAction implements MiddlewareInterface
+final class UpdateAction implements MiddlewareInterface
 {
-    /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
-
     /**
      * @var CommandBus
      */
     private $commandBus;
 
     /**
-     * DeleteAction constructor.
+     * @var MediaRepository
+     */
+    private $mediaRepository;
+
+    /**
+     * UpdateAction constructor.
      *
      * @param MediaRepository $mediaRepository
      * @param CommandBus $commandBus
      */
     public function __construct(MediaRepository $mediaRepository, CommandBus $commandBus)
     {
-        $this->mediaRepository = $mediaRepository;
         $this->commandBus = $commandBus;
+        $this->mediaRepository = $mediaRepository;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
-     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var Media $media */
@@ -58,10 +53,19 @@ final class DeleteAction implements MiddlewareInterface
             return new ApiErrorResponse('given media Id does not exist');
         }
 
-        $commandResult = $this->commandBus->command(DeleteCommand::class, ['media' => $media]);
+        $data = $request->getParsedBody();
+        $publicStatus = $data['publicStatus'];
+        $newFilename = $data['newFilename'];
 
-        if (!$commandResult->isSuccessful()) {
-            return new ApiErrorResponse('media-media-delete', $commandResult->messages());
+        /** @var UpdateCommand $command */
+        $command = $this->commandBus->create(UpdateCommand::class, []);
+        $command = $command->withMedia($media);
+        $command = $command->withPublicStatus($publicStatus);
+        $command = $command->withNewFilename($newFilename);
+        $result = $this->commandBus->dispatch($command);
+
+        if (!$result->isSuccessful()) {
+            return new ApiErrorResponse('media-media-update', $result->messages());
         }
 
         return new ApiSuccessResponse();

@@ -1,22 +1,23 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Delegator\Delegators;
+namespace Ixocreate\Media\Handler;
 
+use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Delegator\DelegatorInterface;
-use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\MediaInterface;
+use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
 
-final class Image implements DelegatorInterface
+final class ImageHandler implements HandlerInterface
 {
     /**
      * @var array
@@ -49,15 +50,25 @@ final class Image implements DelegatorInterface
     private $mediaConfig;
 
     /**
+     * @var StorageSubManager
+     */
+    private $storageSubManager;
+
+    /**
      * Image constructor.
      *
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
+     * @param StorageSubManager $storageSubManager
      */
-    public function __construct(ImageDefinitionSubManager $imageDefinitionSubManager, MediaConfig $mediaConfig)
-    {
+    public function __construct(
+        ImageDefinitionSubManager $imageDefinitionSubManager,
+        MediaConfig $mediaConfig,
+        StorageSubManager $storageSubManager
+    ) {
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
+        $this->storageSubManager = $storageSubManager;
     }
 
     /**
@@ -69,32 +80,33 @@ final class Image implements DelegatorInterface
     }
 
     /**
-     * @param Media $media
+     * @param MediaInterface $media
      * @return bool
      */
-    public function isResponsible(Media $media): bool
+    public function isResponsible(MediaInterface $media): bool
     {
         $pathInfo = \pathinfo($media->filename());
         $extension = $pathInfo['extension'];
-        $responsible = true;
         if ((!\in_array($media->mimeType(), $this->allowedMimeTypes)) &&
             (!\in_array($extension, $this->allowedFileExtensions))) {
-            $responsible = false;
+            return false;
         }
-        return $responsible;
+        return true;
     }
 
     /**
-     * @param Media $media
+     * @param MediaInterface $media
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    public function process(Media $media): void
+    public function process(MediaInterface $media): void
     {
-        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $name => $imageDefinitionClassName) {
+        $storage = $this->storageSubManager->get('media');
+
+        foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
-            $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig);
-            $imageProcessor->process();
+            (new ImageProcessor($media, $imageDefinition, $this->mediaConfig, $storage))->process();
         }
     }
 
@@ -104,11 +116,11 @@ final class Image implements DelegatorInterface
     public function directories(): array
     {
         $directories = [];
-        foreach ($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices() as $imageDefinitionClassName) {
+        foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
-            $directories[] = 'img/' . $imageDefinition->directory() . '/';
+            $directories[] = MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/';
         }
         return $directories;
     }

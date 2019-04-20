@@ -1,6 +1,6 @@
 <?php
 /**
- * @see https://github.com/ixocreate
+ * @link https://github.com/ixocreate
  * @copyright IXOCREATE GmbH
  * @license MIT License
  */
@@ -9,13 +9,12 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
-use Ixocreate\Contract\Application\ConfiguratorRegistryInterface;
-use Ixocreate\Contract\Application\PackageInterface;
-use Ixocreate\Contract\Application\ServiceRegistryInterface;
-use Ixocreate\Contract\ServiceManager\ServiceManagerInterface;
-use Ixocreate\Media\BootstrapItem\DelegatorBootstrapItem;
-use Ixocreate\Media\BootstrapItem\ImageDefinitionBootstrapItem;
-use Ixocreate\Media\BootstrapItem\MediaBootstrapItem;
+use Ixocreate\Application\Configurator\ConfiguratorRegistryInterface;
+use Ixocreate\Application\Package\PackageInterface;
+use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Media\Handler\MediaHandlerBootstrapItem;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionBootstrapItem;
+use Ixocreate\ServiceManager\ServiceManagerInterface;
 
 final class Package implements PackageInterface
 {
@@ -38,9 +37,7 @@ final class Package implements PackageInterface
      */
     public function getConfigProvider(): ?array
     {
-        return [
-            ConfigProvider::class,
-        ];
+        return [];
     }
 
     /**
@@ -63,7 +60,7 @@ final class Package implements PackageInterface
      */
     public function getConfigDirectory(): ?string
     {
-        return null;
+        return __DIR__ . '/../config';
     }
 
     /**
@@ -72,9 +69,9 @@ final class Package implements PackageInterface
     public function getBootstrapItems(): ?array
     {
         return [
-            DelegatorBootstrapItem::class,
-            ImageDefinitionBootstrapItem::class,
             MediaBootstrapItem::class,
+            MediaHandlerBootstrapItem::class,
+            ImageDefinitionBootstrapItem::class,
         ];
     }
 
