@@ -1,4 +1,10 @@
 <?php
+/**
+ * @link https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace Ixocreate\Media;
@@ -12,7 +18,6 @@ use Ixocreate\Media\Uri\Factory\MediaUriFactory;
 use Ixocreate\Media\Uri\MediaUri;
 
 /** @var ServiceManagerConfigurator $serviceManager */
-
 $serviceManager->addFactory(MediaConfig::class, MediaConfigFactory::class);
 $serviceManager->addFactory(MediaUri::class, MediaUriFactory::class);
 

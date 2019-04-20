@@ -1,10 +1,15 @@
 <?php
+/**
+ * @link https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
 /** @var PipeConfigurator $pipe */
-
 use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Application\Http\Pipe\GroupPipeConfigurator;
 use Ixocreate\Application\Http\Pipe\PipeConfigurator;
@@ -33,5 +38,3 @@ $pipe->segmentPipe(AdminConfig::class)(function (PipeConfigurator $pipe) {
         });
     });
 });
-
-

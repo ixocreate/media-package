@@ -14,15 +14,17 @@
         "php": "^7.1",
         "intervention/image": "^2.4.1",
         "firebase/php-jwt": "^5.0",
-        "ixocreate/application": "dev-develop",
-        "ixocreate/collection": "dev-develop",
+        "ixocreate/application": "^0.1",
+        "ixocreate/admin-package": "^0.1",
+        "ixocreate/collection": "^0.1",
+        "ixocreate/filesystem-package": "^0.1",
         "symfony/asset": "^4.1",
         "cocur/slugify": "^3.1"
     },
     "require-dev": {
         "ext-gd": ">=2.0",
         "ext-imagick": "*",
-        "ixocreate/coding-standard": "^1.0",
+        "ixocreate/coding-standard": "^2.0",
         "php-coveralls/php-coveralls": "^2.1",
         "phpunit/phpunit": "^7.0"
     },

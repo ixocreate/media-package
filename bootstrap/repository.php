@@ -1,4 +1,10 @@
 <?php
+/**
+ * @link https://github.com/ixocreate
+ * @copyright IXOCREATE GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace Ixocreate\Media;
@@ -9,7 +15,6 @@ use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 
 /** @var RepositoryConfigurator $repository */
-
 $repository->addRepository(MediaRepository::class);
 $repository->addRepository(MediaCropRepository::class);
 $repository->addRepository(MediaCreatedRepository::class);
