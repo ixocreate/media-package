@@ -10,7 +10,8 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Media;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
@@ -19,7 +20,6 @@ use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
-use League\Flysystem\FilesystemInterface;
 
 class UpdateCommand extends AbstractCommand
 {
@@ -39,16 +39,6 @@ class UpdateCommand extends AbstractCommand
     private $delegatorSubManager;
 
     /**
-     * @var StorageSubManager
-     */
-    private $storageSubManager;
-
-    /**
-     * @var FilesystemInterface
-     */
-    private $storage;
-
-    /**
      * @var Media
      */
     private $media;
@@ -64,23 +54,33 @@ class UpdateCommand extends AbstractCommand
     private $newFilename;
 
     /**
+     * @var FilesystemManager
+     */
+    private $filesystemManager;
+
+    /**
+     * @var FilesystemInterface
+     */
+    private $filesystem;
+
+    /**
      * UpdateCommand constructor.
      *
      * @param MediaHandlerSubManager $delegatorSubManager
-     * @param StorageSubManager $storageSubManager
+     * @param FilesystemManager $filesystemManager
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      */
     public function __construct(
         MediaHandlerSubManager $delegatorSubManager,
-        StorageSubManager $storageSubManager,
+        FilesystemManager $filesystemManager,
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->delegatorSubManager = $delegatorSubManager;
-        $this->storageSubManager = $storageSubManager;
+        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -124,11 +124,11 @@ class UpdateCommand extends AbstractCommand
      */
     public function execute(): bool
     {
-        if (!$this->storageSubManager->has('media')) {
+        if (!$this->filesystemManager->has('media')) {
             throw new InvalidConfigException('Storage Config not set');
         }
 
-        $this->storage = $this->storageSubManager->get('media');
+        $this->filesystem = $this->filesystemManager->get('media');
 
         // Filename
         if ($this->newFilename !== null) {
@@ -153,9 +153,9 @@ class UpdateCommand extends AbstractCommand
                  */
                 $publicDirectory = MediaPaths::PUBLIC_PATH . $this->media->basePath() . $this->media->filename();
                 $privateDirectory = MediaPaths::PRIVATE_PATH . $this->media->basePath() . $this->media->filename();
-                if ($desiredPublicStatus && !$this->storage->has($publicDirectory)) {
+                if ($desiredPublicStatus && !$this->filesystem->has($publicDirectory)) {
                     $this->media = $this->moveMedia($this->media, MediaPaths::PRIVATE_PATH, MediaPaths::PUBLIC_PATH);
-                } elseif (!$desiredPublicStatus && !$this->storage->has($privateDirectory)) {
+                } elseif (!$desiredPublicStatus && !$this->filesystem->has($privateDirectory)) {
                     $this->media = $this->moveMedia($this->media, MediaPaths::PUBLIC_PATH, MediaPaths::PRIVATE_PATH);
                 }
 
@@ -188,14 +188,14 @@ class UpdateCommand extends AbstractCommand
             $delegator = $this->delegatorSubManager->get($delegatorClassName);
             if ($delegator->isResponsible($media)) {
                 foreach ($delegator->directories() as $directory) {
-                    $this->storage->rename(
+                    $this->filesystem->rename(
                         $mediaPath . $directory . $media->basePath() . $media->filename(),
                         $mediaPath . $directory . $media->basePath() . $newFilename . '.' . $fileInfo['extension']
                     );
                 }
             }
         }
-        $this->storage->rename(
+        $this->filesystem->rename(
             $mediaPath . $media->basePath() . $media->filename(),
             $mediaPath . $media->basePath() . $newFilename . '.' . $fileInfo['extension']
         );
@@ -216,7 +216,7 @@ class UpdateCommand extends AbstractCommand
         /**
          * move source file
          */
-        $this->storage->rename(
+        $this->filesystem->rename(
             $fromMediaPath . $media->basePath() . $media->filename(),
             $toMediaPath . $media->basePath() . $media->filename()
         );
@@ -233,7 +233,7 @@ class UpdateCommand extends AbstractCommand
             }
 
             foreach ($delegator->directories() as $directory) {
-                $this->storage->rename(
+                $this->filesystem->rename(
                     $fromMediaPath . $directory . $media->basePath() . $media->filename(),
                     $toMediaPath . $directory . $media->basePath() . $media->filename()
                 );

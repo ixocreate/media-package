@@ -12,7 +12,6 @@ namespace Ixocreate\Media\Action\Image;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Filesystem\Storage\StorageSubManager;
 use Ixocreate\Media\Command\Image\EditorCommand;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
@@ -48,11 +47,6 @@ final class EditorAction implements MiddlewareInterface
     private $mediaCropRepository;
 
     /**
-     * @var StorageSubManager
-     */
-    private $storageSubManager;
-
-    /**
      * @var CommandBus
      */
     private $commandBus;
@@ -65,21 +59,18 @@ final class EditorAction implements MiddlewareInterface
      * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaCropRepository $mediaCropRepository
-     * @param StorageSubManager $storageSubManager
      */
     public function __construct(
         CommandBus $commandBus,
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaCropRepository $mediaCropRepository,
-        StorageSubManager $storageSubManager
+        MediaCropRepository $mediaCropRepository
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaCropRepository = $mediaCropRepository;
-        $this->storageSubManager = $storageSubManager;
         $this->commandBus = $commandBus;
     }
 

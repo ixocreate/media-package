@@ -12,7 +12,7 @@ namespace Ixocreate\Media\Action\Media;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\Entity\Type\Type;
-use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Handler\ImageHandler;
@@ -22,7 +22,6 @@ use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Type\MediaType;
 use Ixocreate\Media\Uri\MediaUri;
-use League\Flysystem\FilesystemInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -51,14 +50,9 @@ final class DetailAction implements MiddlewareInterface
     private $mediaCropRepository;
 
     /**
-     * @var StorageSubManager
+     * @var FilesystemManager
      */
-    private $storageSubManager;
-
-    /**
-     * @var FilesystemInterface
-     */
-    private $storage;
+    private $filesystemManager;
 
     /**
      * DetailAction constructor.
@@ -67,20 +61,20 @@ final class DetailAction implements MiddlewareInterface
      * @param ImageHandler $imageHandler
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaCropRepository $mediaCropRepository
-     * @param StorageSubManager $storageSubManager
+     * @param FilesystemManager $filesystemManager
      */
     public function __construct(
         MediaUri $uri,
         ImageHandler $imageHandler,
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaCropRepository $mediaCropRepository,
-        StorageSubManager $storageSubManager
+        FilesystemManager $filesystemManager
     ) {
         $this->uri = $uri;
         $this->imageHandler = $imageHandler;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaCropRepository = $mediaCropRepository;
-        $this->storageSubManager = $storageSubManager;
+        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -91,11 +85,9 @@ final class DetailAction implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!$this->storageSubManager->has('media')) {
+        if (!$this->filesystemManager->has('media')) {
             throw new InvalidConfigException('Storage Config not set');
         }
-
-        $this->storage = $this->storageSubManager->get('media');
 
         /** @var MediaType $media */
         $media = Type::create($request->getAttribute("id"), MediaType::class);
@@ -134,7 +126,7 @@ final class DetailAction implements MiddlewareInterface
 
         $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
-        $file = $this->storage->read($mediaPath . $media->basePath() . $media->filename());
+        $file = $this->filesystemManager->get("media")->read($mediaPath . $media->basePath() . $media->filename());
 
         $size = \getimagesizefromstring($file);
 
