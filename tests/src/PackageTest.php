@@ -39,7 +39,7 @@ class PackageTest extends TestCase
             MediaHandlerBootstrapItem::class,
             ImageDefinitionBootstrapItem::class,
         ], $package->getBootstrapItems());
-        $this->assertDirectoryExists($package->getConfigDirectory());
+        $this->assertNull($package->getConfigDirectory());
         $this->assertNull($package->getConfigProvider());
         $this->assertNull($package->getDependencies());
         $this->assertDirectoryExists($package->getBootstrapDirectory());
