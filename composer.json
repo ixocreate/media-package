@@ -15,7 +15,7 @@
         "ixocreate/application": "^0.1",
         "ixocreate/admin-package": "^0.2",
         "ixocreate/collection": "^0.1",
-        "ixocreate/filesystem-package": "^0.1",
+        "ixocreate/filesystem-package": "^0.2",
         "symfony/asset": "^4.1",
         "cocur/slugify": "^3.1"
     },

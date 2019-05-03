@@ -11,7 +11,6 @@ namespace Ixocreate\Media\Handler;
 
 use Ixocreate\Media\MediaInterface;
 use Ixocreate\ServiceManager\NamedServiceInterface;
-use League\Flysystem\FilesystemInterface;
 
 interface HandlerInterface extends NamedServiceInterface
 {
@@ -28,7 +27,6 @@ interface HandlerInterface extends NamedServiceInterface
 
     /**
      * @param MediaInterface $media
-     * @param FilesystemInterface $storage
      */
     public function process(MediaInterface $media): void;
 }

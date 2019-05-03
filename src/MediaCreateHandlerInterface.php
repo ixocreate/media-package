@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
-use League\Flysystem\FilesystemInterface;
+use Ixocreate\Filesystem\FilesystemInterface;
 
 interface MediaCreateHandlerInterface
 {

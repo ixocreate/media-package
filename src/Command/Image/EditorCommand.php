@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Image;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCrop;
@@ -45,22 +45,30 @@ final class EditorCommand extends AbstractCommand
     private $mediaCropRepository;
 
     /**
-     * @var StorageSubManager
+     * @var FilesystemManager
      */
-    private $storageSubManager;
+    private $filesystemManager;
 
+    /**
+     * EditorCommand constructor.
+     * @param MediaRepository $mediaRepository
+     * @param MediaConfig $mediaConfig
+     * @param ImageDefinitionSubManager $imageDefinitionSubManager
+     * @param MediaCropRepository $mediaCropRepository
+     * @param FilesystemManager $filesystemManager
+     */
     public function __construct(
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaCropRepository $mediaCropRepository,
-        StorageSubManager $storageSubManager
+        FilesystemManager $filesystemManager
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaCropRepository = $mediaCropRepository;
-        $this->storageSubManager = $storageSubManager;
+        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -69,11 +77,11 @@ final class EditorCommand extends AbstractCommand
      */
     public function execute(): bool
     {
-        if (!$this->storageSubManager->has('media')) {
+        if (!$this->filesystemManager->has('media')) {
             throw new InvalidConfigException('Storage Config not set');
         }
 
-        $storage = $this->storageSubManager->get('media');
+        $filesystem = $this->filesystemManager->get('media');
 
         /** @var Media $media */
         $media = $this->dataValue('media');
@@ -117,7 +125,7 @@ final class EditorCommand extends AbstractCommand
             ]);
         }
 
-        (new EditorProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig, $storage))->process();
+        (new EditorProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig, $filesystem))->process();
 
         $this->mediaCropRepository->save($mediaCrop);
 

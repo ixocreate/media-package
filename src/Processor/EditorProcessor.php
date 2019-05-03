@@ -10,11 +10,11 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Processor;
 
 use Intervention\Image\ImageManager;
+use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaPaths;
-use League\Flysystem\FilesystemInterface;
 
 final class EditorProcessor
 {
