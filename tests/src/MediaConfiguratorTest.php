@@ -33,7 +33,7 @@ class MediaConfiguratorTest extends TestCase
     {
         $driver = 'driver';
         $this->mediaConfigurator->setDriver($driver);
-        $this->assertSame($this->mediaConfigurator->driver(),$driver);
+        $this->assertSame($this->mediaConfigurator->driver(), $driver);
 
         $publicStatus = true;
         $this->mediaConfigurator->setPublicStatus($publicStatus);
