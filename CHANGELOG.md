@@ -1,8 +1,11 @@
 # Release Notes
 
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.2.1...develop)
+### Added
+- Media specific Types and Elements
 ### Changed
 - Upgrade Publish config to Application v0.2
+- Upgrade to Admin Package v0.3
 - Upgrade to Filesystem Package v0.3
 ### Fixed
 - fix -c flag in RecreateImageDefinition

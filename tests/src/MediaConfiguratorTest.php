@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class MediaConfiguratorTest extends TestCase
 {
-
     /**
      * @var MediaConfigurator
      */

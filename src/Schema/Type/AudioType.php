@@ -7,20 +7,20 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Type;
+namespace Ixocreate\Media\Schema\Type;
 
 use Doctrine\DBAL\Types\GuidType;
-use Ixocreate\Entity\Type\AbstractType;
-use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Schema\Element\AudioElement;
 use Ixocreate\Media\Uri\MediaUri;
-use Ixocreate\Schema\BuilderInterface;
-use Ixocreate\Schema\ElementInterface;
-use Ixocreate\Schema\ElementProviderInterface;
-use Ixocreate\Schema\Elements\AudioElement;
-use Ixocreate\Type\DatabaseTypeInterface;
-use Ixocreate\Type\TypeInterface;
+use Ixocreate\Schema\Builder\BuilderInterface;
+use Ixocreate\Schema\Element\ElementInterface;
+use Ixocreate\Schema\Element\ElementProviderInterface;
+use Ixocreate\Schema\Type\AbstractType;
+use Ixocreate\Schema\Type\DatabaseTypeInterface;
+use Ixocreate\Schema\Type\Type;
+use Ixocreate\Schema\Type\TypeInterface;
 
 final class AudioType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {

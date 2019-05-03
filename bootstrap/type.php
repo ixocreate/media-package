@@ -9,12 +9,12 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
-use Ixocreate\Media\Type\AudioType;
-use Ixocreate\Media\Type\DocumentType;
-use Ixocreate\Media\Type\ImageType;
-use Ixocreate\Media\Type\MediaType;
-use Ixocreate\Media\Type\VideoType;
-use Ixocreate\Type\TypeConfigurator;
+use Ixocreate\Media\Schema\Type\AudioType;
+use Ixocreate\Media\Schema\Type\DocumentType;
+use Ixocreate\Media\Schema\Type\ImageType;
+use Ixocreate\Media\Schema\Type\MediaType;
+use Ixocreate\Media\Schema\Type\VideoType;
+use Ixocreate\Schema\Schema\TypeConfigurator;
 
 /** @var TypeConfigurator $type */
 $type->addType(ImageType::class);

@@ -11,7 +11,6 @@ namespace Ixocreate\Media\Action\Media;
 
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
-use Ixocreate\Entity\Type\Type;
 use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
@@ -20,8 +19,9 @@ use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaCropRepository;
-use Ixocreate\Media\Type\MediaType;
+use Ixocreate\Media\Schema\Type\MediaType;
 use Ixocreate\Media\Uri\MediaUri;
+use Ixocreate\Schema\Type\Type;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
