@@ -1,6 +1,9 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.1.0...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.2.0...develop)
+
+### Changed
+- Upgrade Publish config
 
 ## [v0.2.0 (2019-04-23)](https://github.com/ixocreate/media-package/compare/0.1.0...0.2.0)
 
