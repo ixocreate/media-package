@@ -94,7 +94,7 @@ class MediaConfigurator implements ConfiguratorInterface
     {
         $uriObj = new Uri($uri);
         if (empty($uriObj->getHost())) {
-            \ltrim($uri, '/');
+            $uri = \ltrim($uri, '/');
             $uri = '/' . $uri;
         }
 
