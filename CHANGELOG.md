@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.2.1...develop)
 ### Changed
 - Upgrade Publish config to Application v0.2
+- Upgrade to Filesystem Package v0.3
 ### Fixed
 - fix -c flag in RecreateImageDefinition
 

@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
+use Ixocreate\Filesystem\FilesystemConfigurator;
 use Ixocreate\Filesystem\Option\LocalOption;
 
-/** @var \Ixocreate\Filesystem\FilesystemConfigurator $filesystem */
+/** @var FilesystemConfigurator $filesystem */
 $filesystem->addStorage("media", new LocalOption(\getcwd() . '/data/'));
