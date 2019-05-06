@@ -1,6 +1,8 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.2.1...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.0...develop)
+
+## [v0.3.0 (2019-05-06)](https://github.com/ixocreate/media-package/compare/0.2.1...0.3.0)
 ### Added
 - Media specific Types and Elements
 ### Changed
@@ -11,7 +13,6 @@
 - fix -c flag in RecreateImageDefinition
 
 ## [v0.2.1 (2019-05-03)](https://github.com/ixocreate/media-package/compare/0.2.0...0.2.1)
-
 ### Fixed
 - Allow leading slash in Uri
 
