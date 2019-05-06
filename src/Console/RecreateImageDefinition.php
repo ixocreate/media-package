@@ -240,8 +240,8 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         foreach ($this->mediaRepository->findAll() as $media) {
             /** @var Media $media */
             if (
-                !$this->storage->has(MediaPaths::PUBLIC_PATH . $imageDefinition->directory() . '/' . $media->basePath() . $media->filename()) &&
-                !$this->storage->has(MediaPaths::PRIVATE_PATH . $imageDefinition->directory() . '/' . $media->basePath() . $media->filename())
+                !$this->filesystem->has(MediaPaths::PUBLIC_PATH . $imageDefinition->directory() . '/' . $media->basePath() . $media->filename()) &&
+                !$this->filesystem->has(MediaPaths::PRIVATE_PATH . $imageDefinition->directory() . '/' . $media->basePath() . $media->filename())
             ) {
                 if (!$this->imageHandler->isResponsible($media)) {
                     continue;
@@ -268,8 +268,8 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     ): void {
         $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json';
 
-        if ($this->storage->has($jsonFile)) {
-            $json = $this->storage->read($jsonFile);
+        if ($this->filesystem->has($jsonFile)) {
+            $json = $this->filesystem->read($jsonFile);
             $json = \json_decode($json, true);
             if (
                 $json['width'] != $imageDefinition->width() ||
@@ -281,7 +281,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                 $json['height'] = $imageDefinition->height();
                 $json['mode'] = $imageDefinition->mode();
                 $json['upscale'] = $imageDefinition->upscale();
-                $this->storage->put($jsonFile, \json_encode($json));
+                $this->filesystem->put($jsonFile, \json_encode($json));
                 $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
             }
 
@@ -295,7 +295,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $json['mode'] = $imageDefinition->mode();
         $json['upscale'] = $imageDefinition->upscale();
         $json['directory'] = $imageDefinition->directory();
-        $this->storage->write($jsonFile, \json_encode($json));
+        $this->filesystem->write($jsonFile, \json_encode($json));
         $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
     }
 
@@ -321,7 +321,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
                 continue;
             }
 
-            $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig, $this->storage);
+            $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig, $this->filesystem);
             $imageProcessor->process();
             $progressBar->advance();
         }
