@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\MediaCreateHandler;
 
+use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\MediaCreateHandlerInterface;
-use League\Flysystem\FilesystemInterface;
 use Zend\Diactoros\UploadedFile;
 
 final class UploadHandler implements MediaCreateHandlerInterface

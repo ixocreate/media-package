@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\MediaCreateHandler;
 
+use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\MediaCreateHandlerInterface;
-use League\Flysystem\FilesystemInterface;
 
 final class LocalFileHandler implements MediaCreateHandlerInterface
 {
@@ -55,7 +55,6 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
     /**
      * @param FilesystemInterface $storage
      * @param $destination
-     * @throws \League\Flysystem\FileExistsException
      * @return bool
      */
     public function move(FilesystemInterface $storage, $destination): bool

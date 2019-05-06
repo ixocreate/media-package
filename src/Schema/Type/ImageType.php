@@ -7,22 +7,22 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Type;
+namespace Ixocreate\Media\Schema\Type;
 
 use Doctrine\DBAL\Types\GuidType;
-use Ixocreate\Entity\Type\AbstractType;
-use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Schema\Element\ImageElement;
 use Ixocreate\Media\Uri\MediaUri;
-use Ixocreate\Schema\BuilderInterface;
-use Ixocreate\Schema\ElementInterface;
-use Ixocreate\Schema\ElementProviderInterface;
-use Ixocreate\Schema\Elements\VideoElement;
-use Ixocreate\Type\DatabaseTypeInterface;
-use Ixocreate\Type\TypeInterface;
+use Ixocreate\Schema\Builder\BuilderInterface;
+use Ixocreate\Schema\Element\ElementInterface;
+use Ixocreate\Schema\Element\ElementProviderInterface;
+use Ixocreate\Schema\Type\AbstractType;
+use Ixocreate\Schema\Type\DatabaseTypeInterface;
+use Ixocreate\Schema\Type\Type;
+use Ixocreate\Schema\Type\TypeInterface;
 
-final class VideoType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
+final class ImageType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
     /**
      * @var MediaType
@@ -57,7 +57,7 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Ele
 
         if (!empty($mediaType->value()) && \in_array(
             $mediaType->value()->mimeType(),
-            $this->mediaConfig->videoWhitelist()
+            $this->mediaConfig->imageWhitelist()
         )) {
             $type->mediaType = $mediaType;
         }
@@ -132,12 +132,12 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Ele
 
     public static function serviceName(): string
     {
-        return 'video';
+        return 'image';
     }
 
     public function provideElement(BuilderInterface $builder): ElementInterface
     {
-        return $builder->get(VideoElement::class);
+        return $builder->get(ImageElement::class);
     }
 
     /**
@@ -155,8 +155,8 @@ final class VideoType extends AbstractType implements DatabaseTypeInterface, Ele
      */
     public function unserialize($serialized)
     {
-        /** @var VideoType $type */
-        $type = Type::get(VideoType::serviceName());
+        /** @var ImageType $type */
+        $type = Type::get(ImageType::serviceName());
         $this->uri = $type->uri;
         $this->mediaConfig = $type->mediaConfig;
 

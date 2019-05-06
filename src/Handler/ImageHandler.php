@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Handler;
 
-use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
@@ -50,25 +50,25 @@ final class ImageHandler implements HandlerInterface
     private $mediaConfig;
 
     /**
-     * @var StorageSubManager
+     * @var FilesystemManager
      */
-    private $storageSubManager;
+    private $filesystemManager;
 
     /**
      * Image constructor.
      *
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaConfig $mediaConfig
-     * @param StorageSubManager $storageSubManager
+     * @param FilesystemManager $filesystemManager
      */
     public function __construct(
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaConfig $mediaConfig,
-        StorageSubManager $storageSubManager
+        FilesystemManager $filesystemManager
     ) {
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
-        $this->storageSubManager = $storageSubManager;
+        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -100,13 +100,13 @@ final class ImageHandler implements HandlerInterface
      */
     public function process(MediaInterface $media): void
     {
-        $storage = $this->storageSubManager->get('media');
+        $filesystem = $this->filesystemManager->get('media');
 
         foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
-            (new ImageProcessor($media, $imageDefinition, $this->mediaConfig, $storage))->process();
+            (new ImageProcessor($media, $imageDefinition, $this->mediaConfig, $filesystem))->process();
         }
     }
 

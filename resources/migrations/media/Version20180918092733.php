@@ -12,12 +12,9 @@ namespace Ixocreate\Migration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\Migrations\AbstractMigration;
-use Ixocreate\Type\Entity\DateTimeType;
-use Ixocreate\Type\Entity\UuidType;
+use Ixocreate\Schema\Type\DateTimeType;
+use Ixocreate\Schema\Type\UuidType;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20180918092733 extends AbstractMigration
 {
     public function up(Schema $schema): void

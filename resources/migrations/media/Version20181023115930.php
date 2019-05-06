@@ -11,11 +11,8 @@ namespace Ixocreate\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Ixocreate\Type\Entity\UuidType;
+use Ixocreate\Schema\Type\UuidType;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20181023115930 extends AbstractMigration
 {
     public function up(Schema $schema): void

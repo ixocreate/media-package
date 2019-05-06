@@ -12,11 +12,11 @@ namespace Ixocreate\Media\Processor;
 use Intervention\Image\Constraint;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
+use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\MediaPaths;
-use League\Flysystem\FilesystemInterface;
 
 final class ImageProcessor
 {
@@ -115,7 +115,7 @@ final class ImageProcessor
 
         $this->storage->put(
             $filename,
-            $image->encode(\pathinfo($filename, PATHINFO_EXTENSION))
+            (string) $image->encode(\pathinfo($filename, PATHINFO_EXTENSION))
         );
         $image->destroy();
     }

@@ -11,7 +11,8 @@ namespace Ixocreate\Media\Console;
 
 use Ixocreate\Application\Console\CommandInterface;
 use Ixocreate\Entity\EntityCollection;
-use Ixocreate\Filesystem\Storage\StorageSubManager;
+use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidArgumentException;
@@ -22,7 +23,6 @@ use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
 use Ixocreate\Media\Repository\MediaRepository;
-use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -53,14 +53,14 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     private $imageHandler;
 
     /**
-     * @var StorageSubManager
+     * @var FilesystemManager
      */
-    private $storageSubManager;
+    private $filesystemManager;
 
     /**
      * @var FilesystemInterface
      */
-    private $storage;
+    private $filesystem;
 
     /**
      * RefactorImageDefinition constructor.
@@ -69,21 +69,21 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param MediaConfig $mediaConfig
      * @param MediaRepository $mediaRepository
      * @param ImageHandler $imageHandler
-     * @param StorageSubManager $storageSubManager
+     * @param FilesystemManager $filesystemManager
      */
     public function __construct(
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaConfig $mediaConfig,
         MediaRepository $mediaRepository,
         ImageHandler $imageHandler,
-        StorageSubManager $storageSubManager
+        FilesystemManager $filesystemManager
     ) {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->mediaRepository = $mediaRepository;
         $this->imageHandler = $imageHandler;
-        $this->storageSubManager = $storageSubManager;
+        $this->filesystemManager = $filesystemManager;
     }
 
     public function configure()
@@ -105,11 +105,11 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!$this->storageSubManager->has('media')) {
+        if (!$this->filesystemManager->has('media')) {
             throw new InvalidConfigException('Storage Config not set');
         }
 
-        $this->storage = $this->storageSubManager->get('media');
+        $this->filesystem = $this->filesystemManager->get('media');
 
         $io = new SymfonyStyle($input, $output);
         $io->title('Refactor ImageDefinition');
@@ -265,44 +265,38 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         EntityCollection $mediaEntityCollection,
         SymfonyStyle $io,
         ProgressBar $progressBar
-    ) {
-        $jsonFiles = [
-            'publicJsonFile' => MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
-            'privateJsonFile' => MediaPaths::PRIVATE_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json',
-        ];
+    ): void {
+        $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition->directory() . '.json';
 
-        foreach ($jsonFiles as $type => $file) {
-            if ($this->storage->has($file)) {
-                $json = $this->storage->read($file);
-                $json = \json_decode($json, true);
-                if (
-                    $json['width'] != $imageDefinition->width() ||
-                    $json['height'] != $imageDefinition->height() ||
-                    $json['mode'] != $imageDefinition->mode() ||
-                    $json['upscale'] != $imageDefinition->upscale()
-                ) {
-                    $json['width'] = $imageDefinition->width();
-                    $json['height'] = $imageDefinition->height();
-                    $json['mode'] = $imageDefinition->mode();
-                    $json['upscale'] = $imageDefinition->upscale();
-                    $this->storage->put($file, \json_encode($json));
-                    return $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
-                }
-            }
-
-            if (!$this->storage->has($file)) {
-                $json['serviceName'] = $imageDefinition::serviceName();
+        if ($this->storage->has($jsonFile)) {
+            $json = $this->storage->read($jsonFile);
+            $json = \json_decode($json, true);
+            if (
+                $json['width'] != $imageDefinition->width() ||
+                $json['height'] != $imageDefinition->height() ||
+                $json['mode'] != $imageDefinition->mode() ||
+                $json['upscale'] != $imageDefinition->upscale()
+            ) {
                 $json['width'] = $imageDefinition->width();
                 $json['height'] = $imageDefinition->height();
                 $json['mode'] = $imageDefinition->mode();
                 $json['upscale'] = $imageDefinition->upscale();
-                $json['directory'] = $imageDefinition->directory();
-                $this->storage->write($file, \json_encode($json));
-                return $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
+                $this->storage->put($jsonFile, \json_encode($json));
+                $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
             }
+
+            $io->writeln('No changes have been made in ImageDefinition: ' . $imageDefinition::serviceName());
+            return;
         }
 
-        return $io->writeln('No changes have been made in ImageDefinition: ' . $imageDefinition::serviceName());
+        $json['serviceName'] = $imageDefinition::serviceName();
+        $json['width'] = $imageDefinition->width();
+        $json['height'] = $imageDefinition->height();
+        $json['mode'] = $imageDefinition->mode();
+        $json['upscale'] = $imageDefinition->upscale();
+        $json['directory'] = $imageDefinition->directory();
+        $this->storage->write($jsonFile, \json_encode($json));
+        $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
     }
 
     /**

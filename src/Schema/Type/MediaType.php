@@ -7,19 +7,19 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\Type;
+namespace Ixocreate\Media\Schema\Type;
 
 use Doctrine\DBAL\Types\GuidType;
-use Ixocreate\Entity\Type\AbstractType;
-use Ixocreate\Entity\Type\Type;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Repository\MediaRepository;
+use Ixocreate\Media\Schema\Element\MediaElement;
 use Ixocreate\Media\Uri\MediaUri;
-use Ixocreate\Schema\BuilderInterface;
-use Ixocreate\Schema\ElementInterface;
-use Ixocreate\Schema\ElementProviderInterface;
-use Ixocreate\Schema\Elements\MediaElement;
-use Ixocreate\Type\DatabaseTypeInterface;
+use Ixocreate\Schema\Builder\BuilderInterface;
+use Ixocreate\Schema\Element\ElementInterface;
+use Ixocreate\Schema\Element\ElementProviderInterface;
+use Ixocreate\Schema\Type\AbstractType;
+use Ixocreate\Schema\Type\DatabaseTypeInterface;
+use Ixocreate\Schema\Type\Type;
 
 class MediaType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
