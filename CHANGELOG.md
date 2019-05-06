@@ -2,6 +2,9 @@
 
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.0...develop)
 
+### Hot-Fix
+- Wrong variable was used for storage in RecreateImageDefinition
+
 ## [v0.3.0 (2019-05-06)](https://github.com/ixocreate/media-package/compare/0.2.1...0.3.0)
 ### Added
 - Media specific Types and Elements
