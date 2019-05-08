@@ -1,9 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.0...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.2...develop)
+
+## [v0.3.2 (2019-05-08)](https://github.com/ixocreate/media-package/compare/0.3.1...0.3.2)
+### Fixed
+- RecreateImageDefinition now removes MediaCrop Entries as well
 
 ## [v0.3.1 (2019-05-06)](https://github.com/ixocreate/media-package/compare/0.3.0...0.3.1)
-### Hot-Fix
+### Fixed
 - Wrong variable was used for storage in RecreateImageDefinition
 
 ## [v0.3.0 (2019-05-06)](https://github.com/ixocreate/media-package/compare/0.2.1...0.3.0)

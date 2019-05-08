@@ -22,6 +22,7 @@ use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
+use Ixocreate\Media\Repository\MediaCropRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -63,6 +64,11 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     private $filesystem;
 
     /**
+     * @var MediaCropRepository
+     */
+    private $mediaCropRepository;
+
+    /**
      * RefactorImageDefinition constructor.
      *
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
@@ -70,13 +76,15 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param MediaRepository $mediaRepository
      * @param ImageHandler $imageHandler
      * @param FilesystemManager $filesystemManager
+     * @param MediaCropRepository $mediaCropRepository
      */
     public function __construct(
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaConfig $mediaConfig,
         MediaRepository $mediaRepository,
         ImageHandler $imageHandler,
-        FilesystemManager $filesystemManager
+        FilesystemManager $filesystemManager,
+        MediaCropRepository $mediaCropRepository
     ) {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
@@ -84,6 +92,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $this->mediaRepository = $mediaRepository;
         $this->imageHandler = $imageHandler;
         $this->filesystemManager = $filesystemManager;
+        $this->mediaCropRepository = $mediaCropRepository;
     }
 
     public function configure()
@@ -296,6 +305,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $json['upscale'] = $imageDefinition->upscale();
         $json['directory'] = $imageDefinition->directory();
         $this->filesystem->write($jsonFile, \json_encode($json));
+        $io->writeln('Created Json-File for ImageDefinition: ' . $imageDefinition::serviceName());
         $this->processImages($imageDefinition, $mediaEntityCollection, $io, $progressBar);
     }
 
@@ -319,6 +329,14 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         foreach ($array as $media) {
             if (!$this->imageHandler->isResponsible($media)) {
                 continue;
+            }
+
+            // In Case that there is a Crop-Entry, remove it due to reset
+            $mediaCropResult = $this->mediaCropRepository->findBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+            if (!empty($mediaCropResult)) {
+                foreach ($mediaCropResult as $mediaCrop) {
+                    $this->mediaCropRepository->remove($mediaCrop);
+                }
             }
 
             $imageProcessor = new ImageProcessor($media, $imageDefinition, $this->mediaConfig, $this->filesystem);
