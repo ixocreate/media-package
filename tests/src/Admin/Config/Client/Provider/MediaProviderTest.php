@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Test\Media\Admin;
+namespace Ixocreate\Test\Media\Admin\Config\Client\Provider;
 
 use Ixocreate\Admin\UserInterface;
 use Ixocreate\Media\Admin\Config\Client\Provider\MediaProvider;
@@ -26,9 +26,12 @@ class MediaProviderTest extends TestCase
 
     public function setUp()
     {
-        $serviceManagerInterface = $this->createMock(ServiceManagerInterface::class);
-        $serviceManagerConfigInterface = $this->createMock(ServiceManagerConfigInterface::class);
-        $this->imageDefinitionSubManager = new ImageDefinitionSubManager($serviceManagerInterface, $serviceManagerConfigInterface, ImageDefinitionInterface::class);
+        /** @var ServiceManagerInterface $serviceManager */
+        $serviceManager = $this->createMock(ServiceManagerInterface::class);
+        /** @var ServiceManagerConfigInterface $serviceManagerConfig */
+        $serviceManagerConfig = $this->createMock(ServiceManagerConfigInterface::class);
+
+        $this->imageDefinitionSubManager = new ImageDefinitionSubManager($serviceManager, $serviceManagerConfig, ImageDefinitionInterface::class);
     }
 
     public function test__construct()
