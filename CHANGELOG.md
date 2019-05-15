@@ -2,6 +2,12 @@
 
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.2...develop)
 
+### Added
+- Comments to MediaPackageConfig
+- return type in ImageDefinitionConfigurator
+### Changed
+- unified variable names in MediaConfig
+
 ## [v0.3.2 (2019-05-08)](https://github.com/ixocreate/media-package/compare/0.3.1...0.3.2)
 ### Fixed
 - RecreateImageDefinition now removes MediaCrop Entries as well
