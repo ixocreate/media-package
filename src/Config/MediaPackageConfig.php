@@ -69,6 +69,7 @@ class MediaPackageConfig implements SerializableServiceInterface
 
     /**
      * @return array
+     * Fill with MIME-Types
      */
     public function whitelist(): array
     {
@@ -101,6 +102,7 @@ class MediaPackageConfig implements SerializableServiceInterface
 
     /**
      * @return array
+     * Fill with MIME-Types
      */
     public function imageWhitelist(): array
     {
@@ -109,6 +111,7 @@ class MediaPackageConfig implements SerializableServiceInterface
 
     /**
      * @return array
+     * Fill with MIME-Types
      */
     public function videoWhitelist(): array
     {
@@ -117,6 +120,7 @@ class MediaPackageConfig implements SerializableServiceInterface
 
     /**
      * @return array
+     * Fill with MIME-Types
      */
     public function audioWhitelist(): array
     {
@@ -125,6 +129,7 @@ class MediaPackageConfig implements SerializableServiceInterface
 
     /**
      * @return array
+     * Fill with MIME-Types
      */
     public function documentWhitelist(): array
     {
