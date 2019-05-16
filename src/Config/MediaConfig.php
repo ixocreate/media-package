@@ -141,8 +141,8 @@ final class MediaConfig
             $projectUri = $this->projectUri;
 
             $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim(
-                    $uri->getPath(),
-                    '/'
+                $uri->getPath(),
+                '/'
                 ));
             $uri = $uri->withHost($projectUri->getMainUri()->getHost());
             $uri = $uri->withScheme($projectUri->getMainUri()->getScheme());
@@ -171,21 +171,21 @@ final class MediaConfig
                     if (\extension_loaded('gd') === false) {
                         throw new InvalidExtensionException("PHP Extension 'gd' could not be found");
                     }
-                    break;
-                case 'imagick':
+            break;
+            case 'imagick':
                     if (\extension_loaded('imagick') === false) {
                         throw new InvalidExtensionException("PHP Extension 'imagick' could not be found");
                     }
-                    break;
-                case 'automatic':
+            break;
+            case 'automatic':
                     $this->driver = 'imagick';
-                    if (\extension_loaded('imagick') === false) {
-                        $this->driver = 'gd';
-                        if (\extension_loaded('gd') === false) {
-                            throw new InvalidExtensionException("Neither 'gd' or 'imagick' PHP Extension could be found");
-                        }
-                    }
-                    break;
+            if (\extension_loaded('imagick') === false) {
+                $this->driver = 'gd';
+                if (\extension_loaded('gd') === false) {
+                    throw new InvalidExtensionException("Neither 'gd' or 'imagick' PHP Extension could be found");
+                }
+            }
+            break;
             endswitch;
         } else {
             throw new InvalidConfigException(\sprintf("Given media config driver: '%s', is not valid", $this->driver));
