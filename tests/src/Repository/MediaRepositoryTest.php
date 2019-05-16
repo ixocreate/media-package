@@ -16,12 +16,10 @@ use PHPUnit\Framework\TestCase;
 
 class MediaRepositoryTest extends TestCase
 {
-
     public function testGetEntityName()
     {
         $master = $this->createMock(EntityManagerInterface::class);
         $repository = new MediaRepository($master);
         $this->assertSame(Media::class, $repository->getEntityName());
-
     }
 }

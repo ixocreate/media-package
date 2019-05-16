@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class MediaCreatedRepositoryTest extends TestCase
 {
-
     public function testGetEntityName()
     {
         $master = $this->createMock(EntityManagerInterface::class);

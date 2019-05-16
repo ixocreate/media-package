@@ -15,7 +15,6 @@ use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
