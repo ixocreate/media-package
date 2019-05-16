@@ -6,7 +6,7 @@
 - Comments to MediaPackageConfig
 - return type in ImageDefinitionConfigurator
 ### Changed
-- unified variable names in MediaConfig
+- unified variable names in MediaConfig & MediaUri
 
 ## [v0.3.2 (2019-05-08)](https://github.com/ixocreate/media-package/compare/0.3.1...0.3.2)
 ### Fixed
