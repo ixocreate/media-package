@@ -104,7 +104,7 @@ class MediaPackageConfigTest extends TestCase
             'whitelist' => $whitelist,
             'publicStatus' => $this->mediaPackageConfig->publicStatus(),
             'driver' => $this->mediaPackageConfig->driver(),
-            'uri' => $this->mediaPackageConfig->uri()
+            'uri' => $this->mediaPackageConfig->uri(),
         ]);
 
         $this->assertSame($serialize, $this->mediaPackageConfig->serialize());
@@ -122,7 +122,7 @@ class MediaPackageConfigTest extends TestCase
             'whitelist' => $whitelist,
             'publicStatus' => $this->mediaPackageConfig->publicStatus(),
             'driver' => $this->mediaPackageConfig->driver(),
-            'uri' => $this->mediaPackageConfig->uri()
+            'uri' => $this->mediaPackageConfig->uri(),
         ]);
 
         $expected = \unserialize($serialize);
@@ -135,11 +135,11 @@ class MediaPackageConfigTest extends TestCase
                 'video' => $this->mediaPackageConfig->videoWhitelist(),
                 'audio' => $this->mediaPackageConfig->audioWhitelist(),
                 'document' => $this->mediaPackageConfig->documentWhitelist(),
-                'global' => $this->mediaPackageConfig->whitelist()
+                'global' => $this->mediaPackageConfig->whitelist(),
             ],
             'publicStatus' => $this->mediaPackageConfig->publicStatus(),
             'driver' => $this->mediaPackageConfig->driver(),
-            'uri' => $this->mediaPackageConfig->uri()
+            'uri' => $this->mediaPackageConfig->uri(),
         ];
 
         $this->assertSame($expected, $unserialize);

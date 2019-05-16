@@ -10,8 +10,10 @@ declare(strict_types=1);
 namespace Ixocreate\Test\Media\ImageDefinition;
 
 use Ixocreate\Application\Service\AbstractServiceManagerConfigurator;
+use Ixocreate\Application\Service\ServiceManagerConfig;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionConfigurator;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Misc\Media\ImageDefinitionMock;
 use PHPUnit\Framework\TestCase;
@@ -41,7 +43,6 @@ class ImageDefinitionConfiguratorTest extends TestCase
         $this->assertSame('/foo', $configurator->getDirectories()[0]['dir']);
         $this->assertSame(true, $configurator->getDirectories()[0]['recursive']);
         $this->assertSame(ImageDefinitionInterface::class, $configurator->getDirectories()[0]['only'][0]);
-
     }
 
     public function testAddImageDefinition()
@@ -49,10 +50,21 @@ class ImageDefinitionConfiguratorTest extends TestCase
         $this->imageDefinitionConfigurator->addImageDefinition(ImageDefinitionMock::class);
         $configurator = $this->imageDefinitionConfigurator->getManagerConfigurator();
         $this->assertArrayHasKey(ImageDefinitionMock::class, $configurator->getFactories());
-
     }
 
     public function testRegisterService()
     {
+        $configurator = $this->imageDefinitionConfigurator->getManagerConfigurator();
+
+        $collector = [];
+        $serviceRegistry = $this->createMock(ServiceRegistryInterface::class);
+        $serviceRegistry->method('add')->willReturnCallback(function ($name, $object) use (&$collector) {
+            $collector[$name] = $object;
+        });
+
+        $configurator->registerService($serviceRegistry);
+
+        $this->assertArrayHasKey(ImageDefinitionSubManager::class . '::Config', $collector);
+        $this->assertInstanceOf(ServiceManagerConfig::class, $collector[ImageDefinitionSubManager::class . '::Config']);
     }
 }

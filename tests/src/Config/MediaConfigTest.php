@@ -79,7 +79,6 @@ class MediaConfigTest extends TestCase
             );
 
         $this->assertSame($expected, $this->mediaConfig->whitelist());
-
     }
 
     public function testPublicStatus()

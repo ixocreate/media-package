@@ -74,7 +74,7 @@ class MediaProviderTest extends TestCase
                 'height' => $imageDefinition->height(),
                 'upscale' => $imageDefinition->upscale(),
                 'mode' => $imageDefinition->mode(),
-            ]
+            ],
         ];
 
         $this->assertEquals($compare, $this->mediaProvider->clientConfig($this->createMock(UserInterface::class)));
