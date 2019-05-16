@@ -54,15 +54,13 @@ class ImageDefinitionConfiguratorTest extends TestCase
 
     public function testRegisterService()
     {
-        $configurator = $this->imageDefinitionConfigurator->getManagerConfigurator();
-
         $collector = [];
         $serviceRegistry = $this->createMock(ServiceRegistryInterface::class);
         $serviceRegistry->method('add')->willReturnCallback(function ($name, $object) use (&$collector) {
             $collector[$name] = $object;
         });
 
-        $configurator->registerService($serviceRegistry);
+        $this->imageDefinitionConfigurator->registerService($serviceRegistry);
 
         $this->assertArrayHasKey(ImageDefinitionSubManager::class . '::Config', $collector);
         $this->assertInstanceOf(ServiceManagerConfig::class, $collector[ImageDefinitionSubManager::class . '::Config']);
