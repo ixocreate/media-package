@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Media\ImageDefinition;
 
 use Ixocreate\Application\Configurator\ConfiguratorInterface;
+use Ixocreate\Application\Service\AbstractServiceManagerConfigurator;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Application\Service\SubManagerConfigurator;
 use Ixocreate\Media\ImageDefinitionInterface;
@@ -34,9 +35,9 @@ final class ImageDefinitionConfigurator implements ConfiguratorInterface
     }
 
     /**
-     * @return SubManagerConfigurator
+     * @return AbstractServiceManagerConfigurator
      */
-    public function getManagerConfigurator()
+    public function getManagerConfigurator(): AbstractServiceManagerConfigurator
     {
         return $this->subManagerConfigurator;
     }

@@ -25,15 +25,36 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
     private $filename;
 
     /**
-     * TempFileHandler constructor.
-     *
+     * @var bool
+     */
+    private $deleteAfterMove;
+
+    /**
+     * @var string
+     */
+    private $mimeType = null;
+
+    /**
+     * @var int
+     */
+    private $fileSize = null;
+
+    /**
+     * @var string
+     */
+    private $fileHash = null;
+
+    /**
+     * LocalFileHandler constructor.
      * @param string $file
      * @param string $filename
+     * @param boolean $deleteAfterMove
      */
-    public function __construct(string $file, string $filename)
+    public function __construct(string $file, string $filename, bool $deleteAfterMove = true)
     {
         $this->file = $file;
         $this->filename = $filename;
+        $this->deleteAfterMove = $deleteAfterMove;
     }
 
     /**
@@ -63,7 +84,14 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
         $storage->writeStream($destination, $f);
 
         \fclose($f);
-        \unlink($this->file);
+        if ($this->deleteAfterMove) {
+            //get file infos before file is removed;
+            $this->mimeType();
+            $this->fileSize();
+            $this->fileHash();
+
+            \unlink($this->file);
+        }
 
         return true;
     }
@@ -73,8 +101,12 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
      */
     public function mimeType(): string
     {
-        $finfo = \finfo_open(FILEINFO_MIME_TYPE);
-        return \finfo_file($finfo, $this->file);
+        if ($this->mimeType === null) {
+            $finfo = \finfo_open(FILEINFO_MIME_TYPE);
+            $this->mimeType = \finfo_file($finfo, $this->file);
+        }
+
+        return $this->mimeType;
     }
 
     /**
@@ -82,7 +114,11 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
      */
     public function fileSize(): int
     {
-        return \filesize($this->file);
+        if ($this->fileSize === null) {
+            $this->fileSize = \filesize($this->file);
+        }
+
+        return $this->fileSize;
     }
 
     /**
@@ -90,6 +126,10 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
      */
     public function fileHash(): string
     {
-        return \hash_file('sha256', $this->file);
+        if ($this->fileHash === null) {
+            $this->fileHash = \hash_file('sha256', $this->file);
+        }
+
+        return $this->fileHash;
     }
 }

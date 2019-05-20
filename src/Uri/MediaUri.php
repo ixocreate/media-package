@@ -33,23 +33,23 @@ final class MediaUri
     /**
      * @var MediaHandlerSubManager
      */
-    private $delegatorSubManager;
+    private $mediaHandlerSubManager;
 
     /**
      * ApplicationUri constructor.
      *
      * @param Packages $packages
      * @param AdminConfig $adminConfig
-     * @param MediaHandlerSubManager $delegatorSubManager
+     * @param MediaHandlerSubManager $mediaHandlerSubManager
      */
     public function __construct(
         Packages $packages,
         AdminConfig $adminConfig,
-        MediaHandlerSubManager $delegatorSubManager
+        MediaHandlerSubManager $mediaHandlerSubManager
     ) {
         $this->packages = $packages;
         $this->adminConfig = $adminConfig;
-        $this->delegatorSubManager = $delegatorSubManager;
+        $this->mediaHandlerSubManager = $mediaHandlerSubManager;
     }
 
     /**
@@ -72,7 +72,7 @@ final class MediaUri
     public function imageUrl(Media $media, string $imageDefinition = null): string
     {
         /** @var HandlerInterface $imageHandler */
-        $imageHandler = $this->delegatorSubManager->get(ImageHandler::serviceName());
+        $imageHandler = $this->mediaHandlerSubManager->get(ImageHandler::serviceName());
         if (!$imageHandler->isResponsible($media)) {
             $imageDefinition = null;
         }

@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.2...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.3...develop)
+
+## [v0.3.3 (2019-05-20)](https://github.com/ixocreate/media-package/compare/0.3.2...0.3.3)
+### Added
+- Comments to MediaPackageConfig
+- return type in ImageDefinitionConfigurator
+### Changed
+- unified variable names in MediaConfig & MediaUri
+### Fixed
+- fix LocalFileHandler
 
 ## [v0.3.2 (2019-05-08)](https://github.com/ixocreate/media-package/compare/0.3.1...0.3.2)
 ### Fixed
@@ -19,6 +28,10 @@
 - Upgrade to Filesystem Package v0.3
 ### Fixed
 - fix -c flag in RecreateImageDefinition
+
+## [v0.2.2 (2019-05-20)](https://github.com/ixocreate/media-package/compare/0.2.1...0.2.2)
+### Fixed
+- fix LocalFileHandler
 
 ## [v0.2.1 (2019-05-03)](https://github.com/ixocreate/media-package/compare/0.2.0...0.2.1)
 ### Fixed

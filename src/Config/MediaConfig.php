@@ -25,7 +25,7 @@ final class MediaConfig
     /**
      * @var MediaPackageConfig
      */
-    private $mediaProjectConfig;
+    private $mediaPackageConfig;
 
     /**
      * @var UriInterface
@@ -40,12 +40,12 @@ final class MediaConfig
     /**
      * MediaConfig constructor.
      *
-     * @param MediaPackageConfig $mediaProjectConfig
+     * @param MediaPackageConfig $mediaPackageConfig
      * @param ApplicationUri $projectUri
      */
-    public function __construct(MediaPackageConfig $mediaProjectConfig, ApplicationUri $projectUri)
+    public function __construct(MediaPackageConfig $mediaPackageConfig, ApplicationUri $projectUri)
     {
-        $this->mediaProjectConfig = $mediaProjectConfig;
+        $this->mediaPackageConfig = $mediaPackageConfig;
         $this->projectUri = $projectUri;
         $this->assertDriver();
         $this->assertUri();
@@ -90,7 +90,7 @@ final class MediaConfig
      */
     public function whitelist(): array
     {
-        return $this->mediaProjectConfig->whitelist();
+        return $this->mediaPackageConfig->whitelist();
     }
 
     /**
@@ -98,7 +98,7 @@ final class MediaConfig
      */
     public function publicStatus(): bool
     {
-        return $this->mediaProjectConfig->publicStatus();
+        return $this->mediaPackageConfig->publicStatus();
     }
 
     /**
@@ -106,7 +106,7 @@ final class MediaConfig
      */
     public function imageWhitelist(): array
     {
-        return $this->mediaProjectConfig->imageWhitelist();
+        return $this->mediaPackageConfig->imageWhitelist();
     }
 
     /**
@@ -114,7 +114,7 @@ final class MediaConfig
      */
     public function videoWhitelist(): array
     {
-        return $this->mediaProjectConfig->videoWhitelist();
+        return $this->mediaPackageConfig->videoWhitelist();
     }
 
     /**
@@ -122,7 +122,7 @@ final class MediaConfig
      */
     public function audioWhitelist(): array
     {
-        return $this->mediaProjectConfig->audioWhitelist();
+        return $this->mediaPackageConfig->audioWhitelist();
     }
 
     /**
@@ -130,12 +130,12 @@ final class MediaConfig
      */
     public function documentWhitelist(): array
     {
-        return $this->mediaProjectConfig->documentWhitelist();
+        return $this->mediaPackageConfig->documentWhitelist();
     }
 
     private function assertUri(): void
     {
-        $uri = new Uri($this->mediaProjectConfig->uri());
+        $uri = new Uri($this->mediaPackageConfig->uri());
         if (empty($uri->getHost())) {
             /** @var Uri $projectUri */
             $projectUri = $this->projectUri;
@@ -159,11 +159,12 @@ final class MediaConfig
     {
         $allowedConfigParameter = ['automatic', 'gd', 'imagick'];
 
-        $this->driver = $this->mediaProjectConfig->driver();
+        $this->driver = $this->mediaPackageConfig->driver();
 
         if (empty($driver)) {
             $this->driver = 'automatic';
         }
+        // @codeCoverageIgnoreStart
         if (\in_array($this->driver, $allowedConfigParameter)) {
             switch ($this->driver):
                 case 'gd':
@@ -189,5 +190,6 @@ final class MediaConfig
         } else {
             throw new InvalidConfigException(\sprintf("Given media config driver: '%s', is not valid", $this->driver));
         }
+        // @codeCoverageIgnoreEnd
     }
 }
