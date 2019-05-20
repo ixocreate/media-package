@@ -1,7 +1,8 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.2...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.3...develop)
 
+## [v0.3.3 (2019-05-20)](https://github.com/ixocreate/media-package/compare/0.3.2...0.3.3)
 ### Added
 - Comments to MediaPackageConfig
 - return type in ImageDefinitionConfigurator
