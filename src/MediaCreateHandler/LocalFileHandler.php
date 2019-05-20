@@ -48,7 +48,7 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
      * LocalFileHandler constructor.
      * @param string $file
      * @param string $filename
-     * @param boolean $deleteAfterMove
+     * @param bool $deleteAfterMove
      */
     public function __construct(string $file, string $filename, bool $deleteAfterMove = true)
     {
