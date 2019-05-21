@@ -17,9 +17,11 @@ interface MediaInterface
 
     public function mimeType(): string;
 
-    public function size(): int;
+    public function fileSize(): int;
 
     public function publicStatus(): bool;
 
     public function hash(): string;
+
+    public function metaData(): array;
 }
