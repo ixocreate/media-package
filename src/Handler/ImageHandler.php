@@ -13,11 +13,12 @@ use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
 
-final class ImageHandler implements HandlerInterface
+final class ImageHandler implements MediaHandlerInterface
 {
     /**
      * @var array

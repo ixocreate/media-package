@@ -12,6 +12,7 @@ namespace Ixocreate\Media\Handler;
 use Ixocreate\Application\Configurator\ConfiguratorInterface;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Application\Service\SubManagerConfigurator;
+use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
 
 final class MediaHandlerConfigurator implements ConfiguratorInterface
@@ -28,7 +29,7 @@ final class MediaHandlerConfigurator implements ConfiguratorInterface
     {
         $this->subManagerConfigurator = new SubManagerConfigurator(
             MediaHandlerSubManager::class,
-            HandlerInterface::class
+            MediaHandlerInterface::class
         );
     }
 
