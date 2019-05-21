@@ -31,9 +31,13 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
 
     private $filename;
 
-    private $publicStatus;
+    private $mimeType;
+
+    private $fileSize;
 
     private $hash;
+
+    private $publicStatus;
 
     private $metaData;
 
@@ -56,6 +60,16 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
     public function filename(): string
     {
         return $this->filename;
+    }
+
+    public function mimeType(): string
+    {
+        return $this->mimeType;
+    }
+
+    public function fileSize(): int
+    {
+        return $this->fileSize;
     }
 
     public function publicStatus(): bool
@@ -94,8 +108,10 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
             new Definition('id', UuidType::class, false, true),
             new Definition('basePath', TypeInterface::TYPE_STRING, false, true),
             new Definition('filename', TypeInterface::TYPE_STRING, false, true),
-            new Definition('publicStatus', 'bool', false, true),
+            new Definition('mimeType', TypeInterface::TYPE_STRING, false, true),
+            new Definition('fileSize', TypeInterface::TYPE_INT, false, true),
             new Definition('hash', TypeInterface::TYPE_STRING, false, false),
+            new Definition('publicStatus', 'bool', false, true),
             new Definition('metaData', TypeInterface::TYPE_ARRAY, false, true),
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
@@ -110,8 +126,10 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
         $builder->createField('id', UuidType::serviceName())->makePrimaryKey()->build();
         $builder->createField('basePath', 'string')->nullable(false)->build();
         $builder->createField('filename', 'string')->nullable(false)->build();
+        $builder->createField('mimeType', Type::STRING)->nullable(false)->build();
+        $builder->createField('fileSize', Type::INTEGER)->nullable(false)->build();
+        $builder->createField('hash', Type::STRING)->nullable(false)->build();
         $builder->createField('publicStatus', 'boolean')->nullable(false)->build();
-        $builder->createField('hash', 'string')->nullable(false)->build();
         $builder->createField('metaData', Type::JSON)->nullable(false)->build();
         $builder->createField('createdAt', DateTimeType::serviceName())->nullable(false)->build();
         $builder->createField('updatedAt', DateTimeType::serviceName())->nullable(false)->build();
