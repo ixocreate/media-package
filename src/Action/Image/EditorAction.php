@@ -12,12 +12,14 @@ namespace Ixocreate\Media\Action\Image;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
+use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Command\Image\EditorCommand;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
-use Ixocreate\Media\Repository\MediaCropRepository;
+use Ixocreate\Media\Repository\MediaImageInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,14 +44,19 @@ final class EditorAction implements MiddlewareInterface
     private $mediaRepository;
 
     /**
-     * @var MediaCropRepository
+     * @var MediaImageInfoRepository
      */
-    private $mediaCropRepository;
+    private $mediaImageInfoRepository;
 
     /**
      * @var CommandBus
      */
     private $commandBus;
+
+    /**
+     * @var FilesystemManager
+     */
+    private $filesystemManager;
 
     /**
      * EditorAction constructor.
@@ -58,20 +65,23 @@ final class EditorAction implements MiddlewareInterface
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
-     * @param MediaCropRepository $mediaCropRepository
+     * @param MediaImageInfoRepository $mediaImageInfoRepository
+     * @param FilesystemManager $filesystemManager
      */
     public function __construct(
         CommandBus $commandBus,
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaCropRepository $mediaCropRepository
+        MediaImageInfoRepository $mediaImageInfoRepository,
+        FilesystemManager $filesystemManager
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
-        $this->mediaCropRepository = $mediaCropRepository;
+        $this->mediaImageInfoRepository = $mediaImageInfoRepository;
         $this->commandBus = $commandBus;
+        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -91,6 +101,12 @@ final class EditorAction implements MiddlewareInterface
             return new ApiErrorResponse('data_need_to_be_json');
         }
 
+        if (!$this->filesystemManager->has('media')) {
+            throw new InvalidConfigException('Filesystem Config not set');
+        }
+
+        $filesystem = $this->filesystemManager->get('media');
+
         /** @var Media $media */
         $media = $this->media($requestData);
         /** @var ImageDefinitionInterface $imageDefinition */
@@ -101,8 +117,12 @@ final class EditorAction implements MiddlewareInterface
             'imageDefinition' => $imageDefinition,
             'requestData' => $requestData,
         ];
+        /** @var EditorCommand $editorCommand */
+        $editorCommand = $this->commandBus->create(EditorCommand::class, $data);
 
-        $commandResult = $this->commandBus->command(EditorCommand::class, $data);
+        $editorCommand = $editorCommand->withFilesystem($filesystem);
+
+        $commandResult = $this->commandBus->dispatch($editorCommand);
 
         if (!$commandResult->isSuccessful()) {
             return new ApiErrorResponse('media-media-delete', $commandResult->messages());

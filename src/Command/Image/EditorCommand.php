@@ -10,15 +10,14 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Image;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Filesystem\FilesystemManager;
+use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaCrop;
-use Ixocreate\Media\Exception\InvalidConfigException;
+use Ixocreate\Media\Entity\MediaImageInfo;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\Processor\EditorProcessor;
-use Ixocreate\Media\Repository\MediaCropRepository;
+use Ixocreate\Media\Repository\MediaImageInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Ramsey\Uuid\Uuid;
 
@@ -40,35 +39,39 @@ final class EditorCommand extends AbstractCommand
     private $imageDefinitionSubManager;
 
     /**
-     * @var MediaCropRepository
+     * @var MediaImageInfoRepository
      */
-    private $mediaCropRepository;
+    private $mediaImageInfoRepository;
 
     /**
-     * @var FilesystemManager
+     * @var FilesystemInterface
      */
-    private $filesystemManager;
+    private $filesystem;
 
     /**
      * EditorCommand constructor.
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
-     * @param MediaCropRepository $mediaCropRepository
-     * @param FilesystemManager $filesystemManager
+     * @param MediaImageInfoRepository $mediaImageInfoRepository
      */
     public function __construct(
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaCropRepository $mediaCropRepository,
-        FilesystemManager $filesystemManager
+        MediaImageInfoRepository $mediaImageInfoRepository
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
-        $this->mediaCropRepository = $mediaCropRepository;
-        $this->filesystemManager = $filesystemManager;
+        $this->mediaImageInfoRepository = $mediaImageInfoRepository;
+    }
+
+    public function withFilesystem(FilesystemInterface $filesystem): EditorCommand
+    {
+        $command = clone $this;
+        $command->filesystem = $filesystem;
+        return $command;
     }
 
     /**
@@ -77,12 +80,6 @@ final class EditorCommand extends AbstractCommand
      */
     public function execute(): bool
     {
-        if (!$this->filesystemManager->has('media')) {
-            throw new InvalidConfigException('Storage Config not set');
-        }
-
-        $filesystem = $this->filesystemManager->get('media');
-
         /** @var Media $media */
         $media = $this->dataValue('media');
         /** @var ImageDefinitionInterface $imageDefinition */
@@ -90,32 +87,32 @@ final class EditorCommand extends AbstractCommand
 
         $requestData = $this->dataValue('requestData');
 
-        $mediaCrop = null;
+        $mediaImageInfo = null;
 
-        if (!empty($this->mediaCropRepository->findOneBy([
+        if (!empty($this->mediaImageInfoRepository->findOneBy([
             'mediaId' => $media->id(),
             'imageDefinition' => $imageDefinition::serviceName(),
         ]))) {
-            /** @var MediaCrop $mediaCrop */
-            $mediaCrop = $this->mediaCropRepository->findOneBy([
+            /** @var MediaImageInfo $mediaImageInfo */
+            $mediaImageInfo = $this->mediaImageInfoRepository->findOneBy([
                 'mediaId' => $media->id(),
                 'imageDefinition' => $imageDefinition::serviceName(),
             ]);
 
-            if ($mediaCrop::getDefinitions()->has('updatedAt')) {
-                $mediaCrop = $mediaCrop->with('updatedAt', new \DateTime());
+            if ($mediaImageInfo::getDefinitions()->has('updatedAt')) {
+                $mediaImageInfo = $mediaImageInfo->with('updatedAt', new \DateTime());
             }
 
-            if ($mediaCrop::getDefinitions()->has('cropParameters')) {
-                $mediaCrop = $mediaCrop->with('cropParameters', $requestData['crop']);
+            if ($mediaImageInfo::getDefinitions()->has('cropParameters')) {
+                $mediaImageInfo = $mediaImageInfo->with('cropParameters', $requestData['crop']);
             }
         }
 
-        if (empty($this->mediaCropRepository->findOneBy([
+        if (empty($this->mediaImageInfoRepository->findOneBy([
             'mediaId' => $media->id(),
             'imageDefinition' => $imageDefinition::serviceName(),
         ]))) {
-            $mediaCrop = new MediaCrop([
+            $mediaImageInfo = new MediaImageInfo([
                 'id' => Uuid::uuid4(),
                 'mediaId' => $media->id(),
                 'imageDefinition' => $imageDefinition::serviceName(),
@@ -125,9 +122,9 @@ final class EditorCommand extends AbstractCommand
             ]);
         }
 
-        (new EditorProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig, $filesystem))->process();
+        (new EditorProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig, $this->filesystem))->process();
 
-        $this->mediaCropRepository->save($mediaCrop);
+        $this->mediaImageInfoRepository->save($mediaImageInfo);
 
         return true;
     }

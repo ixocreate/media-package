@@ -13,14 +13,12 @@ use Cocur\Slugify\Slugify;
 use Ixocreate\Admin\Entity\User;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
-use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Exception\FileDuplicateException;
 use Ixocreate\Media\Exception\FileTypeNotSupportedException;
-use Ixocreate\Media\Exception\InvalidConfigException;
-use Ixocreate\Media\Handler\HandlerInterface;
+use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\MediaCreateHandlerInterface;
 use Ixocreate\Media\MediaPaths;
@@ -42,7 +40,7 @@ class CreateCommand extends AbstractCommand
     /**
      * @var MediaHandlerSubManager
      */
-    private $delegatorSubManager;
+    private $mediaHandlerSubManager;
 
     /**
      * @var MediaConfig
@@ -75,11 +73,6 @@ class CreateCommand extends AbstractCommand
     private $fileHash;
 
     /**
-     * @var FilesystemManager
-     */
-    private $filesystemManager;
-
-    /**
      * @var FilesystemInterface
      */
     private $filesystem;
@@ -89,22 +82,19 @@ class CreateCommand extends AbstractCommand
      *
      * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
-     * @param MediaHandlerSubManager $delegatorSubManager
+     * @param MediaHandlerSubManager $mediaHandlerSubManager
      * @param MediaConfig $mediaConfig
-     * @param FilesystemManager $filesystemManager
      */
     public function __construct(
         MediaCreatedRepository $mediaCreatedRepository,
         MediaRepository $mediaRepository,
-        MediaHandlerSubManager $delegatorSubManager,
-        MediaConfig $mediaConfig,
-        FilesystemManager $filesystemManager
+        MediaHandlerSubManager $mediaHandlerSubManager,
+        MediaConfig $mediaConfig
     ) {
         $this->mediaCreatedRepository = $mediaCreatedRepository;
         $this->mediaRepository = $mediaRepository;
-        $this->delegatorSubManager = $delegatorSubManager;
+        $this->mediaHandlerSubManager = $mediaHandlerSubManager;
         $this->mediaConfig = $mediaConfig;
-        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -152,17 +142,22 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
+     * @param FilesystemInterface $filesystem
+     * @return CreateCommand
+     */
+    public function withFilesystem(FilesystemInterface $filesystem): CreateCommand
+    {
+        $command = clone $this;
+        $command->filesystem = $filesystem;
+        return $command;
+    }
+
+    /**
      * @throws \Exception
      * @return bool
      */
     public function execute(): bool
     {
-        if (!$this->filesystemManager->has('media')) {
-            throw new InvalidConfigException('Storage Config not set');
-        }
-
-        $this->filesystem = $this->filesystemManager->get('media');
-
         if (!($this->checkWhitelist($this->mediaCreateHandler->mimeType()))) {
             throw new FileTypeNotSupportedException('Mime Type not supported');
         }
@@ -177,13 +172,13 @@ class CreateCommand extends AbstractCommand
 
         $this->mediaRepository->save($media);
 
-        foreach ($this->delegatorSubManager->getServiceManagerConfig()->getNamedServices() as $name => $delegatorClassName) {
-            /** @var HandlerInterface $delegator */
-            $delegator = $this->delegatorSubManager->get($delegatorClassName);
-            if (!$delegator->isResponsible($media)) {
+        foreach ($this->mediaHandlerSubManager->getServiceManagerConfig()->getNamedServices() as $name => $delegatorClassName) {
+            /** @var MediaHandlerInterface $mediaHandler */
+            $mediaHandler = $this->mediaHandlerSubManager->get($delegatorClassName);
+            if (!$mediaHandler->isResponsible($media)) {
                 continue;
             }
-            $delegator->process($media);
+            $mediaHandler->process($media);
         }
 
         if ($this->createdUser !== null) {
@@ -210,14 +205,15 @@ class CreateCommand extends AbstractCommand
         $filename = $slugify->slugify($filenameParts['filename']) . '.' . $filenameParts['extension'];
         $destination = $mediaPath . $basePath . $filename;
 
-        $this->mediaCreateHandler->move($this->filesystem, $destination);
+        // Save File to Drive
+        $this->mediaCreateHandler->write($this->filesystem, $destination);
 
         $media = new Media([
             'id' => $this->uuid(),
             'basePath' => $basePath,
             'filename' => $filename,
+            'fileSize' => $this->mediaCreateHandler->fileSize(),
             'mimeType' => $this->mediaCreateHandler->mimeType(),
-            'size' => $this->mediaCreateHandler->fileSize(),
             'publicStatus' => $this->publicStatus,
             'hash' => $this->fileHash,
             'createdAt' => new \DateTimeImmutable(),

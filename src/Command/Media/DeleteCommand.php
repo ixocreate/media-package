@@ -10,11 +10,10 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Command\Media;
 
 use Ixocreate\CommandBus\Command\AbstractCommand;
-use Ixocreate\Filesystem\FilesystemManager;
+use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Exception\InvalidConfigException;
-use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
+use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
 
@@ -28,33 +27,42 @@ class DeleteCommand extends AbstractCommand
     /**
      * @var MediaHandlerSubManager
      */
-    private $delegatorSubManager;
+    private $mediaHandlerSubManager;
 
     /**
-     * @var FilesystemManager
+     * @var FilesystemInterface
      */
-    private $filesystemManager;
+    private $filesystem;
 
     /**
      * CreateCommand constructor.
      *
      * @param MediaRepository $mediaRepository
-     * @param MediaHandlerSubManager $delegatorSubManager
-     * @param FilesystemManager $filesystemManager
+     * @param MediaHandlerSubManager $mediaHandlerSubManager
      */
     public function __construct(
         MediaRepository $mediaRepository,
-        MediaHandlerSubManager $delegatorSubManager,
-        FilesystemManager $filesystemManager
-    ) {
+        MediaHandlerSubManager $mediaHandlerSubManager
+    )
+    {
         $this->mediaRepository = $mediaRepository;
-        $this->delegatorSubManager = $delegatorSubManager;
-        $this->filesystemManager = $filesystemManager;
+        $this->mediaHandlerSubManager = $mediaHandlerSubManager;
     }
 
     /**
-     * @throws \Exception
+     * @param FilesystemInterface $filesystem
+     * @return DeleteCommand
+     */
+    public function withFilesystem(FilesystemInterface $filesystem): DeleteCommand
+    {
+        $command = clone $this;
+        $command->filesystem = $filesystem;
+        return $command;
+    }
+
+    /**
      * @return bool
+     * @throws \Exception
      */
     public function execute(): bool
     {
@@ -64,20 +72,16 @@ class DeleteCommand extends AbstractCommand
             $media = $this->mediaRepository->find($this->dataValue('mediaId'));
         }
 
-        if (!$this->filesystemManager->has('media')) {
-            throw new InvalidConfigException('Storage Config not set');
-        }
-
         $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
         /**
-         * move output files from delegators as well
+         * move output files from mediaHandlers as well
          */
-        foreach ($this->delegatorSubManager->getServices() as $key => $delegatorClassName) {
-            /** @var HandlerInterface $delegator */
-            $delegator = $this->delegatorSubManager->get($delegatorClassName);
+        foreach ($this->mediaHandlerSubManager->getServices() as $key => $mediaHandlerClassName) {
+            /** @var MediaHandlerInterface $mediaHandler */
+            $mediaHandler = $this->mediaHandlerSubManager->get($mediaHandlerClassName);
 
-            foreach ($delegator->directories() as $directory) {
+            foreach ($mediaHandler->directories() as $directory) {
                 $this->deleteFolder($mediaPath . $directory . $media->basePath());
             }
         }
@@ -99,21 +103,19 @@ class DeleteCommand extends AbstractCommand
 
     /**
      * @param $path
-     * @throws \League\Flysystem\FileNotFoundException
      */
     private function deleteFolder($path)
     {
-        $filesystem = $this->filesystemManager->get("media");
-        $content = $filesystem->listContents($path);
+        $content = $this->filesystem->listContents($path);
 
         if (\count($content) === 0) {
             return;
         }
 
         foreach ($content as $file) {
-            $filesystem->delete($file['path']);
+            $this->filesystem->delete($file['path']);
         }
 
-        $filesystem->deleteDir($path);
+        $this->filesystem->deleteDir($path);
     }
 }
