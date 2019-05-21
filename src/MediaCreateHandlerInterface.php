@@ -23,5 +23,5 @@ interface MediaCreateHandlerInterface
 
     public function fileHash(): string;
 
-    public function move(FilesystemInterface $storage, $destination);
+    public function write(FilesystemInterface $storage, $destination);
 }

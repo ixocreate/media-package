@@ -27,7 +27,7 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
     /**
      * @var bool
      */
-    private $deleteAfterMove;
+    private $deleteAfterWrite;
 
     /**
      * @var string
@@ -48,13 +48,13 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
      * LocalFileHandler constructor.
      * @param string $file
      * @param string $filename
-     * @param bool $deleteAfterMove
+     * @param bool $deleteAfterWrite
      */
-    public function __construct(string $file, string $filename, bool $deleteAfterMove = true)
+    public function __construct(string $file, string $filename, bool $deleteAfterWrite = true)
     {
         $this->file = $file;
         $this->filename = $filename;
-        $this->deleteAfterMove = $deleteAfterMove;
+        $this->deleteAfterWrite = $deleteAfterWrite;
     }
 
     /**
@@ -78,13 +78,13 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
      * @param $destination
      * @return bool
      */
-    public function move(FilesystemInterface $storage, $destination): bool
+    public function write(FilesystemInterface $storage, $destination): bool
     {
         $f = \fopen($this->file, 'r');
         $storage->writeStream($destination, $f);
 
         \fclose($f);
-        if ($this->deleteAfterMove) {
+        if ($this->deleteAfterWrite) {
             //get file infos before file is removed;
             $this->mimeType();
             $this->fileSize();

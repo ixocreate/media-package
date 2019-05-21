@@ -85,7 +85,7 @@ final class UploadHandler implements MediaCreateHandlerInterface
      * @throws \League\Flysystem\FileExistsException
      * @return bool
      */
-    public function move(FilesystemInterface $storage, $destination)
+    public function write(FilesystemInterface $storage, $destination)
     {
         return $storage->writeStream($destination, $this->stream);
     }
