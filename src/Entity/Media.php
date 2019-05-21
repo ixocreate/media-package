@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Entity;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Ixocreate\Database\DatabaseEntityInterface;
 use Ixocreate\Entity\Definition;
@@ -30,17 +31,17 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
 
     private $filename;
 
-    private $mimeType;
-
-    private $size;
-
     private $publicStatus;
 
     private $hash;
 
+    private $metaData;
+
     private $createdAt;
 
     private $updatedAt;
+
+    private $deletedAt;
 
     public function id(): UuidType
     {
@@ -57,16 +58,6 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
         return $this->filename;
     }
 
-    public function mimeType(): string
-    {
-        return $this->mimeType;
-    }
-
-    public function size(): int
-    {
-        return $this->size;
-    }
-
     public function publicStatus(): bool
     {
         return $this->publicStatus;
@@ -75,6 +66,11 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
     public function hash(): string
     {
         return $this->hash;
+    }
+
+    public function metaData(): array
+    {
+        return $this->metaData;
     }
 
     public function createdAt(): DateTimeType
@@ -87,18 +83,23 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
         return $this->updatedAt;
     }
 
+    public function deletedAt(): DateTimeType
+    {
+        return $this->deletedAt;
+    }
+
     protected static function createDefinitions(): DefinitionCollection
     {
         return new DefinitionCollection([
             new Definition('id', UuidType::class, false, true),
             new Definition('basePath', TypeInterface::TYPE_STRING, false, true),
             new Definition('filename', TypeInterface::TYPE_STRING, false, true),
-            new Definition('mimeType', TypeInterface::TYPE_STRING, false, true),
-            new Definition('size', TypeInterface::TYPE_INT, false, true),
             new Definition('publicStatus', 'bool', false, true),
             new Definition('hash', TypeInterface::TYPE_STRING, false, false),
+            new Definition('metaData', TypeInterface::TYPE_ARRAY, false, true),
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
+            new Definition('deletedAt', DateTimeType::class, true, true),
         ]);
     }
 
@@ -109,11 +110,11 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
         $builder->createField('id', UuidType::serviceName())->makePrimaryKey()->build();
         $builder->createField('basePath', 'string')->nullable(false)->build();
         $builder->createField('filename', 'string')->nullable(false)->build();
-        $builder->createField('mimeType', 'string')->nullable(false)->build();
-        $builder->createField('size', 'integer')->nullable(false)->build();
         $builder->createField('publicStatus', 'boolean')->nullable(false)->build();
         $builder->createField('hash', 'string')->nullable(false)->build();
+        $builder->createField('metaData', Type::JSON)->nullable(false)->build();
         $builder->createField('createdAt', DateTimeType::serviceName())->nullable(false)->build();
         $builder->createField('updatedAt', DateTimeType::serviceName())->nullable(false)->build();
+        $builder->createField('deletedAt', DateTimeType::serviceName())->nullable(true)->build();
     }
 }
