@@ -82,7 +82,6 @@ final class UploadHandler implements MediaCreateHandlerInterface
     /**
      * @param FilesystemInterface $storage
      * @param $destination
-     * @throws \League\Flysystem\FileExistsException
      * @return bool
      */
     public function write(FilesystemInterface $storage, $destination)
