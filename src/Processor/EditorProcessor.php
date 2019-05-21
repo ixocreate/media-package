@@ -51,7 +51,7 @@ final class EditorProcessor
     /**
      * @var FilesystemInterface
      */
-    private $storage;
+    private $filesystem;
 
     /**
      * EditorProcessor constructor.
@@ -60,20 +60,20 @@ final class EditorProcessor
      * @param ImageDefinitionInterface $imageDefinition
      * @param Media $media
      * @param MediaConfig $mediaConfig
-     * @param FilesystemInterface $storage
+     * @param FilesystemInterface $filesystem
      */
     public function __construct(
         array $requestData,
         ImageDefinitionInterface $imageDefinition,
         Media $media,
         MediaConfig $mediaConfig,
-        FilesystemInterface $storage
+        FilesystemInterface $filesystem
     ) {
         $this->requestData = $requestData;
         $this->imageDefinition = $imageDefinition;
         $this->media = $media;
         $this->mediaConfig = $mediaConfig;
-        $this->storage = $storage;
+        $this->filesystem = $filesystem;
         $this->requestWidth = $requestData['x2'] - $requestData['x1'];
         $this->requestHeight = $requestData['y2'] - $requestData['y1'];
     }
@@ -93,7 +93,7 @@ final class EditorProcessor
     {
         $mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
-        $file = $this->storage->read($mediaPath . $this->media->basePath() . $this->media->filename());
+        $file = $this->filesystem->read($mediaPath . $this->media->basePath() . $this->media->filename());
 
         $size = \getimagesizefromstring($file);
 
@@ -102,7 +102,7 @@ final class EditorProcessor
 
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
 
-        $image = $imageManager->make($this->storage->read($mediaPath . $this->media->basePath() . $this->media->filename()));
+        $image = $imageManager->make($this->filesystem->read($mediaPath . $this->media->basePath() . $this->media->filename()));
 
         $this->gaugeMinimalRequestDataSize();
         $this->gaugeCanvasSize($imageWidth, $imageHeight);
@@ -113,7 +113,7 @@ final class EditorProcessor
             $this->media,
             $this->imageDefinition,
             $this->mediaConfig,
-            $this->storage,
+            $this->filesystem,
             $image
         ))->process();
     }
