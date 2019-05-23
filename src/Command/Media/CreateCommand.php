@@ -17,6 +17,7 @@ use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Exception\FileDuplicateException;
+use Ixocreate\Media\Exception\FileSizeException;
 use Ixocreate\Media\Exception\FileTypeNotSupportedException;
 use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
@@ -76,6 +77,11 @@ class CreateCommand extends AbstractCommand
      * @var FilesystemInterface
      */
     private $filesystem;
+
+    /**
+     * @var null | int
+     */
+    private $fileSizeLimit = null;
 
     /**
      * CreateCommand constructor.
@@ -153,6 +159,17 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
+     * @param int $fileSizeLimit
+     * @return CreateCommand
+     */
+    public function withFileSizeLimit(int $fileSizeLimit): CreateCommand
+    {
+        $command = clone $this;
+        $command->fileSizeLimit = $fileSizeLimit;
+        return $command;
+    }
+
+    /**
      * @throws \Exception
      * @return bool
      */
@@ -160,6 +177,10 @@ class CreateCommand extends AbstractCommand
     {
         if (!($this->checkWhitelist($this->mediaCreateHandler->mimeType()))) {
             throw new FileTypeNotSupportedException('Mime Type not supported');
+        }
+
+        if ($this->fileSizeLimit !== null && $this->mediaCreateHandler->fileSize() > $this->fileSizeLimit) {
+            throw new FileSizeException('Allowed File Size exceeded');
         }
 
         $this->fileHash = $this->mediaCreateHandler->fileHash();
@@ -170,15 +191,15 @@ class CreateCommand extends AbstractCommand
 
         $media = $this->prepareMedia();
 
-        $this->mediaRepository->save($media);
+        $media = $this->mediaRepository->save($media);
 
-        foreach ($this->mediaHandlerSubManager->getServiceManagerConfig()->getNamedServices() as $name => $delegatorClassName) {
-            /** @var MediaHandlerInterface $mediaHandler */
-            $mediaHandler = $this->mediaHandlerSubManager->get($delegatorClassName);
-            if (!$mediaHandler->isResponsible($media)) {
+        foreach ($this->mediaHandlerSubManager->getServiceManagerConfig()->getNamedServices() as $name => $mediaHandlerClassName) {
+            /** @var MediaHandlerInterface $$handler */
+            $handler = $this->mediaHandlerSubManager->get($mediaHandlerClassName);
+            if (!$handler->isResponsible($media)) {
                 continue;
             }
-            $mediaHandler->process($media);
+            $handler->process($media, $this->filesystem);
         }
 
         if ($this->createdUser !== null) {
@@ -188,7 +209,6 @@ class CreateCommand extends AbstractCommand
             ]);
             $this->mediaCreatedRepository->save($mediaCreated);
         }
-
         return true;
     }
 

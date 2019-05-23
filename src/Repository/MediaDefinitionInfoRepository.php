@@ -10,15 +10,15 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Repository;
 
 use Ixocreate\Database\Repository\AbstractRepository;
-use Ixocreate\Media\Entity\MediaImageInfo;
+use Ixocreate\Media\Entity\MediaDefinitionInfo;
 
-final class MediaImageInfoRepository extends AbstractRepository
+final class MediaDefinitionInfoRepository extends AbstractRepository
 {
     /**
      * @return string
      */
     public function getEntityName(): string
     {
-        return MediaImageInfo::class;
+        return MediaDefinitionInfo::class;
     }
 }

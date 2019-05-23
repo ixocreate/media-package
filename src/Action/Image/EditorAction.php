@@ -19,7 +19,6 @@ use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
-use Ixocreate\Media\Repository\MediaImageInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -44,11 +43,6 @@ final class EditorAction implements MiddlewareInterface
     private $mediaRepository;
 
     /**
-     * @var MediaImageInfoRepository
-     */
-    private $mediaImageInfoRepository;
-
-    /**
      * @var CommandBus
      */
     private $commandBus;
@@ -65,7 +59,6 @@ final class EditorAction implements MiddlewareInterface
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
-     * @param MediaImageInfoRepository $mediaImageInfoRepository
      * @param FilesystemManager $filesystemManager
      */
     public function __construct(
@@ -73,13 +66,11 @@ final class EditorAction implements MiddlewareInterface
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaImageInfoRepository $mediaImageInfoRepository,
         FilesystemManager $filesystemManager
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
-        $this->mediaImageInfoRepository = $mediaImageInfoRepository;
         $this->commandBus = $commandBus;
         $this->filesystemManager = $filesystemManager;
     }
@@ -108,7 +99,7 @@ final class EditorAction implements MiddlewareInterface
         $filesystem = $this->filesystemManager->get('media');
 
         /** @var Media $media */
-        $media = $this->media($requestData);
+        $media = $this->fetchMedia($requestData);
         /** @var ImageDefinitionInterface $imageDefinition */
         $imageDefinition = $this->imageDefinition($requestData);
 
@@ -148,7 +139,7 @@ final class EditorAction implements MiddlewareInterface
      * @param array $requestData
      * @return ApiErrorResponse|object|null
      */
-    private function media(array $requestData)
+    private function fetchMedia(array $requestData)
     {
         if ($this->mediaRepository->count(['id' => $requestData['id']]) === null) {
             return new ApiErrorResponse('Given Media Id does not exist');

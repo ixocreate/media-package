@@ -82,7 +82,7 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
         return $this->hash;
     }
 
-    public function metaData(): array
+    public function metaData(): ?array
     {
         return $this->metaData;
     }
@@ -112,7 +112,7 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
             new Definition('fileSize', TypeInterface::TYPE_INT, false, true),
             new Definition('hash', TypeInterface::TYPE_STRING, false, false),
             new Definition('publicStatus', 'bool', false, true),
-            new Definition('metaData', TypeInterface::TYPE_ARRAY, false, true),
+            new Definition('metaData', TypeInterface::TYPE_ARRAY, true, true),
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
             new Definition('deletedAt', DateTimeType::class, true, true),
@@ -130,7 +130,7 @@ final class Media implements EntityInterface, DatabaseEntityInterface, MediaInte
         $builder->createField('fileSize', Type::INTEGER)->nullable(false)->build();
         $builder->createField('hash', Type::STRING)->nullable(false)->build();
         $builder->createField('publicStatus', 'boolean')->nullable(false)->build();
-        $builder->createField('metaData', Type::JSON)->nullable(false)->build();
+        $builder->createField('metaData', Type::JSON)->nullable(true)->build();
         $builder->createField('createdAt', DateTimeType::serviceName())->nullable(false)->build();
         $builder->createField('updatedAt', DateTimeType::serviceName())->nullable(false)->build();
         $builder->createField('deletedAt', DateTimeType::serviceName())->nullable(true)->build();

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media\MediaCreateHandler;
+namespace Ixocreate\Media\CreateHandler;
 
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\MediaCreateHandlerInterface;

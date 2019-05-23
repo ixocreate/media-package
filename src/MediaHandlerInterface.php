@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
-use Ixocreate\Media\MediaInterface;
+use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\ServiceManager\NamedServiceInterface;
 
 interface MediaHandlerInterface extends NamedServiceInterface
@@ -27,6 +27,7 @@ interface MediaHandlerInterface extends NamedServiceInterface
 
     /**
      * @param MediaInterface $media
+     * @param FilesystemInterface $filesystem
      */
-    public function process(MediaInterface $media): void;
+    public function process(MediaInterface $media, FilesystemInterface $filesystem): void;
 }

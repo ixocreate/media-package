@@ -38,7 +38,7 @@ final class ImageProcessor
     /**
      * @var FilesystemInterface
      */
-    private $storage;
+    private $filesystem;
 
     /**
      * @var Image
@@ -56,20 +56,20 @@ final class ImageProcessor
      * @param MediaInterface $media
      * @param ImageDefinitionInterface $imageDefinition
      * @param MediaConfig $mediaConfig
-     * @param FilesystemInterface $storage
+     * @param FilesystemInterface $filesystem
      * @param Image|null $image
      */
     public function __construct(
         MediaInterface $media,
         ImageDefinitionInterface $imageDefinition,
         MediaConfig $mediaConfig,
-        FilesystemInterface $storage,
+        FilesystemInterface $filesystem,
         Image $image = null
     ) {
         $this->media = $media;
         $this->imageDefinition = $imageDefinition;
         $this->mediaConfig = $mediaConfig;
-        $this->storage = $storage;
+        $this->filesystem = $filesystem;
         $this->image = $image;
         $this->setParameters();
     }
@@ -93,31 +93,34 @@ final class ImageProcessor
     }
 
     /**
-     * Processes UploadAction Images
+     * Processes UploadAction & Editor Images
      *
-     * @throws \League\Flysystem\FileNotFoundException
+     * @return bool
      */
-    public function process(): void
+    public function process(): bool
     {
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
 
         $mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
         /** @var Image $image */
-        $image = ($this->image != null) ? $this->image : $imageManager->make($this->storage->read($mediaPath . $this->media->basePath() . $this->media->filename()));
+        $image = ($this->image !== null) ? $this->image : $imageManager->make($this->filesystem->read($mediaPath . $this->media->basePath() . $this->media->filename()));
 
         $this->imageParameters['imageWidth'] = $image->width();
         $this->imageParameters['imageHeight'] = $image->height();
 
         $this->checkMode($image, $this->imageParameters);
 
-        $filename = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
+        $file = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
 
-        $this->storage->put(
-            $filename,
-            (string) $image->encode(\pathinfo($filename, PATHINFO_EXTENSION))
+        $put = $this->filesystem->put(
+            $file,
+            (string) $image->encode(\pathinfo($file, PATHINFO_EXTENSION))
         );
+
         $image->destroy();
+
+        return $put;
     }
 
     /**

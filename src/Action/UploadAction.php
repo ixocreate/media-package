@@ -16,7 +16,7 @@ use Ixocreate\CommandBus\CommandBus;
 use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Command\Media\CreateCommand;
 use Ixocreate\Media\Exception\InvalidConfigException;
-use Ixocreate\Media\MediaCreateHandler\UploadHandler;
+use Ixocreate\Media\CreateHandler\UploadHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

@@ -2,6 +2,28 @@
 
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.3...develop)
 
+## [v0.4.0 (2019-05-23)](https://github.com/ixocreate/media-package/compare/0.3.2...0.4.0)
+### Added
+- 'metaData' field to 'media_media' data table
+- 'metaData' to MediaInterface 
+- 'width' field to 'media_image_info'
+- 'height' field to 'media_image_info'
+- 'fileSize' field to 'media_image_info'
+- fileSizeLimit to CreateCommand
+- FileSizeException
+
+### Changed
+- data table name 'media_media_crop' to 'media_definition_info'
+- renamed MediaCrop to MediaDefinitionInfo
+- renamed MediaCropRepository to MediaDefinitionInfoRepository
+- column name 'size' to 'fileSize' in 'media_definition_info'
+- renamed HandlerInterface to MediaHandlerInterface
+- moved MediaHandlerInterface (Namespace changed)
+- MediaHandlerInterface->process() now requires FilesystemInterface as well
+- renamed MediaCreateHandlerInterface->move() to MediaCreateHandlerInterface->write()
+- unified variable names
+- renamed EditorAction->media() to EditorAction->fetchMedia()
+ 
 ## [v0.3.3 (2019-05-20)](https://github.com/ixocreate/media-package/compare/0.3.2...0.3.3)
 ### Added
 - Comments to MediaPackageConfig

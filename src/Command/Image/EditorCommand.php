@@ -13,11 +13,11 @@ use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaImageInfo;
+use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\Processor\EditorProcessor;
-use Ixocreate\Media\Repository\MediaImageInfoRepository;
+use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Ramsey\Uuid\Uuid;
 
@@ -39,9 +39,9 @@ final class EditorCommand extends AbstractCommand
     private $imageDefinitionSubManager;
 
     /**
-     * @var MediaImageInfoRepository
+     * @var MediaDefinitionInfoRepository
      */
-    private $mediaImageInfoRepository;
+    private $mediaDefinitionInfoRepository;
 
     /**
      * @var FilesystemInterface
@@ -53,18 +53,18 @@ final class EditorCommand extends AbstractCommand
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
-     * @param MediaImageInfoRepository $mediaImageInfoRepository
+     * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      */
     public function __construct(
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaImageInfoRepository $mediaImageInfoRepository
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
-        $this->mediaImageInfoRepository = $mediaImageInfoRepository;
+        $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
     }
 
     public function withFilesystem(FilesystemInterface $filesystem): EditorCommand
@@ -87,32 +87,32 @@ final class EditorCommand extends AbstractCommand
 
         $requestData = $this->dataValue('requestData');
 
-        $mediaImageInfo = null;
+        $mediaDefinitionInfo = null;
 
-        if (!empty($this->mediaImageInfoRepository->findOneBy([
+        if (!empty($this->mediaDefinitionInfoRepository->findOneBy([
             'mediaId' => $media->id(),
             'imageDefinition' => $imageDefinition::serviceName(),
         ]))) {
-            /** @var MediaImageInfo $mediaImageInfo */
-            $mediaImageInfo = $this->mediaImageInfoRepository->findOneBy([
+            /** @var MediaDefinitionInfo $mediaDefinitionInfo */
+            $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy([
                 'mediaId' => $media->id(),
                 'imageDefinition' => $imageDefinition::serviceName(),
             ]);
 
-            if ($mediaImageInfo::getDefinitions()->has('updatedAt')) {
-                $mediaImageInfo = $mediaImageInfo->with('updatedAt', new \DateTime());
+            if ($mediaDefinitionInfo::getDefinitions()->has('updatedAt')) {
+                $mediaDefinitionInfo = $mediaDefinitionInfo->with('updatedAt', new \DateTime());
             }
 
-            if ($mediaImageInfo::getDefinitions()->has('cropParameters')) {
-                $mediaImageInfo = $mediaImageInfo->with('cropParameters', $requestData['crop']);
+            if ($mediaDefinitionInfo::getDefinitions()->has('cropParameters')) {
+                $mediaDefinitionInfo = $mediaDefinitionInfo->with('cropParameters', $requestData['crop']);
             }
         }
 
-        if (empty($this->mediaImageInfoRepository->findOneBy([
+        if (empty($this->mediaDefinitionInfoRepository->findOneBy([
             'mediaId' => $media->id(),
             'imageDefinition' => $imageDefinition::serviceName(),
         ]))) {
-            $mediaImageInfo = new MediaImageInfo([
+            $mediaDefinitionInfo = new MediaDefinitionInfo([
                 'id' => Uuid::uuid4(),
                 'mediaId' => $media->id(),
                 'imageDefinition' => $imageDefinition::serviceName(),
@@ -124,7 +124,7 @@ final class EditorCommand extends AbstractCommand
 
         (new EditorProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig, $this->filesystem))->process();
 
-        $this->mediaImageInfoRepository->save($mediaImageInfo);
+        $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
 
         return true;
     }

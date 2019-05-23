@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Entity;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Ixocreate\Database\DatabaseEntityInterface;
 use Ixocreate\Entity\Definition;
@@ -19,7 +20,7 @@ use Ixocreate\Schema\Type\DateTimeType;
 use Ixocreate\Schema\Type\TypeInterface;
 use Ixocreate\Schema\Type\UuidType;
 
-final class MediaImageInfo implements EntityInterface, DatabaseEntityInterface
+final class MediaDefinitionInfo implements EntityInterface, DatabaseEntityInterface
 {
     use EntityTrait;
 
@@ -91,7 +92,7 @@ final class MediaImageInfo implements EntityInterface, DatabaseEntityInterface
             new Definition('width', TypeInterface::TYPE_INT, false, true),
             new Definition('height', TypeInterface::TYPE_INT, false, true),
             new Definition('fileSize', TypeInterface::TYPE_INT, false, true),
-            new Definition('cropParameters', TypeInterface::TYPE_ARRAY, false, true),
+            new Definition('cropParameters', TypeInterface::TYPE_ARRAY, true, true),
             new Definition('createdAt', DateTimeType::class, false, true),
             new Definition('updatedAt', DateTimeType::class, false, true),
         ]);
@@ -99,12 +100,15 @@ final class MediaImageInfo implements EntityInterface, DatabaseEntityInterface
 
     public static function loadMetadata(ClassMetadataBuilder $builder)
     {
-        $builder->createField('mediaId', UuidType::serviceName());
-        $builder->createField('imageDefinition', 'string')->nullable(false)->build();
-        $builder->createField('cropParameters', 'json')->nullable(false)->build();
+        $builder->setTable('media_definition_info');
+
+        $builder->createField('mediaId', UuidType::serviceName())->makePrimaryKey()->build();
+        $builder->createField('imageDefinition', 'string')->makePrimaryKey()->build();
+        $builder->createField('width', Type::INTEGER)->nullable(false)->build();
+        $builder->createField('height', Type::INTEGER)->nullable(false)->build();
+        $builder->createField('fileSize', Type::INTEGER)->nullable(false)->build();
+        $builder->createField('cropParameters', 'json')->nullable(true)->build();
         $builder->createField('createdAt', DateTimeType::serviceName())->nullable(false)->build();
         $builder->createField('updatedAt', DateTimeType::serviceName())->nullable(false)->build();
-        $builder->addIndex(['mediaId', 'imageDefinition'], 'PRIMARY');
-        $builder->addUniqueConstraint(['mediaId', 'imagDefinition'], 'PRIMARY');
     }
 }

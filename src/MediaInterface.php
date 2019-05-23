@@ -23,5 +23,5 @@ interface MediaInterface
 
     public function hash(): string;
 
-    public function metaData(): array;
+    public function metaData(): ?array;
 }

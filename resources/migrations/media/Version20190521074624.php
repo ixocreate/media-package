@@ -19,30 +19,33 @@ final class Version20190521074624 extends AbstractMigration
 
     public function preUp(Schema $schema)
     {
-        $this->connection->executeQuery('ALTER TABLE `media_media_crop` RENAME `media_image_info`');
+        $this->connection->executeQuery('ALTER TABLE `media_media_crop` RENAME `media_definition_info`');
         $this->connection->executeQuery('ALTER TABLE `media_media` CHANGE `size` `fileSize` int(11)');
     }
 
     public function up(Schema $schema) : void
     {
-        // MEDIA-IMAGE-INFO
-        $mediaImageInfo = $schema->getTable('media_image_info');
+        // MEDIA-DEFINITION-INFO
+        $mediaImageInfo = $schema->getTable('media_definition_info');
         $mediaImageInfo->dropPrimaryKey();
         $mediaImageInfo->dropColumn('id');
         $mediaImageInfo->addColumn('width', Type::INTEGER);
         $mediaImageInfo->addColumn('height', Type::INTEGER);
         $mediaImageInfo->addColumn('fileSize', Type::INTEGER);
+        $mediaImageInfo->getColumn('cropParameters')->setNotnull(false);
         $mediaImageInfo->setPrimaryKey(['mediaId', 'imageDefinition']);
-        $mediaImageInfo->addForeignKeyConstraint('media_media', ['mediaId'], ['id'], ['onDelete' => 'CASCADE']);
+        foreach ($mediaImageInfo->getForeignKeys() as $foreignKeyName => $foreignKey) {
+            $mediaImageInfo->removeForeignKey($foreignKeyName);
+        }
 
         // MEDIA
         $media = $schema->getTable('media_media');
-        $media->addColumn('metaData', Type::JSON);
+        $media->addColumn('metaData', Type::JSON)->setNotnull(false);
         $media->addColumn('deletedAt', DateTimeType::serviceName())->setNotnull(false);
     }
 
     public function down(Schema $schema) : void
     {
-        $schema->dropTable('media_image_info');
+        $schema->dropTable('media_definition_info');
     }
 }

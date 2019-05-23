@@ -15,6 +15,7 @@ use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 
 class DeleteCommand extends AbstractCommand
@@ -35,18 +36,26 @@ class DeleteCommand extends AbstractCommand
     private $filesystem;
 
     /**
+     * @var MediaDefinitionInfoRepository
+     */
+    private $mediaDefinitionInfoRepository;
+
+    /**
      * CreateCommand constructor.
      *
      * @param MediaRepository $mediaRepository
+     * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      * @param MediaHandlerSubManager $mediaHandlerSubManager
      */
     public function __construct(
         MediaRepository $mediaRepository,
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         MediaHandlerSubManager $mediaHandlerSubManager
     )
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
+        $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
     }
 
     /**
@@ -68,9 +77,6 @@ class DeleteCommand extends AbstractCommand
     {
         /** @var Media $media */
         $media = $this->dataValue('media');
-        if (empty($media)) {
-            $media = $this->mediaRepository->find($this->dataValue('mediaId'));
-        }
 
         $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
@@ -78,15 +84,21 @@ class DeleteCommand extends AbstractCommand
          * move output files from mediaHandlers as well
          */
         foreach ($this->mediaHandlerSubManager->getServices() as $key => $mediaHandlerClassName) {
-            /** @var MediaHandlerInterface $mediaHandler */
-            $mediaHandler = $this->mediaHandlerSubManager->get($mediaHandlerClassName);
+            /** @var MediaHandlerInterface $handler */
+            $handler = $this->mediaHandlerSubManager->get($mediaHandlerClassName);
 
-            foreach ($mediaHandler->directories() as $directory) {
-                $this->deleteFolder($mediaPath . $directory . $media->basePath());
+            if ($handler->isResponsible($media)) {
+                foreach ($handler->directories() as $directory) {
+                    $this->deleteFolder($mediaPath . $directory . $media->basePath());
+                }
             }
         }
 
         $this->deleteFolder($mediaPath . $media->basePath());
+
+        foreach($this->mediaDefinitionInfoRepository->findBy(['mediaId' => $media->id()]) as $mediaDefinitionInfo) {
+            $this->mediaDefinitionInfoRepository->remove($mediaDefinitionInfo);
+        }
 
         $this->mediaRepository->remove($media);
 

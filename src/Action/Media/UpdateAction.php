@@ -12,8 +12,10 @@ namespace Ixocreate\Media\Action\Media;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
+use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Command\Media\UpdateCommand;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,15 +35,26 @@ final class UpdateAction implements MiddlewareInterface
     private $mediaRepository;
 
     /**
+     * @var FilesystemManager
+     */
+    private $filesystemManager;
+
+    /**
      * UpdateAction constructor.
      *
      * @param MediaRepository $mediaRepository
      * @param CommandBus $commandBus
+     * @param FilesystemManager $filesystemManager
      */
-    public function __construct(MediaRepository $mediaRepository, CommandBus $commandBus)
+    public function __construct(
+        MediaRepository $mediaRepository,
+        CommandBus $commandBus,
+        FilesystemManager $filesystemManager
+    )
     {
         $this->commandBus = $commandBus;
         $this->mediaRepository = $mediaRepository;
+        $this->filesystemManager = $filesystemManager;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -53,19 +66,26 @@ final class UpdateAction implements MiddlewareInterface
             return new ApiErrorResponse('given media Id does not exist');
         }
 
+        if (!$this->filesystemManager->has('media')) {
+            throw new InvalidConfigException('Storage Config not set');
+        }
+
+        $filesystem = $this->filesystemManager->get('media');
+
         $data = $request->getParsedBody();
         $publicStatus = $data['publicStatus'];
         $newFilename = $data['newFilename'];
 
-        /** @var UpdateCommand $command */
-        $command = $this->commandBus->create(UpdateCommand::class, []);
-        $command = $command->withMedia($media);
-        $command = $command->withPublicStatus($publicStatus);
-        $command = $command->withNewFilename($newFilename);
-        $result = $this->commandBus->dispatch($command);
+        /** @var UpdateCommand $updateCommand */
+        $updateCommand = $this->commandBus->create(UpdateCommand::class, []);
+        $updateCommand = $updateCommand->withMedia($media);
+        $updateCommand = $updateCommand->withPublicStatus($publicStatus);
+        $updateCommand = $updateCommand->withNewFilename($newFilename);
+        $updateCommand = $updateCommand->withFilesystem($filesystem);
+        $commandResult = $this->commandBus->dispatch($updateCommand);
 
-        if (!$result->isSuccessful()) {
-            return new ApiErrorResponse('media-media-update', $result->messages());
+        if (!$commandResult->isSuccessful()) {
+            return new ApiErrorResponse('media-media-update', $commandResult->messages());
         }
 
         return new ApiSuccessResponse();
