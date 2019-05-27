@@ -2,6 +2,9 @@
 
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.3...develop)
 
+### Added
+- Media Link integration
+
 ## [v0.3.3 (2019-05-20)](https://github.com/ixocreate/media-package/compare/0.3.2...0.3.3)
 ### Added
 - Comments to MediaPackageConfig
