@@ -1,7 +1,8 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.4...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.5...develop)
 
+## [v0.3.5 (2019-05-28)](https://github.com/ixocreate/media-package/compare/0.3.4...0.3.5)
 ### Fixed
 - Travis build clover output
 
