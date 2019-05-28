@@ -2,6 +2,9 @@
 
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.4...develop)
 
+### Fixed
+- Travis build clover output
+
 ## [v0.3.4 (2019-05-28)](https://github.com/ixocreate/media-package/compare/0.3.3...0.3.4)
 ### Added
 - Media Link integration
