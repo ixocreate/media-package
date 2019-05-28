@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -48,7 +48,7 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
      * LocalFileHandler constructor.
      * @param string $file
      * @param string $filename
-     * @param boolean $deleteAfterMove
+     * @param bool $deleteAfterMove
      */
     public function __construct(string $file, string $filename, bool $deleteAfterMove = true)
     {
