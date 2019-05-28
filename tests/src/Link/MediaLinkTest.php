@@ -19,7 +19,7 @@ use Ixocreate\Test\Schema\TypeMockHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Ixocreate\Schema\Link\MediaLink
+ * @covers \Ixocreate\Media\Link\MediaLink
  */
 class MediaLinkTest extends TestCase
 {
