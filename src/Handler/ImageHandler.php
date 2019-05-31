@@ -64,6 +64,11 @@ final class ImageHandler implements MediaHandlerInterface
     private $mediaRepository;
 
     /**
+     * @var ImageDefinitionInterface
+     */
+    private $imageDefinition;
+
+    /**
      * @var MediaDefinitionInfoRepository
      */
     private $mediaDefinitionInfoRepository;
@@ -102,6 +107,17 @@ final class ImageHandler implements MediaHandlerInterface
     }
 
     /**
+     * @param ImageDefinitionInterface $imageDefinition
+     * @return ImageHandler
+     */
+    public function withImageDefinition(ImageDefinitionInterface $imageDefinition)
+    {
+        $handler = clone $this;
+        $handler->imageDefinition = $imageDefinition;
+        return $handler;
+    }
+
+    /**
      * @param MediaInterface $media
      * @return bool
      */
@@ -129,34 +145,50 @@ final class ImageHandler implements MediaHandlerInterface
         $this->media = $media;
         $this->mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
-        foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
-            /** @var ImageDefinitionInterface $imageDefinition */
-            $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
+        if ($this->imageDefinition !== null) {
+            $this->generate($this->imageDefinition, $filesystem);
+        }
 
-            $process = (new ImageProcessor($this->media, $imageDefinition, $this->mediaConfig, $filesystem))->process();
-
-            if ($process === true) {
-
-                $file = $this->mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
-
-                $imageData = \getimagesizefromstring($filesystem->read($file));
-                $fileSize = $filesystem->getSize($file);
-
-                $mediaDefinitionInfo = new MediaDefinitionInfo([
-                    'mediaId' => $this->media->id(),
-                    'imageDefinition' => $imageDefinition::serviceName(),
-                    'width' => $imageData[0],
-                    'height' => $imageData[1],
-                    'fileSize' => $fileSize,
-                    'createdAt' => new \DateTimeImmutable(),
-                    'updatedAt' => new \DateTimeImmutable()
-                ]);
-
-                $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
-
+        if ($this->imageDefinition === null) {
+            foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
+                /** @var ImageDefinitionInterface $imageDefinition */
+                $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
+                $this->generate($imageDefinition, $filesystem);
             }
         }
-        $this->updateMediaMetaData($filesystem);
+
+        if ($this->media->metaData() === null) {
+            $this->updateMediaMetaData($filesystem);
+        }
+    }
+
+    /**
+     * @param ImageDefinitionInterface $imageDefinition
+     * @param FilesystemInterface $filesystem
+     * @throws \Exception
+     */
+    private function generate(ImageDefinitionInterface $imageDefinition, FilesystemInterface $filesystem)
+    {
+        $process = (new ImageProcessor($this->media, $imageDefinition, $this->mediaConfig, $filesystem))->process();
+
+        if ($process === true) {
+
+            $file = $this->mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
+
+            $imageData = \getimagesizefromstring($filesystem->read($file));
+            $fileSize = $filesystem->getSize($file);
+
+            $mediaDefinitionInfo = new MediaDefinitionInfo([
+                'mediaId' => $this->media->id(),
+                'imageDefinition' => $imageDefinition::serviceName(),
+                'width' => $imageData[0],
+                'height' => $imageData[1],
+                'fileSize' => $fileSize,
+                'createdAt' => new \DateTimeImmutable(),
+                'updatedAt' => new \DateTimeImmutable()
+            ]);
+            $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
+        }
     }
 
     /**
@@ -188,10 +220,6 @@ final class ImageHandler implements MediaHandlerInterface
             'width' => $imageData[0],
             'height' => $imageData[1]
         ];
-
-        if ($this->media->metaData() === array()) {
-            $metaData = \array_merge($this->media->metaData(), $metaData);
-        }
 
         $media = $this->media->with('metaData', $metaData);
 

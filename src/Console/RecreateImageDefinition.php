@@ -22,7 +22,7 @@ use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinitionInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
-use Ixocreate\Media\Repository\MediaImageInfoRepository;
+use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -64,9 +64,9 @@ final class RecreateImageDefinition extends Command implements CommandInterface
     private $filesystem;
 
     /**
-     * @var MediaImageInfoRepository
+     * @var MediaDefinitionInfoRepository
      */
-    private $mediaImageInfoRepository;
+    private $mediaDefinitionInfoRepository;
 
     /**
      * RefactorImageDefinition constructor.
@@ -76,7 +76,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param MediaRepository $mediaRepository
      * @param ImageHandler $imageHandler
      * @param FilesystemManager $filesystemManager
-     * @param MediaImageInfoRepository $mediaImageInfoRepository
+     * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      */
     public function __construct(
         ImageDefinitionSubManager $imageDefinitionSubManager,
@@ -84,7 +84,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         MediaRepository $mediaRepository,
         ImageHandler $imageHandler,
         FilesystemManager $filesystemManager,
-        MediaImageInfoRepository $mediaImageInfoRepository
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
     ) {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
@@ -92,7 +92,7 @@ final class RecreateImageDefinition extends Command implements CommandInterface
         $this->mediaRepository = $mediaRepository;
         $this->imageHandler = $imageHandler;
         $this->filesystemManager = $filesystemManager;
-        $this->mediaImageInfoRepository = $mediaImageInfoRepository;
+        $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
     }
 
     public function configure()
@@ -332,10 +332,10 @@ final class RecreateImageDefinition extends Command implements CommandInterface
             }
 
             // In Case that there is a Crop-Entry, remove it due to reset
-            $mediaCropResult = $this->mediaImageInfoRepository->findBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+            $mediaCropResult = $this->mediaDefinitionInfoRepository->findBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
             if (!empty($mediaCropResult)) {
                 foreach ($mediaCropResult as $mediaCrop) {
-                    $this->mediaImageInfoRepository->remove($mediaCrop);
+                    $this->mediaDefinitionInfoRepository->remove($mediaCrop);
                 }
             }
 
