@@ -153,29 +153,20 @@ final class DetailAction implements MiddlewareInterface
         $definitions = [];
 
         foreach ($this->imageDefinitionSubManager->getServices() as $key => $name) {
-            /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($name);
             $validSize = $this->checkValidSize($media, $imageDefinition);
             $definitions[] = [
                 'name' => $imageDefinition::serviceName(),
-                'mode' => $imageDefinition->mode(),
                 'isCropable' => $validSize,
                 'cropParameter' => '',
             ];
 
-            try {
-                /** @var MediaDefinitionInfo $mediaDefinitionInfo */
-                $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()])[0];
+            /** @var MediaDefinitionInfo $mediaDefinitionInfo */
+            $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()])[0];
 
-                if ($mediaDefinitionInfo->cropParameters() !== null) {
-                    $definitions[$key]['cropParameter'] = $mediaDefinitionInfo->cropParameters();
-                }
-
-            } catch (\Exception $exception) {
-                unset($definitions[$key]);
-                continue;
+            if ($mediaDefinitionInfo->cropParameters() !== null) {
+                $definitions[$key]['cropParameter'] = $mediaDefinitionInfo->cropParameters();
             }
-
 
         }
         return $definitions;

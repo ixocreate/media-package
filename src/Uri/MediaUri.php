@@ -12,9 +12,9 @@ namespace Ixocreate\Media\Uri;
 use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Handler\HandlerInterface;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\Media\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
@@ -71,7 +71,7 @@ final class MediaUri
      */
     public function imageUrl(Media $media, string $imageDefinition = null): string
     {
-        /** @var MediaHandlerInterface $imageHandler */
+        /** @var HandlerInterface $imageHandler */
         $imageHandler = $this->mediaHandlerSubManager->get(ImageHandler::serviceName());
         if (!$imageHandler->isResponsible($media)) {
             $imageDefinition = null;
