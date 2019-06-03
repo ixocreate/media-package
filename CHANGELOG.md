@@ -23,6 +23,10 @@
 - renamed MediaCreateHandlerInterface->move() to MediaCreateHandlerInterface->write()
 - unified variable names
 - renamed EditorAction->media() to EditorAction->fetchMedia()
+- renamed 'RecreateImageDefinition' to 'RegenerateDefinitionCommand'
+  - changed CommandName to 'media:regenerate-definition'
+  - Command now tries to keep existing Crop Parameters if valid
+  - Command now always validates / creates / overwrites .json File 
  
 ## [v0.3.3 (2019-05-20)](https://github.com/ixocreate/media-package/compare/0.3.2...0.3.3)
 ### Added
