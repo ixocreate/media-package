@@ -16,10 +16,19 @@ use Ixocreate\Schema\Type\DateTimeType;
 
 final class Version20190521074624 extends AbstractMigration
 {
+    /**
+     * @param Schema $schema
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function preUp(Schema $schema)
+    {
+        $this->connection->executeQuery('RENAME TABLE `media_media_crop` TO `media_definition_info`');
+        $this->connection->executeQuery('ALTER TABLE `media_media` CHANGE `size` `fileSize` int(11)');
+    }
+
     public function up(Schema $schema) : void
     {
         // MEDIA-DEFINITION-INFO
-        $schema->renameTable('media_media_crop', 'media_definition_info');
         $mediaImageInfo = $schema->getTable('media_definition_info');
         $mediaImageInfo->dropPrimaryKey();
         $mediaImageInfo->dropColumn('id');
@@ -34,7 +43,7 @@ final class Version20190521074624 extends AbstractMigration
 
         // MEDIA
         $media = $schema->getTable('media_media');
-        $media->changeColumn('size', ['name' => 'fileSize', 'type' => Type::getType('integer')]);
+        $media->getColumn('fileSize')->setNotnull(true);
         $media->addColumn('metaData', Type::JSON)->setNotnull(false);
         $media->addColumn('deletedAt', DateTimeType::serviceName())->setNotnull(false);
     }
