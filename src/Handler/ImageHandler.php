@@ -178,16 +178,30 @@ final class ImageHandler implements MediaHandlerInterface
             $imageData = \getimagesizefromstring($filesystem->read($file));
             $fileSize = $filesystem->getSize($file);
 
-            $mediaDefinitionInfo = new MediaDefinitionInfo([
-                'mediaId' => $this->media->id(),
-                'imageDefinition' => $imageDefinition::serviceName(),
-                'width' => $imageData[0],
-                'height' => $imageData[1],
-                'fileSize' => $fileSize,
-                'createdAt' => new \DateTimeImmutable(),
-                'updatedAt' => new \DateTimeImmutable()
-            ]);
-            $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
+            $entries = $this->mediaDefinitionInfoRepository->findBy(['mediaId' => $this->media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+
+            // In Case there are no existing Entries, create new one
+            if (empty($entries)) {
+                $mediaDefinitionInfo = new MediaDefinitionInfo([
+                    'mediaId' => $this->media->id(),
+                    'imageDefinition' => $imageDefinition::serviceName(),
+                    'width' => $imageData[0],
+                    'height' => $imageData[1],
+                    'fileSize' => $fileSize,
+                    'createdAt' => new \DateTimeImmutable(),
+                    'updatedAt' => new \DateTimeImmutable()
+                ]);
+                $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
+                return;
+            }
+
+            // If there are already Entries, updated them
+            foreach ($entries as $entry) {
+                /** @var mediaDefinitionInfo $entry */
+                $entry = $entry->with('updatedAt', new \DateTimeImmutable());
+                $this->mediaDefinitionInfoRepository->save($entry);
+            }
+
         }
     }
 
