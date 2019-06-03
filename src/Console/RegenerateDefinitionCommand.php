@@ -33,7 +33,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-final class RegenerateDefinition extends Command implements CommandInterface
+final class RegenerateDefinitionCommand extends Command implements CommandInterface
 {
     /**
      * @var array
