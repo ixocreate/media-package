@@ -108,6 +108,10 @@ class UpdateCommand extends AbstractCommand
         return $command;
     }
 
+    /**
+     * @param FilesystemInterface $filesystem
+     * @return UpdateCommand
+     */
     public function withFilesystem(FilesystemInterface $filesystem): UpdateCommand
     {
         $command = clone $this;
