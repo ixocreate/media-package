@@ -50,8 +50,7 @@ final class UpdateAction implements MiddlewareInterface
         MediaRepository $mediaRepository,
         CommandBus $commandBus,
         FilesystemManager $filesystemManager
-    )
-    {
+    ) {
         $this->commandBus = $commandBus;
         $this->mediaRepository = $mediaRepository;
         $this->filesystemManager = $filesystemManager;

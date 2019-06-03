@@ -170,13 +170,10 @@ final class DetailAction implements MiddlewareInterface
                 if ($mediaDefinitionInfo->cropParameters() !== null) {
                     $definitions[$key]['cropParameter'] = $mediaDefinitionInfo->cropParameters();
                 }
-
             } catch (\Exception $exception) {
                 unset($definitions[$key]);
                 continue;
             }
-
-
         }
         return $definitions;
     }

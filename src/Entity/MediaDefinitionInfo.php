@@ -40,7 +40,6 @@ final class MediaDefinitionInfo implements EntityInterface, DatabaseEntityInterf
 
     private $updatedAt;
 
-
     public function mediaId(): UuidType
     {
         return $this->mediaId;

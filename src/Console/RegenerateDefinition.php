@@ -34,7 +34,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class RegenerateDefinition extends Command implements CommandInterface
 {
-
     /**
      * @var array | null
      */
@@ -44,31 +43,36 @@ final class RegenerateDefinition extends Command implements CommandInterface
      * @var MediaConfig
      */
     private $mediaConfig;
+
     /**
      * @var ImageHandler
      */
     private $imageHandler;
+
     /**
      * @var FilesystemManager
      */
     private $filesystemManager;
+
     /**
      * @var FilesystemInterface
      */
     private $filesystem;
+
     /**
      * @var MediaRepository
      */
     private $mediaRepository;
+
     /**
      * @var ImageDefinitionSubManager
      */
     private $imageDefinitionSubManager;
+
     /**
      * @var MediaDefinitionInfoRepository
      */
     private $mediaDefinitionInfoRepository;
-
 
     /**
      * RegenerateDefinition constructor.
@@ -128,8 +132,8 @@ final class RegenerateDefinition extends Command implements CommandInterface
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|void|null
      * @throws \Exception
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -236,7 +240,7 @@ final class RegenerateDefinition extends Command implements CommandInterface
     private function runSpecific(InputInterface $input, OutputInterface $output, SymfonyStyle $style)
     {
         $inputName = \trim($input->getArgument('name'));
-        $inputName = \strtolower($inputName);
+        $inputName = \mb_strtolower($inputName);
         if (!\in_array(
             $inputName,
             \array_keys($this->imageDefinitionSubManager->getServiceManagerConfig()->getNamedServices())
@@ -249,7 +253,8 @@ final class RegenerateDefinition extends Command implements CommandInterface
         $this->checkDefinitionChanges($imageDefinition);
     }
 
-    private function runChanged(InputInterface $input, OutputInterface $output, SymfonyStyle $style) {
+    private function runChanged(InputInterface $input, OutputInterface $output, SymfonyStyle $style)
+    {
         // TODO: implement
     }
 
@@ -265,7 +270,7 @@ final class RegenerateDefinition extends Command implements CommandInterface
      */
     private function checkJsonFile(ImageDefinitionInterface $imageDefinition): bool
     {
-        $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH .$imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
+        $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
 
         if (!$this->filesystem->has($jsonFile)) {
             $json['serviceName'] = $imageDefinition::serviceName();
@@ -292,7 +297,7 @@ final class RegenerateDefinition extends Command implements CommandInterface
      */
     private function checkDefinitionChanges(ImageDefinitionInterface $imageDefinition): bool
     {
-        $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH .$imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
+        $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
 
 //        if ($this->filesystem->has($jsonFile)) {
 //            $json = $this->filesystem->read($jsonFile);
@@ -334,7 +339,6 @@ final class RegenerateDefinition extends Command implements CommandInterface
             return;
         }
     }
-
 
     /**
      * Checks if existing crop Parameters are still valid.
@@ -379,6 +383,7 @@ final class RegenerateDefinition extends Command implements CommandInterface
      * @param OutputInterface $output
      * @param SymfonyStyle $style
      * @param Media $media
+     * @param mixed $all
      * @throws \Exception
      */
     private function processImages(ImageDefinitionInterface $imageDefinition, InputInterface $input, OutputInterface $output, SymfonyStyle $style, Media $media, $all = false)
@@ -396,7 +401,6 @@ final class RegenerateDefinition extends Command implements CommandInterface
             $mediaDefinition = $mediaDefinition->with('cropParameters', $this->cropParameters);
             $this->mediaDefinitionInfoRepository->save($mediaDefinition);
         }
-
     }
 
     /**

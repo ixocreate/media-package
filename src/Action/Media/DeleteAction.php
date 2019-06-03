@@ -50,8 +50,7 @@ final class DeleteAction implements MiddlewareInterface
         MediaRepository $mediaRepository,
         CommandBus $commandBus,
         FilesystemManager $filesystemManager
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->commandBus = $commandBus;
         $this->filesystemManager = $filesystemManager;
