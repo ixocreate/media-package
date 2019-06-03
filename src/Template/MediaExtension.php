@@ -20,7 +20,6 @@ use Ixocreate\Template\Extension\ExtensionInterface;
 
 final class MediaExtension implements ExtensionInterface
 {
-
     /**
      * @var MediaConfig
      */
@@ -53,8 +52,7 @@ final class MediaExtension implements ExtensionInterface
         MediaRepository $mediaRepository,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         ImageDefinitionSubManager $imageDefinitionSubManager
-    )
-    {
+    ) {
         $this->mediaConfig = $mediaConfig;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
         $this->mediaRepository = $mediaRepository;

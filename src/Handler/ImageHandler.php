@@ -172,7 +172,6 @@ final class ImageHandler implements MediaHandlerInterface
         $process = (new ImageProcessor($this->media, $imageDefinition, $this->mediaConfig, $filesystem))->process();
 
         if ($process === true) {
-
             $file = $this->mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
 
             $imageData = \getimagesizefromstring($filesystem->read($file));
@@ -201,7 +200,6 @@ final class ImageHandler implements MediaHandlerInterface
                 $entry = $entry->with('updatedAt', new \DateTimeImmutable());
                 $this->mediaDefinitionInfoRepository->save($entry);
             }
-
         }
     }
 
@@ -232,7 +230,7 @@ final class ImageHandler implements MediaHandlerInterface
 
         $metaData = [
             'width' => $imageData[0],
-            'height' => $imageData[1]
+            'height' => $imageData[1],
         ];
 
         $media = $this->media->with('metaData', $metaData);

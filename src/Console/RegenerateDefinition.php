@@ -26,8 +26,6 @@ use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,7 +35,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class RegenerateDefinition extends Command implements CommandInterface
 {
-
     /**
      * @var array
      */
@@ -47,31 +44,36 @@ final class RegenerateDefinition extends Command implements CommandInterface
      * @var MediaConfig
      */
     private $mediaConfig;
+
     /**
      * @var ImageHandler
      */
     private $imageHandler;
+
     /**
      * @var FilesystemManager
      */
     private $filesystemManager;
+
     /**
      * @var FilesystemInterface
      */
     private $filesystem;
+
     /**
      * @var MediaRepository
      */
     private $mediaRepository;
+
     /**
      * @var ImageDefinitionSubManager
      */
     private $imageDefinitionSubManager;
+
     /**
      * @var MediaDefinitionInfoRepository
      */
     private $mediaDefinitionInfoRepository;
-
 
     /**
      * RegenerateDefinition constructor.
@@ -131,8 +133,8 @@ final class RegenerateDefinition extends Command implements CommandInterface
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|void|null
      * @throws \Exception
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -262,7 +264,7 @@ final class RegenerateDefinition extends Command implements CommandInterface
      */
     private function checkJsonFile(ImageDefinitionInterface $imageDefinition): bool
     {
-        $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH .$imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
+        $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
 
         if (!$this->filesystem->has($jsonFile)) {
             $json['serviceName'] = $imageDefinition::serviceName();
@@ -348,7 +350,6 @@ final class RegenerateDefinition extends Command implements CommandInterface
             return;
         }
     }
-
 
     /**
      * Checks if existing crop Parameters are still valid.

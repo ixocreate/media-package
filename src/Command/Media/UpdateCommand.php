@@ -15,8 +15,8 @@ use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
+use Ixocreate\Media\MediaHandlerInterface;
 use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
@@ -116,8 +116,8 @@ class UpdateCommand extends AbstractCommand
     }
 
     /**
-     * @return bool
      * @throws Exception
+     * @return bool
      */
     public function execute(): bool
     {

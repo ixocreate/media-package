@@ -266,7 +266,6 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param EntityCollection $mediaEntityCollection
      * @param SymfonyStyle $io
      * @param ProgressBar $progressBar
-     * @throws \League\Flysystem\FileExistsException
      * @throws \League\Flysystem\FileNotFoundException
      */
     private function handleChanges(
@@ -314,7 +313,6 @@ final class RecreateImageDefinition extends Command implements CommandInterface
      * @param EntityCollection $mediaEntityCollection
      * @param SymfonyStyle $io
      * @param ProgressBar $progressBar
-     * @throws \League\Flysystem\FileNotFoundException
      */
     private function processImages(
         ImageDefinitionInterface $imageDefinition,

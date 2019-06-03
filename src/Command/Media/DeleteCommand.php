@@ -51,8 +51,7 @@ class DeleteCommand extends AbstractCommand
         MediaRepository $mediaRepository,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         MediaHandlerSubManager $mediaHandlerSubManager
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
@@ -70,8 +69,8 @@ class DeleteCommand extends AbstractCommand
     }
 
     /**
-     * @return bool
      * @throws \Exception
+     * @return bool
      */
     public function execute(): bool
     {
@@ -96,7 +95,7 @@ class DeleteCommand extends AbstractCommand
 
         $this->deleteFolder($mediaPath . $media->basePath());
 
-        foreach($this->mediaDefinitionInfoRepository->findBy(['mediaId' => $media->id()]) as $mediaDefinitionInfo) {
+        foreach ($this->mediaDefinitionInfoRepository->findBy(['mediaId' => $media->id()]) as $mediaDefinitionInfo) {
             $this->mediaDefinitionInfoRepository->remove($mediaDefinitionInfo);
         }
 
