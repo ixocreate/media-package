@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -18,9 +18,9 @@ use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\MediaInterface;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Processor\EditorProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
@@ -224,7 +224,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     private function runSpecific(InputInterface $input, OutputInterface $output, SymfonyStyle $style)
     {
         $inputName = \trim($input->getArgument('name'));
-        $inputName = \strtolower($inputName);
+        $inputName = \mb_strtolower($inputName);
 
         if (!$this->imageDefinitionSubManager->has($inputName)) {
             $style->error(\sprintf("ImageDefinition '%s' does not exist", $inputName));
@@ -324,7 +324,6 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         $json['upscale'] = $imageDefinition->upscale();
 
         return $this->filesystem->put($jsonFile, \json_encode($json));
-
     }
 
     /**
@@ -342,7 +341,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
             if ($mediaDefinitionInfo->cropParameters() !== null) {
                 if ($this->evaluateExistingCropParameters($media, $imageDefinition, $mediaDefinitionInfo->cropParameters())) {
                     $this->cropParameters = [
-                        $imageDefinition::serviceName() => $mediaDefinitionInfo->cropParameters()
+                        $imageDefinition::serviceName() => $mediaDefinitionInfo->cropParameters(),
                     ];
                 }
             }

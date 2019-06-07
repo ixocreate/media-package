@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -14,9 +14,9 @@ use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\MediaInterface;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Config\MediaPaths;
 
 final class ImageProcessor
 {

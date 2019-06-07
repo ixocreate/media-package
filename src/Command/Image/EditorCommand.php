@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -15,7 +15,7 @@ use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\Processor\EditorProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;

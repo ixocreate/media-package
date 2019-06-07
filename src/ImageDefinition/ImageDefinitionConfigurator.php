@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -13,7 +13,7 @@ use Ixocreate\Application\Configurator\ConfiguratorInterface;
 use Ixocreate\Application\Service\AbstractServiceManagerConfigurator;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Application\Service\SubManagerConfigurator;
-use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
 
 final class ImageDefinitionConfigurator implements ConfiguratorInterface

@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -13,8 +13,8 @@ use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\MediaHandlerInterface;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Handler\MediaHandlerInterface;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 

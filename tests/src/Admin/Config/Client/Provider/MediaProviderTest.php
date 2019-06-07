@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -14,7 +14,7 @@ use Ixocreate\Application\Service\ServiceManagerConfig;
 use Ixocreate\Application\Service\ServiceManagerConfigurator;
 use Ixocreate\Media\Admin\Config\Client\Provider\MediaProvider;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Misc\Media\ImageDefinitionMock;
 use Ixocreate\ServiceManager\ServiceManager;
 use Ixocreate\ServiceManager\ServiceManagerSetup;

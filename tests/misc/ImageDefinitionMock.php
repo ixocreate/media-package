@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Misc\Media;
 
-use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 
 final class ImageDefinitionMock implements ImageDefinitionInterface
 {

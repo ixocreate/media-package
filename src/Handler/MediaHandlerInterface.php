@@ -1,15 +1,16 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
 declare(strict_types=1);
 
-namespace Ixocreate\Media;
+namespace Ixocreate\Media\Handler;
 
 use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Media\MediaInterface;
 use Ixocreate\ServiceManager\NamedServiceInterface;
 
 interface MediaHandlerInterface extends NamedServiceInterface

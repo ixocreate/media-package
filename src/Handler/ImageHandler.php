@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -13,10 +13,10 @@ use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\ImageDefinitionInterface;
-use Ixocreate\Media\MediaHandlerInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\Handler\MediaHandlerInterface;
 use Ixocreate\Media\MediaInterface;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
@@ -188,7 +188,7 @@ final class ImageHandler implements MediaHandlerInterface
                     'height' => $imageData[1],
                     'fileSize' => $fileSize,
                     'createdAt' => new \DateTimeImmutable(),
-                    'updatedAt' => new \DateTimeImmutable()
+                    'updatedAt' => new \DateTimeImmutable(),
                 ]);
                 $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
                 return;

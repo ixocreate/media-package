@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -13,7 +13,7 @@ use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Application\Uri\ApplicationUri;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Uri\MediaUri;
 use Ixocreate\ServiceManager\FactoryInterface;
 use Ixocreate\ServiceManager\ServiceManagerInterface;

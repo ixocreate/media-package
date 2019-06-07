@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -16,9 +16,9 @@ use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\MediaHandlerInterface;
+use Ixocreate\Media\Handler\MediaHandlerInterface;
 use Ixocreate\Media\MediaInterface;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Repository\MediaRepository;
 
 class UpdateCommand extends AbstractCommand

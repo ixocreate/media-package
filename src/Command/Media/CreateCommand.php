@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -20,9 +20,9 @@ use Ixocreate\Media\Exception\FileDuplicateException;
 use Ixocreate\Media\Exception\FileSizeException;
 use Ixocreate\Media\Exception\FileTypeNotSupportedException;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\MediaCreateHandlerInterface;
-use Ixocreate\Media\MediaHandlerInterface;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\CreateHandler\MediaCreateHandlerInterface;
+use Ixocreate\Media\Handler\MediaHandlerInterface;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Repository\MediaCreatedRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 

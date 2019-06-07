@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -12,7 +12,7 @@ namespace Ixocreate\Media\Admin\Config\Client\Provider;
 use Ixocreate\Admin\ClientConfigProviderInterface;
 use Ixocreate\Admin\UserInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 
 final class MediaProvider implements ClientConfigProviderInterface
 {

@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -14,8 +14,8 @@ use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\MediaHandlerInterface;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\Handler\MediaHandlerInterface;
+use Ixocreate\Media\Config\MediaPaths;
 use Symfony\Component\Asset\Packages;
 
 final class MediaUri

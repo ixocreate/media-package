@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/ixocreate
- * @copyright IXOCREATE GmbH
+ * @copyright IXOLIT GmbH
  * @license MIT License
  */
 
@@ -19,8 +19,8 @@ use Ixocreate\Media\Exception\InvalidArgumentException;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\ImageDefinitionInterface;
-use Ixocreate\Media\MediaPaths;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Processor\ImageProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
