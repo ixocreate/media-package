@@ -12,7 +12,6 @@ namespace Ixocreate\Media\Handler;
 use Ixocreate\Application\Configurator\ConfiguratorInterface;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Application\Service\SubManagerConfigurator;
-use Ixocreate\Media\Handler\MediaHandlerInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
 
 final class MediaHandlerConfigurator implements ConfiguratorInterface

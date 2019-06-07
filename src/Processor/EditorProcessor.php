@@ -12,9 +12,9 @@ namespace Ixocreate\Media\Processor;
 use Intervention\Image\ImageManager;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
-use Ixocreate\Media\Config\MediaPaths;
 
 final class EditorProcessor
 {

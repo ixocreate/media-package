@@ -13,8 +13,8 @@ use Ixocreate\Application\Service\AbstractServiceManagerConfigurator;
 use Ixocreate\Application\Service\ServiceManagerConfig;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionConfigurator;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Misc\Media\ImageDefinitionMock;
 use PHPUnit\Framework\TestCase;
 

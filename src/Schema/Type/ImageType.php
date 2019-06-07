@@ -88,8 +88,8 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         $mediaType = Type::create($value, MediaType::class);
 
         if (!empty($mediaType->value()) && \in_array(
-                $mediaType->value()->mimeType(),
-                $this->mediaConfig->imageWhitelist()
+            $mediaType->value()->mimeType(),
+            $this->mediaConfig->imageWhitelist()
             )) {
             $type->mediaType = $mediaType;
 

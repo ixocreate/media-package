@@ -13,7 +13,6 @@ use Ixocreate\Application\Configurator\ConfiguratorInterface;
 use Ixocreate\Application\Service\AbstractServiceManagerConfigurator;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Application\Service\SubManagerConfigurator;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
 
 final class ImageDefinitionConfigurator implements ConfiguratorInterface

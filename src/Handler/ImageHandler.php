@@ -11,12 +11,11 @@ namespace Ixocreate\Media\Handler;
 
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
-use Ixocreate\Media\Entity\MediaDefinitionInfo;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
-use Ixocreate\Media\Handler\MediaHandlerInterface;
-use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\Config\MediaPaths;
+use Ixocreate\Media\Entity\MediaDefinitionInfo;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\Processor\ImageProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;

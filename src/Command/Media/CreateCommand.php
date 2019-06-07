@@ -14,15 +14,15 @@ use Ixocreate\Admin\Entity\User;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Config\MediaPaths;
+use Ixocreate\Media\CreateHandler\MediaCreateHandlerInterface;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Exception\FileDuplicateException;
 use Ixocreate\Media\Exception\FileSizeException;
 use Ixocreate\Media\Exception\FileTypeNotSupportedException;
-use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\CreateHandler\MediaCreateHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerInterface;
-use Ixocreate\Media\Config\MediaPaths;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\Repository\MediaCreatedRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 

@@ -11,11 +11,11 @@ namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\ImageHandler;
-use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Ixocreate\Media\Handler\MediaHandlerInterface;
-use Ixocreate\Media\Config\MediaPaths;
+use Ixocreate\Media\Handler\MediaHandlerSubManager;
 use Symfony\Component\Asset\Packages;
 
 final class MediaUri
