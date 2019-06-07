@@ -10,8 +10,12 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Schema\Type;
 
 use Doctrine\DBAL\Types\GuidType;
+use Ixocreate\Collection\Collection;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
+use Ixocreate\Media\Repository\MediaRepository;
 use Ixocreate\Media\Schema\Element\ImageElement;
 use Ixocreate\Media\Uri\MediaUri;
 use Ixocreate\Schema\Builder\BuilderInterface;
@@ -30,6 +34,11 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     private $mediaType;
 
     /**
+     * @var array
+     */
+    private $imageDefinitionInfos;
+
+    /**
      * @var MediaUri
      */
     private $uri;
@@ -39,10 +48,33 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
      */
     private $mediaConfig;
 
-    public function __construct(MediaUri $uri, MediaConfig $mediaConfig)
-    {
+    /**
+     * @var MediaRepository
+     */
+    private $mediaRepository;
+
+    /**
+     * @var MediaDefinitionInfoRepository
+     */
+    private $mediaDefinitionInfoRepository;
+
+    /**
+     * @var ImageDefinitionSubManager
+     */
+    private $imageDefinitionSubManager;
+
+    public function __construct(
+        MediaUri $uri,
+        MediaConfig $mediaConfig,
+        MediaRepository $mediaRepository,
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
+        ImageDefinitionSubManager $imageDefinitionSubManager
+    ) {
         $this->uri = $uri;
         $this->mediaConfig = $mediaConfig;
+        $this->mediaRepository = $mediaRepository;
+        $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
+        $this->imageDefinitionSubManager = $imageDefinitionSubManager;
     }
 
     /**
@@ -56,10 +88,13 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         $mediaType = Type::create($value, MediaType::class);
 
         if (!empty($mediaType->value()) && \in_array(
-            $mediaType->value()->mimeType(),
-            $this->mediaConfig->imageWhitelist()
-        )) {
+                $mediaType->value()->mimeType(),
+                $this->mediaConfig->imageWhitelist()
+            )) {
             $type->mediaType = $mediaType;
+
+            $type->imageDefinitionInfos = (new Collection($this->mediaDefinitionInfoRepository
+                ->findBy(['mediaId' => $mediaType->value()->id()]), 'imageDefinition'))->toArray();
         }
 
         return $type;
@@ -116,6 +151,32 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         return $this->uri->imageUrl($media, $imageDefinition);
     }
 
+    /**
+     * @param string|null $imageDefinitionServiceName
+     * @return int|null
+     */
+    public function width(string $imageDefinitionServiceName = null)
+    {
+        if (!empty($imageDefinitionServiceName)) {
+            $mediaDefinitionInfo = $this->imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
+            return $mediaDefinitionInfo ? $mediaDefinitionInfo->width() : null;
+        }
+        return $this->value()->metaData()['width'];
+    }
+
+    /**
+     * @param string|null $imageDefinitionServiceName
+     * @return int|null
+     */
+    public function height(string $imageDefinitionServiceName = null)
+    {
+        if (!empty($imageDefinitionServiceName)) {
+            $mediaDefinitionInfo = $this->imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
+            return $mediaDefinitionInfo ? $mediaDefinitionInfo->height() : null;
+        }
+        return $this->value()->metaData()['height'];
+    }
+
     public function convertToDatabaseValue()
     {
         if (empty($this->value())) {
@@ -147,6 +208,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     {
         return \serialize([
             'mediaType' => $this->mediaType,
+            'imageDefinitionInfos' => $this->imageDefinitionInfos,
         ]);
     }
 
@@ -159,10 +221,14 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         $type = Type::get(ImageType::serviceName());
         $this->uri = $type->uri;
         $this->mediaConfig = $type->mediaConfig;
+        $this->imageDefinitionInfos = $type->imageDefinitionInfos;
 
         $unserialized = \unserialize($serialized);
         if (!empty($unserialized['mediaType']) && $unserialized['mediaType'] instanceof MediaType) {
             $this->mediaType = $unserialized['mediaType'];
+        }
+        if (!empty($unserialized['imageDefinitionInfos'])) {
+            $this->imageDefinitionInfos = $unserialized['imageDefinitionInfos'];
         }
     }
 }
