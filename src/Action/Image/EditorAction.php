@@ -103,14 +103,11 @@ final class EditorAction implements MiddlewareInterface
         /** @var ImageDefinitionInterface $imageDefinition */
         $imageDefinition = $this->imageDefinition($requestData);
 
-        $data = [
-            'media' => $media,
-            'imageDefinition' => $imageDefinition,
-            'requestData' => $requestData,
-        ];
         /** @var EditorCommand $editorCommand */
-        $editorCommand = $this->commandBus->create(EditorCommand::class, $data);
-
+        $editorCommand = $this->commandBus->create(EditorCommand::class, []);
+        $editorCommand = $editorCommand->withMedia($media);
+        $editorCommand = $editorCommand->withImageDefinition($imageDefinition);
+        $editorCommand = $editorCommand->withCropParameter($requestData['crop']);
         $editorCommand = $editorCommand->withFilesystem($filesystem);
 
         $commandResult = $this->commandBus->dispatch($editorCommand);

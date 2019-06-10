@@ -12,10 +12,12 @@ namespace Ixocreate\Media\Command\Image;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
+use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
+use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\Processor\EditorProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
@@ -49,6 +51,21 @@ final class EditorCommand extends AbstractCommand
     private $filesystem;
 
     /**
+     * @var array
+     */
+    private $cropParameter = [];
+
+    /**
+     * @var ImageDefinitionInterface || null
+     */
+    private $imageDefinition;
+
+    /**
+     * @var MediaInterface || null
+     */
+    private $media;
+
+    /**
      * EditorCommand constructor.
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
@@ -60,13 +77,18 @@ final class EditorCommand extends AbstractCommand
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
-    ) {
+    )
+    {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
     }
 
+    /**
+     * @param FilesystemInterface $filesystem
+     * @return EditorCommand
+     */
     public function withFilesystem(FilesystemInterface $filesystem): EditorCommand
     {
         $command = clone $this;
@@ -75,54 +97,81 @@ final class EditorCommand extends AbstractCommand
     }
 
     /**
-     * @throws \Exception
+     * @param ImageDefinitionInterface $imageDefinition
+     * @return EditorCommand
+     */
+    public function withImageDefinition(ImageDefinitionInterface $imageDefinition): EditorCommand
+    {
+        $command = clone $this;
+        $command->imageDefinition = $imageDefinition;
+        return $command;
+    }
+
+    /**
+     * @param array $cropParameter
+     * @return EditorCommand
+     */
+    public function withCropParameter(array $cropParameter): EditorCommand
+    {
+        $command = clone $this;
+        $command->cropParameter = $cropParameter;
+        return $command;
+    }
+
+    /**
+     * @param MediaInterface $media
+     * @return EditorCommand
+     */
+    public function withMedia(MediaInterface $media): EditorCommand
+    {
+        $command = clone $this;
+        $command->media = $media;
+        return $command;
+    }
+
+    /**
      * @return bool
+     * @throws \Exception
      */
     public function execute(): bool
     {
-        /** @var Media $media */
-        $media = $this->dataValue('media');
-        /** @var ImageDefinitionInterface $imageDefinition */
-        $imageDefinition = $this->dataValue('imageDefinition');
+        (new EditorProcessor($this->cropParameter, $this->imageDefinition, $this->media, $this->mediaConfig, $this->filesystem))->process();
 
-        $requestData = $this->dataValue('requestData');
+        $mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
-        $mediaDefinitionInfo = null;
+        $file = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
 
-        if (!empty($this->mediaDefinitionInfoRepository->findOneBy([
-            'mediaId' => $media->id(),
-            'imageDefinition' => $imageDefinition::serviceName(),
-        ]))) {
-            /** @var MediaDefinitionInfo $mediaDefinitionInfo */
-            $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy([
-                'mediaId' => $media->id(),
-                'imageDefinition' => $imageDefinition::serviceName(),
-            ]);
+        $imageData = \getimagesizefromstring($this->filesystem->read($file));
 
-            if ($mediaDefinitionInfo::getDefinitions()->has('updatedAt')) {
-                $mediaDefinitionInfo = $mediaDefinitionInfo->with('updatedAt', new \DateTime());
-            }
+        $fileSize = $this->filesystem->getSize($file);
 
-            if ($mediaDefinitionInfo::getDefinitions()->has('cropParameters')) {
-                $mediaDefinitionInfo = $mediaDefinitionInfo->with('cropParameters', $requestData['crop']);
-            }
+
+        $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy([
+            'mediaId' => $this->media->id(),
+            'imageDefinition' => $this->imageDefinition::serviceName(),
+        ]);
+
+        if (!empty($mediaDefinitionInfo)) {
+            $mediaDefinitionInfo = $mediaDefinitionInfo->with('updatedAt', new \DateTime());
+            $mediaDefinitionInfo = $mediaDefinitionInfo->with('cropParameters', $this->cropParameter);
+            $mediaDefinitionInfo = $mediaDefinitionInfo->with('width', $imageData[0]);
+            $mediaDefinitionInfo = $mediaDefinitionInfo->with('height', $imageData[1]);
+            $mediaDefinitionInfo = $mediaDefinitionInfo->with('fileSize', $fileSize);
         }
 
-        if (empty($this->mediaDefinitionInfoRepository->findOneBy([
-            'mediaId' => $media->id(),
-            'imageDefinition' => $imageDefinition::serviceName(),
-        ]))) {
+        if (empty($mediaDefinitionInfo)) {
             $mediaDefinitionInfo = new MediaDefinitionInfo([
-                'id' => Uuid::uuid4(),
-                'mediaId' => $media->id(),
-                'imageDefinition' => $imageDefinition::serviceName(),
-                'cropParameters' => $requestData['crop'],
+                'id' => $this->uuid(),
+                'mediaId' => $this->media->id(),
+                'imageDefinition' => $this->imageDefinition::serviceName(),
+                'cropParameters' => $this->cropParameter,
+                'width' => $imageData[0],
+                'height' => $imageData[1],
+                'fileSize' => $fileSize,
                 'createdAt' => new \DateTimeImmutable(),
                 'updatedAt' => new \DateTimeImmutable(),
             ]);
         }
-
-        (new EditorProcessor($requestData['crop'], $imageDefinition, $media, $this->mediaConfig, $this->filesystem))->process();
 
         $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
 

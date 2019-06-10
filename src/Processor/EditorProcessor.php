@@ -15,6 +15,7 @@ use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
+use Ixocreate\Media\MediaInterface;
 
 final class EditorProcessor
 {
@@ -58,14 +59,14 @@ final class EditorProcessor
      *
      * @param array $requestData
      * @param ImageDefinitionInterface $imageDefinition
-     * @param Media $media
+     * @param MediaInterface $media
      * @param MediaConfig $mediaConfig
      * @param FilesystemInterface $filesystem
      */
     public function __construct(
         array $requestData,
         ImageDefinitionInterface $imageDefinition,
-        Media $media,
+        MediaInterface $media,
         MediaConfig $mediaConfig,
         FilesystemInterface $filesystem
     ) {
