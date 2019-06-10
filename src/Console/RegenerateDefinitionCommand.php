@@ -10,8 +10,10 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Console;
 
 use Ixocreate\Application\Console\CommandInterface;
+use Ixocreate\CommandBus\CommandBus;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Filesystem\FilesystemManager;
+use Ixocreate\Media\Command\Image\EditorCommand;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
@@ -21,7 +23,6 @@ use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\MediaInterface;
-use Ixocreate\Media\Processor\EditorProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Symfony\Component\Console\Command\Command;
@@ -76,6 +77,11 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     private $mediaDefinitionInfoRepository;
 
     /**
+     * @var CommandBus
+     */
+    private $commandBus;
+
+    /**
      * RegenerateDefinition constructor.
      *
      * @param MediaConfig $mediaConfig
@@ -84,6 +90,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
      * @param MediaRepository $mediaRepository
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
+     * @param CommandBus $commandBus
      */
     public function __construct(
         MediaConfig $mediaConfig,
@@ -91,7 +98,8 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         FilesystemManager $filesystemManager,
         MediaRepository $mediaRepository,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
+        CommandBus $commandBus
     ) {
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
@@ -100,6 +108,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         $this->mediaRepository = $mediaRepository;
         $this->filesystemManager = $filesystemManager;
         $this->imageHandler = $imageHandler;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -400,6 +409,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
 
         $progressBar = $this->customProgressBar($output, $imageDefinition, \count($medias));
 
+        $progressBar->start();
         foreach ($medias as $media) {
             if (!$this->imageHandler->isResponsible($media)) {
                 continue;
@@ -414,23 +424,26 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
                 $this->handleDefinitionChanges($imageDefinition);
                 $style->writeln('Overwrite .json File');
                 $this->checkDefinitionCropParameters($imageDefinition, $media);
-            } else {
-                $style->writeln('No changes have been made in ImageDefinition: ' . $imageDefinition::serviceName());
             }
 
-            $progressBar->start();
 
             if (\array_key_exists($imageDefinition::serviceName(), $this->cropParameters)) {
-                (new EditorProcessor($this->cropParameters[$imageDefinition::serviceName()], $imageDefinition, $media, $this->mediaConfig, $this->filesystem))->process();
-                $mediaDefinition = $this->mediaDefinitionInfoRepository->find(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
-                $mediaDefinition = $mediaDefinition->with('cropParameters', $this->cropParameters[$imageDefinition::serviceName()]);
-                $mediaDefinition = $mediaDefinition->with('updatedAt', new \DateTimeImmutable());
-                $this->mediaDefinitionInfoRepository->save($mediaDefinition);
+                $this->editorCommand($media, $imageDefinition, $this->cropParameters);
             }
 
             if (!\array_key_exists($imageDefinition::serviceName(), $this->cropParameters)) {
-                $imageHandler = $this->imageHandler->withImageDefinition($imageDefinition);
-                $imageHandler->process($media, $this->filesystem);
+                // Check if there is already and Entry with MediaId + ImageDefinition
+                $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+
+                if (!empty($mediaDefinitionInfo && $mediaDefinitionInfo->cropParameters() !== null)) {
+                    // If the Entry already has CropParameters, consider them
+                    $this->editorCommand($media, $imageDefinition, $mediaDefinitionInfo->cropParameters());
+                }
+                // If there is no Entry at all or an Entry without Crop Parameters, proceed normally
+                if (empty($mediaDefinitionInfo) || $mediaDefinitionInfo->cropParameters() === null) {
+                    $imageHandler = $this->imageHandler->withImageDefinition($imageDefinition);
+                    $imageHandler->process($media, $this->filesystem);
+                }
             }
             $progressBar->advance();
         }
@@ -439,6 +452,23 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         $style->newLine();
         $style->writeln('Finished');
         $style->newLine(2);
+    }
+
+    /**
+     * @param $media
+     * @param $imageDefinition
+     * @param $cropParameters
+     */
+    private function editorCommand($media, $imageDefinition, $cropParameters)
+    {
+        /** @var EditorCommand $editorCommand */
+        $editorCommand = $this->commandBus->create(EditorCommand::class, []);
+        $editorCommand = $editorCommand->withMedia($media);
+        $editorCommand = $editorCommand->withImageDefinition($imageDefinition);
+        $editorCommand = $editorCommand->withFilesystem($this->filesystem);
+        $editorCommand = $editorCommand->withCropParameter($cropParameters);
+
+        $this->commandBus->dispatch($editorCommand);
     }
 
     /**
@@ -455,7 +485,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         ProgressBar::setFormatDefinition('custom', '%message% -- %current%/%max% [%bar%] -- %percent:3s%%');
         $progressBar->setFormat('custom');
         $progressBar->setProgressCharacter("\xF0\x9F\x8D\xBA");
-        $progressBar->setMessage('Processing');
+        $progressBar->setMessage('Processing' . ' - ' . $imageDefinition::serviceName());
         return $progressBar;
     }
 }
