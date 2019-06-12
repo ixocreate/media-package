@@ -21,7 +21,6 @@ use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\Processor\EditorProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
-use Ramsey\Uuid\Uuid;
 
 final class EditorCommand extends AbstractCommand
 {
@@ -77,8 +76,7 @@ final class EditorCommand extends AbstractCommand
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
@@ -130,8 +128,8 @@ final class EditorCommand extends AbstractCommand
     }
 
     /**
-     * @return bool
      * @throws \Exception
+     * @return bool
      */
     public function execute(): bool
     {
