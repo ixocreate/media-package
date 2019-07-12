@@ -252,14 +252,10 @@ class CreateCommand extends AbstractCommand
     {
         do {
             $basePath = \implode('/', \str_split(\bin2hex(\random_bytes(3)), 2)) . '/';
-
-            $folders = \explode('/', $basePath);
-
-            if (\in_array('ad', $folders)) {
-                continue;
-            }
-
             $exists = $this->filesystem->has($mediaPath . $basePath);
+            if (\strpos($basePath, 'ad') !== false) {
+                $exists = false;
+            }
         } while ($exists === true);
 
         $this->filesystem->createDir($mediaPath . $basePath);
