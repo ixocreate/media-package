@@ -66,6 +66,10 @@ class MediaConfiguratorTest extends TestCase
         $this->mediaConfigurator->setGlobalWhitelist($global);
         $this->assertSame($this->mediaConfigurator->whitelist()['global'], $global);
 
+        $parallelImageProcessing = true;
+        $this->mediaConfigurator->setParallelImageProcessing($parallelImageProcessing);
+        $this->assertSame($this->mediaConfigurator->isParallelImageProcessing(), $parallelImageProcessing);
+
         $collector = [];
         $serviceRegistry = $this->createMock(ServiceRegistryInterface::class);
         $serviceRegistry->method('add')->willReturnCallback(function ($name, $object) use (&$collector) {

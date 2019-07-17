@@ -40,6 +40,11 @@ class MediaConfigurator implements ConfiguratorInterface
     private $uri = '';
 
     /**
+     * @var bool
+     */
+    private $parallelImageProcessing = false;
+
+    /**
      * @return array
      */
     public function whitelist(): array
@@ -69,6 +74,14 @@ class MediaConfigurator implements ConfiguratorInterface
     public function uri(): string
     {
         return $this->uri;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isParallelImageProcessing(): bool
+    {
+        return $this->parallelImageProcessing;
     }
 
     /**
@@ -139,6 +152,14 @@ class MediaConfigurator implements ConfiguratorInterface
     public function setDocumentWhitelist(array $whitelist): void
     {
         $this->whitelist['document'] = $whitelist;
+    }
+
+    /**
+     * @param bool $parallelImageProcessing
+     */
+    public function setParallelImageProcessing(bool $parallelImageProcessing)
+    {
+        $this->parallelImageProcessing = $parallelImageProcessing;
     }
 
     public function registerService(ServiceRegistryInterface $serviceRegistry): void

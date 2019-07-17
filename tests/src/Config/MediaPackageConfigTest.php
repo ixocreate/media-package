@@ -105,6 +105,7 @@ class MediaPackageConfigTest extends TestCase
             'publicStatus' => $this->mediaPackageConfig->publicStatus(),
             'driver' => $this->mediaPackageConfig->driver(),
             'uri' => $this->mediaPackageConfig->uri(),
+            'parallelImageProcessing' => $this->mediaPackageConfig->isParallelImageProcessing(),
         ]);
 
         $this->assertSame($serialize, $this->mediaPackageConfig->serialize());
@@ -123,6 +124,7 @@ class MediaPackageConfigTest extends TestCase
             'publicStatus' => $this->mediaPackageConfig->publicStatus(),
             'driver' => $this->mediaPackageConfig->driver(),
             'uri' => $this->mediaPackageConfig->uri(),
+            'parallelImageProcessing' => $this->mediaPackageConfig->isParallelImageProcessing(),
         ]);
 
         $expected = \unserialize($serialize);
@@ -140,6 +142,7 @@ class MediaPackageConfigTest extends TestCase
             'publicStatus' => $this->mediaPackageConfig->publicStatus(),
             'driver' => $this->mediaPackageConfig->driver(),
             'uri' => $this->mediaPackageConfig->uri(),
+            'parallelImageProcessing' => $this->mediaPackageConfig->isParallelImageProcessing(),
         ];
 
         $this->assertSame($expected, $unserialize);

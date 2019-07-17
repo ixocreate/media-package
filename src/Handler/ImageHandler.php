@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Handler;
 
+use Doctrine\DBAL\Driver\Connection;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
@@ -78,6 +79,11 @@ final class ImageHandler implements MediaHandlerInterface
     private $imageDefinitionSubManager;
 
     /**
+     * @var Connection
+     */
+    private $master;
+
+    /**
      * Image constructor.
      *
      * @param MediaRepository $mediaRepository
@@ -89,12 +95,14 @@ final class ImageHandler implements MediaHandlerInterface
         MediaRepository $mediaRepository,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaConfig $mediaConfig
+        MediaConfig $mediaConfig,
+        Connection $master
     ) {
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaConfig = $mediaConfig;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
         $this->mediaRepository = $mediaRepository;
+        $this->master = $master;
     }
 
     /**
@@ -149,10 +157,37 @@ final class ImageHandler implements MediaHandlerInterface
         }
 
         if ($this->imageDefinition === null) {
-            foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
-                /** @var ImageDefinitionInterface $imageDefinition */
-                $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
-                $this->generate($imageDefinition, $filesystem);
+            if ($this->mediaConfig->isParallelImageProcessing()) {
+                $pids = [];
+                $this->connection->close();
+
+                foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
+                    /** @var ImageDefinitionInterface $imageDefinition */
+                    $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
+
+                    $pid = \pcntl_fork();
+                    if ($pid == -1) {
+                        throw new \Exception('unable to fork child');
+                    } else if ($pid) {
+                        $pids[] = $pid;
+                    } else {
+                        $this->connection->connect();
+                        $this->generate($imageDefinition, $filesystem);
+                        exit(0);
+                    }
+                }
+
+                foreach ($pids as $pid) {
+                    \pcntl_waitpid($pid, $status);
+                }
+
+                $this->connection->connect();
+            } else {
+                foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
+                    /** @var ImageDefinitionInterface $imageDefinition */
+                    $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
+                    $this->generate($imageDefinition, $filesystem);
+                }
             }
         }
 
@@ -176,10 +211,11 @@ final class ImageHandler implements MediaHandlerInterface
             $imageData = \getimagesizefromstring($filesystem->read($file));
             $fileSize = $filesystem->getSize($file);
 
-            $entries = $this->mediaDefinitionInfoRepository->findBy(['mediaId' => $this->media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+            /** @var mediaDefinitionInfo $mediaDefinitionInfo */
+            $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy(['mediaId' => $this->media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
 
             // In Case there are no existing Entries, create new one
-            if (empty($entries)) {
+            if ($mediaDefinitionInfo === null) {
                 $mediaDefinitionInfo = new MediaDefinitionInfo([
                     'mediaId' => $this->media->id(),
                     'imageDefinition' => $imageDefinition::serviceName(),
@@ -190,14 +226,9 @@ final class ImageHandler implements MediaHandlerInterface
                     'updatedAt' => new \DateTimeImmutable(),
                 ]);
                 $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
-                return;
-            }
-
-            // If there are already Entries, updated them
-            foreach ($entries as $entry) {
-                /** @var mediaDefinitionInfo $entry */
-                $entry = $entry->with('updatedAt', new \DateTimeImmutable());
-                $this->mediaDefinitionInfoRepository->save($entry);
+            } else {
+                $mediaDefinitionInfo = $mediaDefinitionInfo->with('updatedAt', new \DateTimeImmutable());
+                $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
             }
         }
     }

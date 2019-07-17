@@ -1,17 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.3.5...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.0...develop)
 
-## [v0.3.5 (2019-05-28)](https://github.com/ixocreate/media-package/compare/0.3.4...0.3.5)
-### Fixed
-- Travis build clover output
-
-## [v0.3.4 (2019-05-28)](https://github.com/ixocreate/media-package/compare/0.3.3...0.3.4)
+## [v0.4.0 (2019-05-23)](https://github.com/ixocreate/media-package/compare/0.3.5...0.4.0)
 ### Added
-- Media Link integration
-
-## [v0.4.0 (2019-05-23)](https://github.com/ixocreate/media-package/compare/0.3.2...0.4.0)
-### Added
+- add parallel image processing
 - 'metaData' field to 'media_media' data table
 - 'metaData' to MediaInterface 
 - 'width' field to 'media_image_info'
@@ -35,6 +28,14 @@
   - changed CommandName to 'media:regenerate-definition'
   - Command now tries to keep existing Crop Parameters if valid
   - Command now always validates / creates / overwrites .json File 
+
+## [v0.3.5 (2019-05-28)](https://github.com/ixocreate/media-package/compare/0.3.4...0.3.5)
+### Fixed
+- Travis build clover output
+
+## [v0.3.4 (2019-05-28)](https://github.com/ixocreate/media-package/compare/0.3.3...0.3.4)
+### Added
+- Media Link integration
  
 ## [v0.3.3 (2019-05-20)](https://github.com/ixocreate/media-package/compare/0.3.2...0.3.3)
 ### Added

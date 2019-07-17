@@ -38,6 +38,11 @@ class MediaPackageConfig implements SerializableServiceInterface
     private $uri;
 
     /**
+     * @var bool
+     */
+    private $parallelImageProcessing;
+
+    /**
      * MediaPackageConfig constructor.
      *
      * @param MediaConfigurator $mediaConfigurator
@@ -65,6 +70,7 @@ class MediaPackageConfig implements SerializableServiceInterface
         $this->driver = $mediaConfigurator->driver();
         $this->publicStatus = $mediaConfigurator->publicStatus();
         $this->uri = $mediaConfigurator->uri();
+        $this->parallelImageProcessing = $mediaConfigurator->isParallelImageProcessing();
     }
 
     /**
@@ -137,6 +143,14 @@ class MediaPackageConfig implements SerializableServiceInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isParallelImageProcessing(): bool
+    {
+        return $this->parallelImageProcessing;
+    }
+
+    /**
      * @return string
      */
     public function serialize()
@@ -146,6 +160,7 @@ class MediaPackageConfig implements SerializableServiceInterface
             'publicStatus' => $this->publicStatus,
             'driver' => $this->driver,
             'uri' => $this->uri,
+            'parallelImageProcessing' => $this->parallelImageProcessing,
         ]);
     }
 
@@ -159,5 +174,6 @@ class MediaPackageConfig implements SerializableServiceInterface
         $this->publicStatus = $unserialized['publicStatus'];
         $this->driver = $unserialized['driver'];
         $this->uri = $unserialized['uri'];
+        $this->parallelImageProcessing = $unserialized['parallelImageProcessing'];
     }
 }

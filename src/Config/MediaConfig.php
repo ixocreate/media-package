@@ -133,6 +133,14 @@ final class MediaConfig
         return $this->mediaPackageConfig->documentWhitelist();
     }
 
+    /**
+     * @return bool
+     */
+    public function isParallelImageProcessing(): bool
+    {
+        return $this->mediaPackageConfig->isParallelImageProcessing();
+    }
+
     private function assertUri(): void
     {
         $uri = new Uri($this->mediaPackageConfig->uri());
