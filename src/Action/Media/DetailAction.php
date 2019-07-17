@@ -90,7 +90,7 @@ final class DetailAction implements MiddlewareInterface
         }
 
         /** @var MediaType $media */
-        $media = Type::create($request->getAttribute("id"), MediaType::class);
+        $media = Type::create($request->getAttribute('id'), MediaType::class);
         if (empty($media->value())) {
             return new ApiErrorResponse('given_media_Id_does_not_exist');
         }
@@ -124,7 +124,7 @@ final class DetailAction implements MiddlewareInterface
 
         $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
-        $file = $this->filesystemManager->get("media")->read($mediaPath . $media->basePath() . $media->filename());
+        $file = $this->filesystemManager->get('media')->read($mediaPath . $media->basePath() . $media->filename());
 
         $size = \getimagesizefromstring($file);
 

@@ -77,7 +77,7 @@ final class StreamAction implements MiddlewareInterface
         $token = $request->getAttribute('token');
 
         if (empty($token)) {
-            return new ApiErrorResponse("bad_request");
+            return new ApiErrorResponse('bad_request');
         }
 
         if (empty($this->adminConfig->secret())) {

@@ -168,7 +168,7 @@ final class ImageHandler implements MediaHandlerInterface
                     $pid = \pcntl_fork();
                     if ($pid == -1) {
                         throw new \Exception('unable to fork child');
-                    } else if ($pid) {
+                    } elseif ($pid) {
                         $pids[] = $pid;
                     } else {
                         $this->connection->connect();

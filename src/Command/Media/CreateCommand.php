@@ -239,7 +239,7 @@ class CreateCommand extends AbstractCommand
         do {
             $basePath = \implode('/', \str_split(\bin2hex(\random_bytes(3)), 2)) . '/';
             $exists = $this->filesystem->has($mediaPath . $basePath);
-            if (\strpos($basePath, 'ad') !== false) {
+            if (\mb_strpos($basePath, 'ad') !== false) {
                 $exists = false;
             }
         } while ($exists === true);

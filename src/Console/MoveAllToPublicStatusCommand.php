@@ -46,7 +46,7 @@ final class MoveAllToPublicStatusCommand extends Command implements CommandInter
 
     public function configure()
     {
-        $this->setDescription("Moves all media files to public status");
+        $this->setDescription('Moves all media files to public status');
     }
 
     /**

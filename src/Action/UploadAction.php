@@ -56,13 +56,13 @@ final class UploadAction implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!\array_key_exists('file', $request->getUploadedFiles())) {
-            return new ApiErrorResponse("invalid_file");
+            return new ApiErrorResponse('invalid_file');
         }
 
         $upload = $request->getUploadedFiles()['file'];
 
         if (!($upload instanceof UploadedFile)) {
-            return new ApiErrorResponse("invalid_file");
+            return new ApiErrorResponse('invalid_file');
         }
 
         /** @var CreateCommand $createCommand */

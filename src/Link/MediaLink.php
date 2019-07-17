@@ -98,7 +98,7 @@ final class MediaLink implements LinkInterface
     public function assemble(): string
     {
         if (empty($this->media)) {
-            return "";
+            return '';
         }
 
         return $this->mediaUri->url($this->media);

@@ -69,29 +69,29 @@ final class IndexAction implements MiddlewareInterface
         //?sort[column1]=ASC&sort[column2]=DESC&filter[column1]=test&filter[column2]=foobar
         $queryParams = $request->getQueryParams();
         foreach ($queryParams as $key => $value) {
-            if (\mb_substr($key, 0, 4) === "sort") {
+            if (\mb_substr($key, 0, 4) === 'sort') {
                 $sorting = [];
                 foreach ($value as $sortName => $sortValue) {
                     $sorting[$sortName] = $sortValue;
                 }
-            } elseif (\mb_substr($key, 0, 6) === "filter") {
+            } elseif (\mb_substr($key, 0, 6) === 'filter') {
                 foreach ($value as $filterName => $filterValue) {
                     $criteria->andWhere(Criteria::expr()->contains($filterName, $filterValue));
                 }
                 continue;
-            } elseif ($key === "offset") {
+            } elseif ($key === 'offset') {
                 $value = (int)$value;
                 if (!empty($value)) {
                     $criteria->setFirstResult($value);
                 }
                 continue;
-            } elseif ($key === "limit") {
+            } elseif ($key === 'limit') {
                 $value = (int)$value;
                 if (!empty($value)) {
                     $criteria->setMaxResults(\min($value, 500));
                 }
                 continue;
-            } elseif ($key === "type") {
+            } elseif ($key === 'type') {
                 switch ($value) {
                     case 'image':
                         $mimeTypes = $this->mediaConfig->imageWhitelist();

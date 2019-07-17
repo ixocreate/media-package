@@ -46,7 +46,7 @@ final class MoveByPublicStatusCommand extends Command implements CommandInterfac
 
     public function configure()
     {
-        $this->setDescription("Moves all media files by public status");
+        $this->setDescription('Moves all media files by public status');
     }
 
     /**
