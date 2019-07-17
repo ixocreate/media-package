@@ -15,8 +15,6 @@ use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\Admin\RoleInterface;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaCreated;
-use Ixocreate\Media\Repository\MediaCreatedRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 use Ixocreate\Media\Uri\MediaUri;
 use Psr\Http\Message\ResponseInterface;
@@ -42,28 +40,20 @@ final class IndexAction implements MiddlewareInterface
     private $mediaConfig;
 
     /**
-     * @var MediaCreatedRepository
-     */
-    private $mediaCreatedRepository;
-
-    /**
      * IndexAction constructor.
      *
      * @param MediaRepository $mediaRepository
      * @param MediaUri $uri
      * @param MediaConfig $mediaConfig
-     * @param MediaCreatedRepository $mediaCreatedRepository
      */
     public function __construct(
         MediaRepository $mediaRepository,
         MediaUri $uri,
-        MediaConfig $mediaConfig,
-        MediaCreatedRepository $mediaCreatedRepository
+        MediaConfig $mediaConfig
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->uri = $uri;
         $this->mediaConfig = $mediaConfig;
-        $this->mediaCreatedRepository = $mediaCreatedRepository;
     }
 
     /**
@@ -129,16 +119,8 @@ final class IndexAction implements MiddlewareInterface
         /** @var RoleInterface $role */
         $role = $request->getAttribute(User::class)->role()->getRole();
         if (\in_array('media.only-own-media', $role->getPermissions())) {
-            $createdResult = $this->mediaCreatedRepository->findBy(['createdBy' => $request->getAttribute(User::class)->id()]);
-            $mediaCreatedArray = [];
-            /** @var MediaCreated $mediaCreated */
-            foreach ($createdResult as $mediaCreated) {
-                $mediaCreatedArray[] = (string)$mediaCreated->mediaId();
-            }
-
-            $criteria->andWhere(Criteria::expr()->in('id', $mediaCreatedArray));
+            $criteria->andWhere(Criteria::expr()->eq('createdBy', $request->getAttribute(User::class)->id()));
         }
-
 
         if (empty($sorting)) {
             $criteria->orderBy(['createdAt' => 'DESC']);

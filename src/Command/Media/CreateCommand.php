@@ -17,22 +17,15 @@ use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\CreateHandler\MediaCreateHandlerInterface;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaCreated;
 use Ixocreate\Media\Exception\FileDuplicateException;
 use Ixocreate\Media\Exception\FileSizeException;
 use Ixocreate\Media\Exception\FileTypeNotSupportedException;
 use Ixocreate\Media\Handler\MediaHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\Repository\MediaCreatedRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 
 class CreateCommand extends AbstractCommand
 {
-    /**
-     * @var MediaCreatedRepository
-     */
-    private $mediaCreatedRepository;
-
     /**
      * @var MediaRepository
      */
@@ -86,18 +79,15 @@ class CreateCommand extends AbstractCommand
     /**
      * CreateCommand constructor.
      *
-     * @param MediaCreatedRepository $mediaCreatedRepository
      * @param MediaRepository $mediaRepository
      * @param MediaHandlerSubManager $mediaHandlerSubManager
      * @param MediaConfig $mediaConfig
      */
     public function __construct(
-        MediaCreatedRepository $mediaCreatedRepository,
         MediaRepository $mediaRepository,
         MediaHandlerSubManager $mediaHandlerSubManager,
         MediaConfig $mediaConfig
     ) {
-        $this->mediaCreatedRepository = $mediaCreatedRepository;
         $this->mediaRepository = $mediaRepository;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
         $this->mediaConfig = $mediaConfig;
@@ -201,14 +191,6 @@ class CreateCommand extends AbstractCommand
             }
             $handler->process($media, $this->filesystem);
         }
-
-        if ($this->createdUser !== null) {
-            $mediaCreated = new MediaCreated([
-                'mediaId' => $media->id(),
-                'createdBy' => $this->createdUser->id(),
-            ]);
-            $this->mediaCreatedRepository->save($mediaCreated);
-        }
         return true;
     }
 
@@ -239,6 +221,10 @@ class CreateCommand extends AbstractCommand
             'createdAt' => new \DateTimeImmutable(),
             'updatedAt' => new \DateTimeImmutable(),
         ]);
+
+        if ($this->createdUser !== null) {
+            $media = $media->with('createdBy', $this->createdUser->id());
+        }
 
         return $media;
     }

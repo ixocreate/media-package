@@ -13,6 +13,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\Migrations\AbstractMigration;
 use Ixocreate\Schema\Type\DateTimeType;
+use Ixocreate\Schema\Type\UuidType;
 
 final class Version20190521074624 extends AbstractMigration
 {
@@ -28,7 +29,6 @@ final class Version20190521074624 extends AbstractMigration
 
     public function up(Schema $schema) : void
     {
-        // MEDIA-DEFINITION-INFO
         $mediaImageInfo = $schema->getTable('media_definition_info');
         $mediaImageInfo->dropPrimaryKey();
         $mediaImageInfo->dropColumn('id');
@@ -41,11 +41,13 @@ final class Version20190521074624 extends AbstractMigration
             $mediaImageInfo->removeForeignKey($foreignKeyName);
         }
 
-        // MEDIA
         $media = $schema->getTable('media_media');
         $media->getColumn('fileSize')->setNotnull(true);
         $media->addColumn('metaData', Type::JSON)->setNotnull(false);
+        $media->addColumn('createdBy', UuidType::serviceName())->setNotNull(false);
         $media->addColumn('deletedAt', DateTimeType::serviceName())->setNotnull(false);
+
+        $schema->dropTable('media_media_created');
     }
 
     public function down(Schema $schema) : void
