@@ -10,16 +10,16 @@ declare(strict_types=1);
 namespace Ixocreate\Test\Media\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Ixocreate\Media\Entity\MediaCreated;
-use Ixocreate\Media\Repository\MediaCreatedRepository;
+use Ixocreate\Media\Entity\MediaDefinitionInfo;
+use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use PHPUnit\Framework\TestCase;
 
-class MediaCreatedRepositoryTest extends TestCase
+class MediaDefinitionInfoRepositoryTest extends TestCase
 {
     public function testGetEntityName()
     {
         $master = $this->createMock(EntityManagerInterface::class);
-        $repository = new MediaCreatedRepository($master);
-        $this->assertSame(MediaCreated::class, $repository->getEntityName());
+        $repository = new MediaDefinitionInfoRepository($master);
+        $this->assertSame(MediaDefinitionInfo::class, $repository->getEntityName());
     }
 }

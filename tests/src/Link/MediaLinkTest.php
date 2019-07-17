@@ -43,7 +43,7 @@ class MediaLinkTest extends TestCase
             'basePath' => '12/12/12/',
             'filename' => 'test.jpg',
             'mimeType' => 'image/jpeg',
-            'size' => 12000,
+            'fileSize' => 12000,
             'publicStatus' => true,
             'hash' => 'b602adea-2a6a-4644-8426-d25b84aa8bca',
             'createdAt' => '2016-02-04 16:37:00',
