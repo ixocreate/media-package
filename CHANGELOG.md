@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.0...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.5...develop)
+
+## [v0.4.5 (2019-07-18)](https://github.com/ixocreate/media-package/compare/0.4.4...0.4.5)
+### fixed
+- fix input validation of RegenerateDefinitionCommand
 
 ## [v0.4.0 (2019-05-23)](https://github.com/ixocreate/media-package/compare/0.3.5...0.4.0)
 ### Added

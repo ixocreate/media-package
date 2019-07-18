@@ -127,7 +127,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     public function configure()
     {
         $this
-            ->setDescription('Regenerates or generates ImageDefinition related Files')
+            ->setDescription('Regenerates or generates ImageDefinition related files')
             // TODO: Define useful Help Text
             ->setHelp('Useful Help Text')
             ->setDefinition(
@@ -148,7 +148,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if (!$this->filesystemManager->has('media')) {
-            throw new InvalidConfigException('Storage Config not set');
+            throw new InvalidConfigException('storage config not set');
         }
 
         $this->filesystem = $this->filesystemManager->get('media');
@@ -156,108 +156,97 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         $style = new SymfonyStyle($input, $output);
         $style->title('Regenerate Definition');
 
-        $this->evaluateInput($input, $output, $style);
-    }
-
-    /**
-     * Evaluates the Command-Input
-     *
-     * If Input is incorrect, returns Console-Note
-     * If Input it valid, passes to the responsible method
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param SymfonyStyle $style
-     * @throws \Exception
-     */
-    private function evaluateInput(InputInterface $input, OutputInterface $output, SymfonyStyle $style)
-    {
         if (!$input->getOption('all') && !$input->getOption('changed') && !$input->getArgument('name')) {
-            $style->note('Please enter a valid Option or specify a valid ImageDefinition "name"');
+            $style->error('Please enter a valid option or specify a valid ImageDefinition "name"');
+            return 1;
         }
 
-        if ($input->getOption('all') && $input->getArgument('name')) {
-            $style->note('You can only use Option "--all" or specify a valid ImageDefinition "name"');
+        if ($input->getArgument('name')) {
+
+            if ($input->getOption('all') || $input->getOption('changed')) {
+                $style->error('regeneration of a specific ImageDefinition can not be combined with "--all" or "--changed"');
+                return 1;
+            }
+
+            $inputName = \trim($input->getArgument('name'));
+            $inputName = \mb_strtolower($inputName);
+
+            $this->runSpecific($inputName, $output, $style);
+            return;
         }
 
-        if ($input->getOption('changed') && $input->getArgument('name')) {
-            $style->note('You can only use Option "--changed" or specify a valid ImageDefinition "name"');
-        }
-
-        // In Case changed & all were given, run all
         if ($input->getOption('changed') && $input->getOption('all')) {
-            $this->runAll($input, $output, $style);
+            $style->error('You can not use option "--changed" with option "--all"');
+            return 1;
         }
 
         // In Case all Definitions should be checked
         if ($input->getOption('all')) {
-            $this->runAll($input, $output, $style);
+            $this->runAll($output, $style);
+            return;
         }
 
-        // In Case a specific Definition should be checked
-        if ($input->getArgument('name')) {
-            $this->runSpecific($input, $output, $style);
-        }
-
-        // In Case only changed Definitions should be checked
-        if ($input->getOption('changed')) {
-            $this->runChanged($input, $output, $style);
-        }
+        $this->runChanged($output, $style);
     }
 
     /**
      * Method is used if the options "all" was selected
      *
-     * @param InputInterface $input
      * @param OutputInterface $output
      * @param SymfonyStyle $style
      * @throws \Exception
      */
-    private function runAll(InputInterface $input, OutputInterface $output, SymfonyStyle $style)
+    private function runAll(OutputInterface $output, SymfonyStyle $style)
     {
         foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
-            $this->processImages($imageDefinition, $input, $output, $style);
+            $this->processImages($imageDefinition, $output, $style);
         }
     }
 
     /**
      * Method is used if the argument "name" was filled
      *
-     * @param InputInterface $input
+     * @param string $name
      * @param OutputInterface $output
      * @param SymfonyStyle $style
      * @throws \Exception
      */
-    private function runSpecific(InputInterface $input, OutputInterface $output, SymfonyStyle $style)
+    private function runSpecific(string $name, OutputInterface $output, SymfonyStyle $style)
     {
-        $inputName = \trim($input->getArgument('name'));
-        $inputName = \mb_strtolower($inputName);
-
-        if (!$this->imageDefinitionSubManager->has($inputName)) {
-            $style->error(\sprintf("ImageDefinition '%s' does not exist", $inputName));
+        if (!$this->imageDefinitionSubManager->has($name)) {
+            $style->error(\sprintf("ImageDefinition '%s' does not exist", $name));
             return;
         }
 
-        $imageDefinition = $this->imageDefinitionSubManager->get($inputName);
-        $this->processImages($imageDefinition, $input, $output, $style);
+        $imageDefinition = $this->imageDefinitionSubManager->get($name);
+        $this->processImages($imageDefinition, $output, $style);
     }
 
     /**
-     * @param InputInterface $input
      * @param OutputInterface $output
      * @param SymfonyStyle $style
      * @throws \Exception
      */
-    private function runChanged(InputInterface $input, OutputInterface $output, SymfonyStyle $style)
+    private function runChanged(OutputInterface $output, SymfonyStyle $style)
     {
+        $changedDefinitions = [];
         foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
             if ($this->checkDefinitionChanges($imageDefinition)) {
-                $this->processImages($imageDefinition, $input, $output, $style);
+                $changedDefinitions[] = $imageDefinition;
+                $style->writeln(\sprintf("change detected for '%s'", $imageDefinition));
             }
+        }
+
+        if (empty($changedDefinitions)) {
+            $style->writeln('noting to regenerate, no ImageDefinition changed');
+        }
+
+        foreach ($changedDefinitions as $changedDefinition) {
+            $this->processImages($changedDefinition, $output, $style);
         }
     }
 
@@ -398,12 +387,11 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
 
     /**
      * @param ImageDefinitionInterface $imageDefinition
-     * @param InputInterface $input
      * @param OutputInterface $output
      * @param SymfonyStyle $style
      * @throws \Exception
      */
-    private function processImages(ImageDefinitionInterface $imageDefinition, InputInterface $input, OutputInterface $output, SymfonyStyle $style)
+    private function processImages(ImageDefinitionInterface $imageDefinition, OutputInterface $output, SymfonyStyle $style)
     {
         $medias = $this->mediaRepository->findAll();
 
