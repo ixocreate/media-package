@@ -82,20 +82,23 @@ class CreateCommand extends AbstractCommand
      * @param MediaRepository $mediaRepository
      * @param MediaHandlerSubManager $mediaHandlerSubManager
      * @param MediaConfig $mediaConfig
+     * @param FilesystemInterface $media
      */
     public function __construct(
         MediaRepository $mediaRepository,
         MediaHandlerSubManager $mediaHandlerSubManager,
-        MediaConfig $mediaConfig
+        MediaConfig $mediaConfig,
+        FilesystemInterface $media
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
         $this->mediaConfig = $mediaConfig;
+        $this->filesystem = $media;
     }
 
     /**
      * @param MediaCreateHandlerInterface $mediaCreateHandler
-     * @return CreateCommand
+     * @return $this
      */
     public function withMediaCreateHandler(MediaCreateHandlerInterface $mediaCreateHandler): CreateCommand
     {
@@ -106,7 +109,7 @@ class CreateCommand extends AbstractCommand
 
     /**
      * @param User $user
-     * @return CreateCommand
+     * @return $this
      */
     public function withCreatedUser(User $user): CreateCommand
     {
@@ -117,7 +120,7 @@ class CreateCommand extends AbstractCommand
 
     /**
      * @param bool $checkForDuplicates
-     * @return CreateCommand
+     * @return $this
      */
     public function withCheckForDuplicates(bool $checkForDuplicates): CreateCommand
     {
@@ -128,7 +131,7 @@ class CreateCommand extends AbstractCommand
 
     /**
      * @param bool $publicStatus
-     * @return CreateCommand
+     * @return $this
      */
     public function withPublicStatus(bool $publicStatus): CreateCommand
     {
@@ -138,19 +141,8 @@ class CreateCommand extends AbstractCommand
     }
 
     /**
-     * @param FilesystemInterface $filesystem
-     * @return CreateCommand
-     */
-    public function withFilesystem(FilesystemInterface $filesystem): CreateCommand
-    {
-        $command = clone $this;
-        $command->filesystem = $filesystem;
-        return $command;
-    }
-
-    /**
      * @param int $fileSizeLimit
-     * @return CreateCommand
+     * @return $this
      */
     public function withFileSizeLimit(int $fileSizeLimit): CreateCommand
     {

@@ -11,17 +11,13 @@ namespace Ixocreate\Media\Action\Media;
 
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
-use Ixocreate\Filesystem\FilesystemManager;
-use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaDefinitionInfo;
-use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Schema\Type\MediaType;
-use Ixocreate\Media\Uri\MediaUri;
 use Ixocreate\Schema\Type\Type;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,11 +26,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class DetailAction implements MiddlewareInterface
 {
-    /**
-     * @var MediaUri
-     */
-    private $uri;
-
     /**
      * @var ImageHandler
      */
@@ -51,31 +42,20 @@ final class DetailAction implements MiddlewareInterface
     private $mediaDefinitionInfoRepository;
 
     /**
-     * @var FilesystemManager
-     */
-    private $filesystemManager;
-
-    /**
      * DetailAction constructor.
      *
-     * @param MediaUri $uri
      * @param ImageHandler $imageHandler
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
-     * @param FilesystemManager $filesystemManager
      */
     public function __construct(
-        MediaUri $uri,
         ImageHandler $imageHandler,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
-        FilesystemManager $filesystemManager
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
     ) {
-        $this->uri = $uri;
         $this->imageHandler = $imageHandler;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
-        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -85,10 +65,6 @@ final class DetailAction implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!$this->filesystemManager->has('media')) {
-            throw new InvalidConfigException('Filesystem Config not set');
-        }
-
         /** @var MediaType $media */
         $media = Type::create($request->getAttribute('id'), MediaType::class);
         if (empty($media->value())) {
@@ -115,21 +91,50 @@ final class DetailAction implements MiddlewareInterface
 
     /**
      * @param Media $media
+     * @return array
+     */
+    private function determineDefinitions(Media $media): array
+    {
+        $definitions = [];
+
+        $width = $media->metaData()['width'];
+        $height = $media->metaData()['height'];
+
+        foreach ($this->imageDefinitionSubManager->getServices() as $key => $name) {
+            /** @var ImageDefinitionInterface $imageDefinition */
+            $imageDefinition = $this->imageDefinitionSubManager->get($name);
+            $validSize = $this->checkValidSize($imageDefinition, $width, $height);
+            $definitions[] = [
+                'name' => $imageDefinition::serviceName(),
+                'mode' => $imageDefinition->mode(),
+                'isCropable' => $validSize,
+                'cropParameter' => '',
+            ];
+
+            try {
+                /** @var MediaDefinitionInfo $mediaDefinitionInfo */
+                $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->find(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+
+                if ($mediaDefinitionInfo !== null && $mediaDefinitionInfo->cropParameters() !== null) {
+                    $definitions[$key]['cropParameter'] = $mediaDefinitionInfo->cropParameters();
+                }
+            } catch (\Exception $exception) {
+                unset($definitions[$key]);
+                continue;
+            }
+        }
+        return $definitions;
+    }
+
+    /**
      * @param ImageDefinitionInterface $imageDefinition
+     * @param int $width
+     * @param int $height
      * @return bool
      */
-    private function checkValidSize(Media $media, ImageDefinitionInterface $imageDefinition): bool
+    private function checkValidSize(ImageDefinitionInterface $imageDefinition, int $width, int $height): bool
     {
         $state = false;
-
-        $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
-
-        $file = $this->filesystemManager->get('media')->read($mediaPath . $media->basePath() . $media->filename());
-
-        $size = \getimagesizefromstring($file);
-
-        $width = $size[0];
-        $height = $size[1];
 
         if ($width === $height) {
             if ($width >= $imageDefinition->width() && $width >= $imageDefinition->height()) {
@@ -142,39 +147,5 @@ final class DetailAction implements MiddlewareInterface
         }
 
         return $state;
-    }
-
-    /**
-     * @param Media $media
-     * @return array
-     */
-    private function determineDefinitions(Media $media): array
-    {
-        $definitions = [];
-
-        foreach ($this->imageDefinitionSubManager->getServices() as $key => $name) {
-            /** @var ImageDefinitionInterface $imageDefinition */
-            $imageDefinition = $this->imageDefinitionSubManager->get($name);
-            $validSize = $this->checkValidSize($media, $imageDefinition);
-            $definitions[] = [
-                'name' => $imageDefinition::serviceName(),
-                'mode' => $imageDefinition->mode(),
-                'isCropable' => $validSize,
-                'cropParameter' => '',
-            ];
-
-            try {
-                /** @var MediaDefinitionInfo $mediaDefinitionInfo */
-                $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()])[0];
-
-                if ($mediaDefinitionInfo->cropParameters() !== null) {
-                    $definitions[$key]['cropParameter'] = $mediaDefinitionInfo->cropParameters();
-                }
-            } catch (\Exception $exception) {
-                unset($definitions[$key]);
-                continue;
-            }
-        }
-        return $definitions;
     }
 }

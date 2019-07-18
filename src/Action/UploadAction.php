@@ -13,10 +13,8 @@ use Ixocreate\Admin\Entity\User;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Command\Media\CreateCommand;
 use Ixocreate\Media\CreateHandler\UploadHandler;
-use Ixocreate\Media\Exception\InvalidConfigException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -31,20 +29,13 @@ final class UploadAction implements MiddlewareInterface
     private $commandBus;
 
     /**
-     * @var FilesystemManager
-     */
-    private $filesystemManager;
-
-    /**
      * UploadAction constructor.
      *
      * @param CommandBus $commandBus
-     * @param FilesystemManager $filesystemManager
      */
-    public function __construct(CommandBus $commandBus, FilesystemManager $filesystemManager)
+    public function __construct(CommandBus $commandBus)
     {
         $this->commandBus = $commandBus;
-        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -73,14 +64,6 @@ final class UploadAction implements MiddlewareInterface
 
         $user = $request->getAttribute(User::class);
         $createCommand = $createCommand->withCreatedUser($user);
-
-        if (!$this->filesystemManager->has('media')) {
-            throw new InvalidConfigException('Filesystem Config not set');
-        }
-
-        $filesystem = $this->filesystemManager->get('media');
-
-        $createCommand = $createCommand->withFilesystem($filesystem);
 
         $commandResult = $this->commandBus->dispatch($createCommand);
 

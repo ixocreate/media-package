@@ -12,10 +12,8 @@ namespace Ixocreate\Media\Action\Media;
 use Ixocreate\Admin\Response\ApiErrorResponse;
 use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
-use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Command\Media\DeleteCommand;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Repository\MediaRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,25 +33,17 @@ final class DeleteAction implements MiddlewareInterface
     private $commandBus;
 
     /**
-     * @var FilesystemManager
-     */
-    private $filesystemManager;
-
-    /**
      * DeleteAction constructor.
      *
      * @param MediaRepository $mediaRepository
      * @param CommandBus $commandBus
-     * @param FilesystemManager $filesystemManager
      */
     public function __construct(
         MediaRepository $mediaRepository,
-        CommandBus $commandBus,
-        FilesystemManager $filesystemManager
+        CommandBus $commandBus
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->commandBus = $commandBus;
-        $this->filesystemManager = $filesystemManager;
     }
 
     /**
@@ -70,17 +60,8 @@ final class DeleteAction implements MiddlewareInterface
             return new ApiErrorResponse('given media Id does not exist');
         }
 
-        if (!$this->filesystemManager->has('media')) {
-            throw new InvalidConfigException('Filesystem Config not set');
-        }
-
-        $filesystem = $this->filesystemManager->get('media');
-
         /** @var DeleteCommand $deleteCommand */
         $deleteCommand = $this->commandBus->create(DeleteCommand::class, ['media' => $media]);
-
-        $deleteCommand = $deleteCommand->withFilesystem($filesystem);
-
         $commandResult = $this->commandBus->dispatch($deleteCommand);
 
         if (!$commandResult->isSuccessful()) {

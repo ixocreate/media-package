@@ -41,31 +41,23 @@ class DeleteCommand extends AbstractCommand
     private $mediaDefinitionInfoRepository;
 
     /**
-     * CreateCommand constructor.
+     * DeleteCommand constructor.
      *
      * @param MediaRepository $mediaRepository
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      * @param MediaHandlerSubManager $mediaHandlerSubManager
+     * @param FilesystemInterface $media
      */
     public function __construct(
         MediaRepository $mediaRepository,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
-        MediaHandlerSubManager $mediaHandlerSubManager
+        MediaHandlerSubManager $mediaHandlerSubManager,
+        FilesystemInterface $media
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
-    }
-
-    /**
-     * @param FilesystemInterface $filesystem
-     * @return DeleteCommand
-     */
-    public function withFilesystem(FilesystemInterface $filesystem): DeleteCommand
-    {
-        $command = clone $this;
-        $command->filesystem = $filesystem;
-        return $command;
+        $this->filesystem = $media;
     }
 
     /**
