@@ -81,7 +81,7 @@ final class ImageHandler implements MediaHandlerInterface
     /**
      * @var Connection
      */
-    private $master;
+    private $connection;
 
     /**
      * Image constructor.
@@ -102,7 +102,7 @@ final class ImageHandler implements MediaHandlerInterface
         $this->mediaConfig = $mediaConfig;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
         $this->mediaRepository = $mediaRepository;
-        $this->master = $master;
+        $this->connection = $master;
     }
 
     /**
