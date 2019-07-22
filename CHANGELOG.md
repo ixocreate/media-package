@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.5...develop)
 ### Changed
 - improve memory usage
+- restrict parallel image processing to cli
 
 ## [v0.4.5 (2019-07-18)](https://github.com/ixocreate/media-package/compare/0.4.4...0.4.5)
 ### Changed

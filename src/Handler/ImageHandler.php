@@ -157,7 +157,8 @@ final class ImageHandler implements MediaHandlerInterface
         }
 
         if ($this->imageDefinition === null) {
-            if ($this->mediaConfig->isParallelImageProcessing()) {
+            // restrict forking to cli, using pcntl_fork in apache or php-fpm environments is not reliable
+            if ($this->mediaConfig->isParallelImageProcessing() && \php_sapi_name() === 'cli') {
                 $pids = [];
                 $this->connection->close();
 
