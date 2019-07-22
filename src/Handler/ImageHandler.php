@@ -166,15 +166,17 @@ final class ImageHandler implements MediaHandlerInterface
                     $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
                     $pid = \pcntl_fork();
-                    if ($pid == -1) {
-                        throw new \Exception('unable to fork child');
-                    } elseif ($pid) {
-                        $pids[] = $pid;
-                    } else {
-                        $this->connection->connect();
-                        $this->generate($imageDefinition, $filesystem);
-                        exit(0);
+                    switch ($pid) {
+                        case -1:
+                            throw new \RuntimeException('unable to fork child');
+                        case 0:
+                            $this->connection->connect();
+                            $this->generate($imageDefinition, $filesystem);
+                            exit(0);
+                        default:
+                            $pids[$pid] = $pid;
                     }
+
                 }
 
                 foreach ($pids as $pid) {
@@ -212,7 +214,7 @@ final class ImageHandler implements MediaHandlerInterface
             $fileSize = $filesystem->getSize($file);
 
             /** @var mediaDefinitionInfo $mediaDefinitionInfo */
-            $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy(['mediaId' => $this->media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+            $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->find(['mediaId' => $this->media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
 
             // In Case there are no existing Entries, create new one
             if ($mediaDefinitionInfo === null) {

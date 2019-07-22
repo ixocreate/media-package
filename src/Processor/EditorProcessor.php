@@ -94,19 +94,12 @@ final class EditorProcessor
     {
         $mediaPath = $this->media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
 
-        $file = $this->filesystem->read($mediaPath . $this->media->basePath() . $this->media->filename());
-
-        $size = \getimagesizefromstring($file);
-
-        $imageWidth = $size[0];
-        $imageHeight = $size[1];
-
         $imageManager = new ImageManager(['driver' => $this->mediaConfig->driver()]);
 
         $image = $imageManager->make($this->filesystem->read($mediaPath . $this->media->basePath() . $this->media->filename()));
 
         $this->gaugeMinimalRequestDataSize();
-        $this->gaugeCanvasSize($imageWidth, $imageHeight);
+        $this->gaugeCanvasSize($image->getWidth(), $image->getHeight());
 
         $image->crop($this->requestWidth, $this->requestHeight, $this->requestData['x1'], $this->requestData['y1']);
 
