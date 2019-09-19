@@ -162,7 +162,6 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         }
 
         if ($input->getArgument('name')) {
-
             if ($input->getOption('all') || $input->getOption('changed')) {
                 $style->error('regeneration of a specific ImageDefinition can not be combined with "--all" or "--changed"');
                 return 1;

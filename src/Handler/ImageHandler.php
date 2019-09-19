@@ -178,7 +178,6 @@ final class ImageHandler implements MediaHandlerInterface
                         default:
                             $pids[$pid] = $pid;
                     }
-
                 }
 
                 foreach ($pids as $pid) {
