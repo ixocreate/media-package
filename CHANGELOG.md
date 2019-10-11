@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.6...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.7...develop)
+
+## [v0.4.7 (2019-10-11)](https://github.com/ixocreate/media-package/compare/0.4.6...0.4.7)
+### Fixed
+- Annotation schema not passed to element's metadata
 
 ## [v0.4.6 (2019-10-11)](https://github.com/ixocreate/media-package/compare/0.4.5...0.4.6)
 ### Added
