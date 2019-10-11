@@ -11,15 +11,9 @@ namespace Ixocreate\Media\Schema\Element;
 
 use Ixocreate\Media\Schema\Type\ImageAnnotatedType;
 use Ixocreate\Schema\Element\AbstractSingleElement;
-use Ixocreate\Schema\Element\CollectionElement;
 
 final class ImageAnnotatedElement extends AbstractSingleElement
 {
-    /**
-     * @var CollectionElement
-     */
-    protected $annotationSchema;
-
     public function type(): string
     {
         return ImageAnnotatedType::class;
@@ -36,33 +30,11 @@ final class ImageAnnotatedElement extends AbstractSingleElement
     }
 
     /**
-     * @return CollectionElement|null
+     * @param array $annotationSchema
+     * @return \Ixocreate\Schema\Element\ElementInterface
      */
-    public function annotationSchema(): ?array
+    public function withAnnotationSchema(array $annotationSchema)
     {
-        return $this->annotationSchema;
-    }
-
-    /**
-     * @param CollectionElement $annotationSchema
-     * @return ImageElement
-     */
-    public function withAnnotationSchema($annotationSchema): ImageAnnotatedElement
-    {
-        $element = clone $this;
-        $element->annotationSchema = $annotationSchema;
-
-        return $element;
-    }
-
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        $array = parent::jsonSerialize();
-        $array['annotationsSchema'] = $this->annotationSchema();
-
-        return $array;
+        return $this->withAddedMetadata('annotationSchema', $annotationSchema);
     }
 }
