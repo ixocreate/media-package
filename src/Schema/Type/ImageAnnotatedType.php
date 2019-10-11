@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Schema\Type;
 
-use Doctrine\DBAL\Types\GuidType;
+use Doctrine\DBAL\Types\JsonType;
 use Ixocreate\Collection\Collection;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
@@ -26,7 +26,7 @@ use Ixocreate\Schema\Type\DatabaseTypeInterface;
 use Ixocreate\Schema\Type\Type;
 use Ixocreate\Schema\Type\TypeInterface;
 
-final class ImageType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
+final class ImageAnnotatedType extends AbstractType implements DatabaseTypeInterface, ElementProviderInterface, \Serializable
 {
     /**
      * @var MediaType
@@ -37,6 +37,11 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
      * @var array
      */
     private $imageDefinitionInfos;
+
+    /**
+     * @var array
+     */
+    private $annotations;
 
     /**
      * @var MediaUri
@@ -85,7 +90,10 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     public function create($value, array $options = []): TypeInterface
     {
         $type = clone $this;
-        $mediaType = Type::create($value, MediaType::class);
+
+        $type->annotations = $value['annotations'] ?? null;
+
+        $mediaType = Type::create($value['media'] ?? null, MediaType::class);
 
         if (!empty($mediaType->value()) && \in_array($mediaType->value()->mimeType(), $this->mediaConfig->imageWhitelist())) {
             $type->mediaType = $mediaType;
@@ -103,14 +111,17 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     public function value()
     {
         if (empty($this->mediaType)) {
-            return null;
+            return ['media' => null, 'annotations' => $this->annotations];
         }
 
         if (empty($this->mediaType->value())) {
-            return null;
+            return ['media' => null, 'annotations' => $this->annotations];
         }
 
-        return $this->mediaType->value();
+        return [
+            'media' => $this->mediaType->value(),
+            'annotations' => $this->annotations,
+        ];
     }
 
     public function __toString()
@@ -131,8 +142,9 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
             return null;
         }
 
-        $array = $this->mediaType->jsonSerialize();
-        $array['thumb'] = $this->getUrl('admin-thumb');
+        $array['media'] = $this->mediaType->jsonSerialize();
+        $array['media']['thumb'] = $this->getUrl('admin-thumb');
+        $array['annotations'] = $this->annotations;
 
         return $array;
     }
@@ -140,12 +152,20 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     public function getUrl(?string $imageDefinition = null): string
     {
         /** @var Media $media */
-        $media = $this->value();
+        $media = $this->value()['media'];
         if (empty($media) || !($media instanceof Media)) {
             return "";
         }
 
         return $this->uri->imageUrl($media, $imageDefinition);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function annotations()
+    {
+        return new Collection($this->value()['annotations'] ?? []);
     }
 
     /**
@@ -158,7 +178,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
             $mediaDefinitionInfo = $this->imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
             return $mediaDefinitionInfo ? $mediaDefinitionInfo->width() : null;
         }
-        return $this->value()->metaData()['width'];
+        return $this->value()['media']->metaData()['width'];
     }
 
     /**
@@ -171,26 +191,25 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
             $mediaDefinitionInfo = $this->imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
             return $mediaDefinitionInfo ? $mediaDefinitionInfo->height() : null;
         }
-        return $this->value()->metaData()['height'];
+        return $this->value()['media']->metaData()['height'];
     }
 
     public function convertToDatabaseValue()
     {
-        if (empty($this->value())) {
-            return null;
-        }
-
-        return $this->mediaType->convertToDatabaseValue();
+        return [
+            'media' => !empty($this->value()['media']) ? $this->mediaType->convertToDatabaseValue() : null,
+            'annotations' => $this->value()['annotations'] ?? null,
+        ];
     }
 
     public static function baseDatabaseType(): string
     {
-        return GuidType::class;
+        return JsonType::class;
     }
 
     public static function serviceName(): string
     {
-        return 'image';
+        return 'imageAnnotated';
     }
 
     public function provideElement(BuilderInterface $builder): ElementInterface
@@ -205,6 +224,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     {
         return \serialize([
             'mediaType' => $this->mediaType,
+            'annotations' => $this->annotations,
             'imageDefinitionInfos' => $this->imageDefinitionInfos,
         ]);
     }
@@ -214,11 +234,12 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
      */
     public function unserialize($serialized)
     {
-        /** @var ImageType $type */
-        $type = Type::get(ImageType::serviceName());
+        /** @var ImageAnnotatedType $type */
+        $type = Type::get(ImageAnnotatedType::serviceName());
         $this->uri = $type->uri;
         $this->mediaConfig = $type->mediaConfig;
         $this->imageDefinitionInfos = $type->imageDefinitionInfos;
+        $this->annotations = $type->annotations;
 
         $unserialized = \unserialize($serialized);
         if (!empty($unserialized['mediaType']) && $unserialized['mediaType'] instanceof MediaType) {
@@ -226,6 +247,9 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         }
         if (!empty($unserialized['imageDefinitionInfos'])) {
             $this->imageDefinitionInfos = $unserialized['imageDefinitionInfos'];
+        }
+        if (!empty($unserialized['annotations'])) {
+            $this->annotations = $unserialized['annotations'];
         }
     }
 }
