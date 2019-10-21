@@ -123,7 +123,7 @@ final class IndexAction implements MiddlewareInterface
         }
 
         if (empty($sorting)) {
-            $criteria->orderBy(['createdAt' => 'DESC']);
+            $criteria->orderBy(['updatedAt' => 'DESC']);
         } elseif (!empty($sorting)) {
             $criteria->orderBy($sorting);
         }

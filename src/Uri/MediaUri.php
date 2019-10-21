@@ -13,9 +13,11 @@ use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Handler\MediaHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
+use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Symfony\Component\Asset\Packages;
 
 final class MediaUri
@@ -36,20 +38,28 @@ final class MediaUri
     private $mediaHandlerSubManager;
 
     /**
+     * @var MediaDefinitionInfoRepository
+     */
+    private $mediaDefinitionInfoRepository;
+
+    /**
      * ApplicationUri constructor.
      *
      * @param Packages $packages
      * @param AdminConfig $adminConfig
      * @param MediaHandlerSubManager $mediaHandlerSubManager
+     * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      */
     public function __construct(
         Packages $packages,
         AdminConfig $adminConfig,
-        MediaHandlerSubManager $mediaHandlerSubManager
+        MediaHandlerSubManager $mediaHandlerSubManager,
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
     ) {
         $this->packages = $packages;
         $this->adminConfig = $adminConfig;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
+        $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
     }
 
     /**
@@ -82,6 +92,21 @@ final class MediaUri
         }
 
         if ($media->publicStatus()) {
+            /** @var MediaDefinitionInfo $mediaDefinition */
+            $mediaDefinition =
+                $this->mediaDefinitionInfoRepository->findOneBy([
+                    'mediaId' => $media->id(),
+                    'imageDefinition' => $imageDefinition
+                ]);
+            /**
+             * In Case Crop-Parameters are available, hash them for URL
+             */
+            if ($mediaDefinition) {
+                if ($mediaDefinition->cropParameters()) {
+                    $suffix = \md5((string)$mediaDefinition->cropParameters());
+                    return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition, $suffix);
+                }
+            }
             return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition);
         }
 
@@ -102,12 +127,17 @@ final class MediaUri
      * @param string $basePath
      * @param string $filename
      * @param string|null $imageDefinition
+     * @param string|null $suffix
      * @return string
      */
-    public function generateImageUrl(string $basePath, string $filename, string $imageDefinition = null): string
+    public function generateImageUrl(string $basePath, string $filename, string $imageDefinition = null, string $suffix = null): string
     {
         if ($imageDefinition === null) {
             return $this->generateUrl($basePath, $filename);
+        }
+
+        if ($suffix) {
+            return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename . '?variant= ' . $suffix);
         }
 
         return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename);

@@ -168,7 +168,14 @@ class CreateCommand extends AbstractCommand
         $this->fileHash = $this->mediaCreateHandler->fileHash();
 
         if ($this->checkForDuplicates && $this->checkDuplicate($this->fileHash)) {
-            throw new FileDuplicateException('File has already been uploaded');
+            /** @var Media $media */
+            $media = $this->mediaRepository->findOneBy(['hash' => $this->fileHash]);
+            $media = $media->with('updatedAt', new \DateTime());
+            $this->mediaRepository->save($media);
+
+            $this->uuid = (string)$media->id();
+            return true;
+            //throw new FileDuplicateException('File has already been uploaded');
         }
 
         $media = $this->prepareMedia();
