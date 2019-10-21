@@ -11,9 +11,11 @@ namespace Ixocreate\Media\Uri\Factory;
 
 use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Application\Uri\ApplicationUri;
+use Ixocreate\Database\Repository\Factory\RepositorySubManager;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
+use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Uri\MediaUri;
 use Ixocreate\ServiceManager\FactoryInterface;
 use Ixocreate\ServiceManager\ServiceManagerInterface;
@@ -51,6 +53,9 @@ final class MediaUriFactory implements FactoryInterface
 
         $delegatorSubManager = $container->get(MediaHandlerSubManager::class);
 
-        return new MediaUri($packages, $adminConfig, $delegatorSubManager);
+        $mediaDefinitionInfoRepository =
+            ($container->get(RepositorySubManager::class))->get(MediaDefinitionInfoRepository::class);
+
+        return new MediaUri($packages, $adminConfig, $delegatorSubManager, $mediaDefinitionInfoRepository);
     }
 }

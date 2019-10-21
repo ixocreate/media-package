@@ -1,6 +1,14 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.7...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.9...develop)
+
+## [v0.4.9 (2019-10-21)](https://github.com/ixocreate/media-package/compare/0.4.8...0.4.9)
+### Added
+- Added suffix in Url with MediaDefinitionInfo - CropParameters
+
+## [v0.4.8 (2019-10-18)](https://github.com/ixocreate/media-package/compare/0.4.7...0.4.8)
+### Changed
+- Improve Duplicate Upload
 
 ## [v0.4.7 (2019-10-11)](https://github.com/ixocreate/media-package/compare/0.4.6...0.4.7)
 ### Fixed
