@@ -1,4 +1,10 @@
 <?php
+/**
+ * @link https://github.com/ixocreate
+ * @copyright IXOLIT GmbH
+ * @license MIT License
+ */
+
 declare(strict_types=1);
 
 namespace Ixocreate\Media\Cacheable;
@@ -19,6 +25,7 @@ final class UrlVariantCacheable implements CacheableInterface
      * @var string
      */
     private $imageDefinition;
+
     /**
      * @var MediaDefinitionInfoRepository
      */
@@ -61,10 +68,10 @@ final class UrlVariantCacheable implements CacheableInterface
         ]);
 
         if (empty($mediaDefinition)) {
-            return \substr(\sha1((new DateTime())->format('c')), 0, 8);
+            return \mb_substr(\sha1((new DateTime())->format('c')), 0, 8);
         }
 
-        return \substr(\sha1($mediaDefinition->updatedAt()->format('c')), 0, 8);
+        return \mb_substr(\sha1($mediaDefinition->updatedAt()->format('c')), 0, 8);
     }
 
     /**

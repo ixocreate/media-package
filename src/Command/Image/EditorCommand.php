@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Command\Image;
 
-use DateTime;
 use Ixocreate\Cache\CacheManager;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
@@ -66,10 +65,12 @@ final class EditorCommand extends AbstractCommand
      * @var MediaInterface || null
      */
     private $media;
+
     /**
      * @var CacheManager
      */
     private $cacheManager;
+
     /**
      * @var UrlVariantCacheable
      */

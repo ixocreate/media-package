@@ -15,11 +15,9 @@ use Ixocreate\Cache\CacheManager;
 use Ixocreate\Media\Cacheable\UrlVariantCacheable;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Handler\MediaHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Symfony\Component\Asset\Packages;
 
 final class MediaUri
@@ -38,10 +36,12 @@ final class MediaUri
      * @var MediaHandlerSubManager
      */
     private $mediaHandlerSubManager;
+
     /**
      * @var CacheManager
      */
     private $cacheManager;
+
     /**
      * @var UrlVariantCacheable
      */
