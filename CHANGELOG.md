@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.9...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.10...develop)
+
+## [v0.4.10 (2019-10-22)](https://github.com/ixocreate/media-package/compare/0.4.9...0.4.10)
+### Changed
+- trivialize variant suffix in url
 
 ## [v0.4.9 (2019-10-21)](https://github.com/ixocreate/media-package/compare/0.4.8...0.4.9)
 ### Added
