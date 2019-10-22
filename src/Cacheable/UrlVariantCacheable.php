@@ -61,10 +61,10 @@ final class UrlVariantCacheable implements CacheableInterface
         ]);
 
         if (empty($mediaDefinition)) {
-            return \substr(\sha1((new DateTime())->format('c')), 0, 7);
+            return \substr(\sha1((new DateTime())->format('c')), 0, 8);
         }
 
-        return \substr(\sha1($mediaDefinition->updatedAt()->format('c')), 0, 7);
+        return \substr(\sha1($mediaDefinition->updatedAt()->format('c')), 0, 8);
     }
 
     /**

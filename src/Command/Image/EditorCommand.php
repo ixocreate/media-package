@@ -193,10 +193,6 @@ final class EditorCommand extends AbstractCommand
             $this->urlVariantCacheable->withMediaId((string) $this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
             true
         );
-        if ($this->media instanceof Media) {
-            $media = $this->media->with('updatedAt', new DateTime());
-            $this->mediaRepository->save($media);
-        }
 
         return true;
     }
