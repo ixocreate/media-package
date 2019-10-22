@@ -38,28 +38,20 @@ final class MediaUri
     private $mediaHandlerSubManager;
 
     /**
-     * @var MediaDefinitionInfoRepository
-     */
-    private $mediaDefinitionInfoRepository;
-
-    /**
      * ApplicationUri constructor.
      *
      * @param Packages $packages
      * @param AdminConfig $adminConfig
      * @param MediaHandlerSubManager $mediaHandlerSubManager
-     * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      */
     public function __construct(
         Packages $packages,
         AdminConfig $adminConfig,
-        MediaHandlerSubManager $mediaHandlerSubManager,
-        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
+        MediaHandlerSubManager $mediaHandlerSubManager
     ) {
         $this->packages = $packages;
         $this->adminConfig = $adminConfig;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
-        $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
     }
 
     /**
@@ -92,22 +84,9 @@ final class MediaUri
         }
 
         if ($media->publicStatus()) {
-            /** @var MediaDefinitionInfo $mediaDefinition */
-            $mediaDefinition =
-                $this->mediaDefinitionInfoRepository->findOneBy([
-                    'mediaId' => $media->id(),
-                    'imageDefinition' => $imageDefinition
-                ]);
-            /**
-             * In Case Crop-Parameters are available, hash them for URL
-             */
-            if ($mediaDefinition) {
-                if ($mediaDefinition->cropParameters()) {
-                    $suffix = \md5((string)$mediaDefinition->cropParameters());
-                    return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition, $suffix);
-                }
-            }
-            return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition);
+
+            $suffix = \substr(\sha1($media->updatedAt()->format('c')), 0, 7);
+            return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition, $suffix);
         }
 
         return $this->generateStreamUrl($media, $imageDefinition);
