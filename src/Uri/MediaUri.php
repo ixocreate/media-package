@@ -116,7 +116,7 @@ final class MediaUri
         }
 
         if ($suffix) {
-            return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename . '?variant= ' . $suffix);
+            return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename . '?variant=' . $suffix);
         }
 
         return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename);
