@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.10...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.11...develop)
+
+## [v0.4.11 (2019-10-22)](https://github.com/ixocreate/media-package/compare/0.4.10...0.4.11)
+### Changed
+- url variant helper
 
 ## [v0.4.10 (2019-10-22)](https://github.com/ixocreate/media-package/compare/0.4.9...0.4.10)
 ### Changed
