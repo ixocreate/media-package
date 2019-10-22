@@ -11,13 +11,13 @@ namespace Ixocreate\Media\Uri;
 
 use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
+use Ixocreate\Cache\CacheManager;
+use Ixocreate\Media\Cacheable\UrlVariantCacheable;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Handler\MediaHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
-use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Symfony\Component\Asset\Packages;
 
 final class MediaUri
@@ -38,6 +38,16 @@ final class MediaUri
     private $mediaHandlerSubManager;
 
     /**
+     * @var CacheManager
+     */
+    private $cacheManager;
+
+    /**
+     * @var UrlVariantCacheable
+     */
+    private $urlVariantCacheable;
+
+    /**
      * ApplicationUri constructor.
      *
      * @param Packages $packages
@@ -47,11 +57,15 @@ final class MediaUri
     public function __construct(
         Packages $packages,
         AdminConfig $adminConfig,
-        MediaHandlerSubManager $mediaHandlerSubManager
+        MediaHandlerSubManager $mediaHandlerSubManager,
+        CacheManager $cacheManager,
+        UrlVariantCacheable $urlVariantCacheable
     ) {
         $this->packages = $packages;
         $this->adminConfig = $adminConfig;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
+        $this->cacheManager = $cacheManager;
+        $this->urlVariantCacheable = $urlVariantCacheable;
     }
 
     /**
@@ -84,8 +98,7 @@ final class MediaUri
         }
 
         if ($media->publicStatus()) {
-
-            $suffix = \substr(\sha1($media->updatedAt()->format('c')), 0, 7);
+            $suffix = $this->cacheManager->fetch($this->urlVariantCacheable->withImageDefinition($imageDefinition)->withMediaId((string) $media->id()));
             return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition, $suffix);
         }
 

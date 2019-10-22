@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Command\Image;
 
-use DateTime;
+use Ixocreate\Cache\CacheManager;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Media\Cacheable\UrlVariantCacheable;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
@@ -66,22 +67,38 @@ final class EditorCommand extends AbstractCommand
     private $media;
 
     /**
+     * @var CacheManager
+     */
+    private $cacheManager;
+
+    /**
+     * @var UrlVariantCacheable
+     */
+    private $urlVariantCacheable;
+
+    /**
      * EditorCommand constructor.
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
      * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
+     * @param CacheManager $cacheManager
+     * @param UrlVariantCacheable $urlVariantCacheable
      */
     public function __construct(
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
         ImageDefinitionSubManager $imageDefinitionSubManager,
-        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
+        CacheManager $cacheManager,
+        UrlVariantCacheable $urlVariantCacheable
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
+        $this->cacheManager = $cacheManager;
+        $this->urlVariantCacheable = $urlVariantCacheable;
     }
 
     /**
@@ -173,11 +190,10 @@ final class EditorCommand extends AbstractCommand
         }
 
         $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
-
-        if ($this->media instanceof Media) {
-            $media = $this->media->with('updatedAt', new DateTime());
-            $this->mediaRepository->save($media);
-        }
+        $this->cacheManager->fetch(
+            $this->urlVariantCacheable->withMediaId((string) $this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
+            true
+        );
 
         return true;
     }
