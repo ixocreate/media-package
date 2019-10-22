@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Command\Image;
 
+use DateTime;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Config\MediaConfig;
@@ -172,6 +173,11 @@ final class EditorCommand extends AbstractCommand
         }
 
         $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
+
+        if ($this->media instanceof Media) {
+            $media = $this->media->with('updatedAt', new DateTime());
+            $this->mediaRepository->save($media);
+        }
 
         return true;
     }

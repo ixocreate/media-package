@@ -53,9 +53,6 @@ final class MediaUriFactory implements FactoryInterface
 
         $delegatorSubManager = $container->get(MediaHandlerSubManager::class);
 
-        $mediaDefinitionInfoRepository =
-            ($container->get(RepositorySubManager::class))->get(MediaDefinitionInfoRepository::class);
-
-        return new MediaUri($packages, $adminConfig, $delegatorSubManager, $mediaDefinitionInfoRepository);
+        return new MediaUri($packages, $adminConfig, $delegatorSubManager);
     }
 }
