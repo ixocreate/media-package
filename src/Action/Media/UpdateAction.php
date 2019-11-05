@@ -61,7 +61,7 @@ final class UpdateAction implements MiddlewareInterface
         /** @var Media $media */
         $media = $this->mediaRepository->findOneBy(['id' => $request->getAttribute('id')]);
 
-        if (empty($media)) {
+        if (!$media) {
             return new ApiErrorResponse('given media Id does not exist');
         }
 
@@ -72,14 +72,18 @@ final class UpdateAction implements MiddlewareInterface
         $filesystem = $this->filesystemManager->get('media');
 
         $data = $request->getParsedBody();
-        $publicStatus = $data['publicStatus'];
-        $newFilename = $data['newFilename'];
 
         /** @var UpdateCommand $updateCommand */
         $updateCommand = $this->commandBus->create(UpdateCommand::class, []);
         $updateCommand = $updateCommand->withMedia($media);
-        $updateCommand = $updateCommand->withPublicStatus($publicStatus);
-        $updateCommand = $updateCommand->withNewFilename($newFilename);
+        $updateCommand =
+            (isset($data['publicStatus']))
+                ? $updateCommand->withPublicStatus($data['publicStatus'])
+                : $updateCommand;
+        $updateCommand =
+            (isset($data['newFilename']))
+                ? $updateCommand->withNewFilename($data['newFilename'])
+                : $updateCommand;
         $updateCommand = $updateCommand->withFilesystem($filesystem);
         $commandResult = $this->commandBus->dispatch($updateCommand);
 
@@ -87,6 +91,6 @@ final class UpdateAction implements MiddlewareInterface
             return new ApiErrorResponse('media-media-update', $commandResult->messages());
         }
 
-        return new ApiSuccessResponse();
+        return new ApiSuccessResponse(['id' => $media->id()]);
     }
 }

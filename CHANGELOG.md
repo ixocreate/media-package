@@ -1,10 +1,19 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.11...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.13...develop)
 
-## [v0.4.11 (2019-10-22)](https://github.com/ixocreate/media-package/compare/0.4.10...0.4.11)
+## [v0.4.13 (2019-11-05)](https://github.com/ixocreate/media-package/compare/0.4.12...0.4.13)
+### Changed
+- check in UpdateAction
+- filterNewFilename method in UpdateCommand
+
+## [v0.4.12 (2019-11-05)](https://github.com/ixocreate/media-package/compare/0.4.12...0.4.13)
 ### Changed
 - url variant helper
+
+## [v0.4.11 (2019-10-22)](https://github.com/ixocreate/media-package/compare/0.4.10...0.4.11)
+### Fixed
+- fixed url
 
 ## [v0.4.10 (2019-10-22)](https://github.com/ixocreate/media-package/compare/0.4.9...0.4.10)
 ### Changed

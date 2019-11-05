@@ -69,7 +69,8 @@ class UpdateCommand extends AbstractCommand
         MediaHandlerSubManager $mediaHandlerSubManager,
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig
-    ) {
+    )
+    {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
@@ -120,16 +121,15 @@ class UpdateCommand extends AbstractCommand
     }
 
     /**
-     * @throws Exception
      * @return bool
+     * @throws Exception
      */
     public function execute(): bool
     {
         // Filename
         if ($this->newFilename !== null) {
-            $this->filterNewFilename();
             /** @var string $newFilename */
-            $newFilename = $this->newFilename;
+            $newFilename = $this->filterNewFilename($this->newFilename);
 
             $fileInfo = \pathinfo($this->media->filename());
 
@@ -141,6 +141,9 @@ class UpdateCommand extends AbstractCommand
 
         // PublicStatus
         if ($this->publicStatus !== null) {
+            /**
+             * only change public status if it is allowed in mediaConfig
+             */
             if ($this->mediaConfig->publicStatus()) {
                 $desiredPublicStatus = $this->publicStatus;
                 /**
@@ -149,9 +152,11 @@ class UpdateCommand extends AbstractCommand
                 $publicDirectory = MediaPaths::PUBLIC_PATH . $this->media->basePath() . $this->media->filename();
                 $privateDirectory = MediaPaths::PRIVATE_PATH . $this->media->basePath() . $this->media->filename();
                 if ($desiredPublicStatus && !$this->filesystem->has($publicDirectory)) {
-                    $this->media = $this->moveMedia($this->media, MediaPaths::PRIVATE_PATH, MediaPaths::PUBLIC_PATH);
+                    $this->media =
+                        $this->moveMedia($this->media, MediaPaths::PRIVATE_PATH, MediaPaths::PUBLIC_PATH);
                 } elseif (!$desiredPublicStatus && !$this->filesystem->has($privateDirectory)) {
-                    $this->media = $this->moveMedia($this->media, MediaPaths::PUBLIC_PATH, MediaPaths::PRIVATE_PATH);
+                    $this->media =
+                        $this->moveMedia($this->media, MediaPaths::PUBLIC_PATH, MediaPaths::PRIVATE_PATH);
                 }
 
                 if ($this->media->publicStatus() !== $desiredPublicStatus) {
@@ -234,16 +239,20 @@ class UpdateCommand extends AbstractCommand
         return $media;
     }
 
-    private function filterNewFilename(): void
+    /**
+     * @param $newFilename
+     * @return string
+     */
+    private function filterNewFilename($newFilename): string
     {
         // remove whitespace
-        $newFilename = \trim($this->newFilename);
+        $newFilename = \trim($newFilename);
         // remove Extension
         $newFilename = \pathinfo($newFilename, PATHINFO_FILENAME);
         // remove all special Characters except "-_ /."
         $newFilename = \preg_replace("/([^A-Za-z0-9ÖöÄäÜü\/\-_\.])/", "", $newFilename);
 
-        $this->newFilename = $newFilename;
+        return $newFilename;
     }
 
     /**
