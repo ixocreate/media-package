@@ -69,8 +69,7 @@ class UpdateCommand extends AbstractCommand
         MediaHandlerSubManager $mediaHandlerSubManager,
         MediaRepository $mediaRepository,
         MediaConfig $mediaConfig
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
@@ -121,8 +120,8 @@ class UpdateCommand extends AbstractCommand
     }
 
     /**
-     * @return bool
      * @throws Exception
+     * @return bool
      */
     public function execute(): bool
     {
