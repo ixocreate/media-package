@@ -12,6 +12,7 @@ namespace Ixocreate\Media\Command\Image;
 use Ixocreate\Cache\CacheManager;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Media\Cacheable\MediaDefinitionInfoCacheable;
 use Ixocreate\Media\Cacheable\UrlVariantCacheable;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
@@ -77,6 +78,11 @@ final class EditorCommand extends AbstractCommand
     private $urlVariantCacheable;
 
     /**
+     * @var MediaDefinitionInfoCacheable
+     */
+    private $mediaDefinitionInfoCacheable;
+
+    /**
      * EditorCommand constructor.
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
@@ -84,6 +90,7 @@ final class EditorCommand extends AbstractCommand
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      * @param CacheManager $cacheManager
      * @param UrlVariantCacheable $urlVariantCacheable
+     * @param MediaDefinitionInfoCacheable $mediaDefinitionInfoCacheable
      */
     public function __construct(
         MediaRepository $mediaRepository,
@@ -91,7 +98,8 @@ final class EditorCommand extends AbstractCommand
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         CacheManager $cacheManager,
-        UrlVariantCacheable $urlVariantCacheable
+        UrlVariantCacheable $urlVariantCacheable,
+        MediaDefinitionInfoCacheable $mediaDefinitionInfoCacheable
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
@@ -99,6 +107,7 @@ final class EditorCommand extends AbstractCommand
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
         $this->cacheManager = $cacheManager;
         $this->urlVariantCacheable = $urlVariantCacheable;
+        $this->mediaDefinitionInfoCacheable = $mediaDefinitionInfoCacheable;
     }
 
     /**
@@ -146,8 +155,9 @@ final class EditorCommand extends AbstractCommand
     }
 
     /**
-     * @throws \Exception
      * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function execute(): bool
     {
@@ -192,6 +202,10 @@ final class EditorCommand extends AbstractCommand
         $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
         $this->cacheManager->fetch(
             $this->urlVariantCacheable->withMediaId((string) $this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
+            true
+        );
+        $this->cacheManager->fetch(
+            $this->mediaDefinitionInfoCacheable->withMediaId((string) $this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
             true
         );
 
