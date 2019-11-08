@@ -10,7 +10,10 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Schema\Type;
 
 use Doctrine\DBAL\Types\GuidType;
+use Ixocreate\Cache\CacheManager;
+use Ixocreate\Media\Cacheable\MediaCacheable;
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\MediaInfo;
 use Ixocreate\Media\Repository\MediaRepository;
 use Ixocreate\Media\Schema\Element\MediaElement;
 use Ixocreate\Media\Uri\MediaUri;
@@ -34,15 +37,39 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
     protected $uri;
 
     /**
+     * @var CacheManager
+     */
+    private $cacheManager;
+
+    /**
+     * @var MediaCacheable
+     */
+    private $mediaCacheable;
+
+    /**
+     * @var MediaInfo
+     */
+    private $mediaInfo;
+
+    /**
      * ImageType constructor.
      *
      * @param MediaRepository $mediaRepository
+     * @param CacheManager $cacheManager
+     * @param MediaCacheable $mediaCacheable
      * @param MediaUri $uri
      */
-    public function __construct(MediaRepository $mediaRepository, MediaUri $uri)
+    public function __construct(
+        MediaRepository $mediaRepository,
+        CacheManager $cacheManager,
+        MediaCacheable $mediaCacheable,
+        MediaUri $uri
+    )
     {
         $this->mediaRepository = $mediaRepository;
         $this->uri = $uri;
+        $this->cacheManager = $cacheManager;
+        $this->mediaCacheable = $mediaCacheable;
     }
 
     /**
@@ -58,6 +85,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
 
             $value = $value['id'];
         }
+
         $value = $this->mediaRepository->find($value);
 
         if (!empty($value)) {
@@ -67,10 +95,15 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
         return null;
     }
 
+    public function mediaInfo(): ?MediaInfo
+    {
+        return $this->mediaInfo;
+    }
+
     public function __toString()
     {
         if (empty($this->value())) {
-            return "";
+            return '';
         }
 
         return (string)$this->value()->id();
@@ -110,7 +143,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
         /** @var Media $media */
         $media = $this->value();
         if (empty($media) || !($media instanceof Media)) {
-            return "";
+            return '';
         }
 
         return $this->uri->imageUrl($media, $definition);
@@ -126,21 +159,40 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
         return $builder->get(MediaElement::class);
     }
 
+    public function serialize()
+    {
+        return \serialize($this->__toString());
+    }
+
     /**
      * @param string $serialized
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function unserialize($serialized)
     {
+        $unserialized = \unserialize($serialized);
+
+        $mediaId = null;
+        if (!empty($unserialized['value']) && $unserialized['value'] instanceof Media) {
+            $mediaId = (string)$unserialized['value']->id();
+        } else if (\is_string($unserialized)) {
+            $mediaId = $unserialized;
+        }
+
+        if ($mediaId === null) {
+            return;
+        }
+
         /** @var MediaType $mediaType */
         $mediaType = Type::get(MediaType::serviceName());
-
+        $this->cacheManager = $mediaType->cacheManager;
+        $this->mediaCacheable = $mediaType->mediaCacheable;
         $this->mediaRepository = $mediaType->mediaRepository;
         $this->uri = $mediaType->uri;
 
-        $this->value = null;
-        $unserialized = \unserialize($serialized);
-        if (!empty($unserialized['value']) && $unserialized['value'] instanceof Media) {
-            $this->value = $unserialized['value'];
-        }
+        /** @var MediaInfo $mediaInfo */
+        $mediaInfo = $this->cacheManager->fetch($this->mediaCacheable->withMediaId($mediaId));
+        $this->value = $mediaInfo->media();
+        $this->mediaInfo = $mediaInfo;
     }
 }
