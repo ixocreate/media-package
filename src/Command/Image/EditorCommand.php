@@ -12,11 +12,10 @@ namespace Ixocreate\Media\Command\Image;
 use Ixocreate\Cache\CacheManager;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
-use Ixocreate\Media\Cacheable\MediaDefinitionInfoCacheable;
+use Ixocreate\Media\Cacheable\MediaCacheable;
 use Ixocreate\Media\Cacheable\UrlVariantCacheable;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
-use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
@@ -78,9 +77,9 @@ final class EditorCommand extends AbstractCommand
     private $urlVariantCacheable;
 
     /**
-     * @var MediaDefinitionInfoCacheable
+     * @var MediaCacheable
      */
-    private $mediaDefinitionInfoCacheable;
+    private $mediaCacheable;
 
     /**
      * EditorCommand constructor.
@@ -90,7 +89,7 @@ final class EditorCommand extends AbstractCommand
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      * @param CacheManager $cacheManager
      * @param UrlVariantCacheable $urlVariantCacheable
-     * @param MediaDefinitionInfoCacheable $mediaDefinitionInfoCacheable
+     * @param MediaCacheable $mediaCacheable
      */
     public function __construct(
         MediaRepository $mediaRepository,
@@ -99,7 +98,7 @@ final class EditorCommand extends AbstractCommand
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         CacheManager $cacheManager,
         UrlVariantCacheable $urlVariantCacheable,
-        MediaDefinitionInfoCacheable $mediaDefinitionInfoCacheable
+        MediaCacheable $mediaCacheable
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
@@ -107,7 +106,7 @@ final class EditorCommand extends AbstractCommand
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
         $this->cacheManager = $cacheManager;
         $this->urlVariantCacheable = $urlVariantCacheable;
-        $this->mediaDefinitionInfoCacheable = $mediaDefinitionInfoCacheable;
+        $this->mediaCacheable = $mediaCacheable;
     }
 
     /**
@@ -201,11 +200,11 @@ final class EditorCommand extends AbstractCommand
 
         $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
         $this->cacheManager->fetch(
-            $this->urlVariantCacheable->withMediaId((string) $this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
+            $this->urlVariantCacheable->withMediaId((string)$this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
             true
         );
         $this->cacheManager->fetch(
-            $this->mediaDefinitionInfoCacheable->withMediaId((string) $this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
+            $this->mediaCacheable->withMediaId((string)$this->media->id()),
             true
         );
 
