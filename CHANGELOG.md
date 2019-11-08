@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.13...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.14...develop)
+
+## [v0.4.14 (2019-11-08)](https://github.com/ixocreate/media-package/compare/0.4.13...0.4.14)
+### Added
+- MediaCacheable
+- MediaInfo Class
+- MediaCacheable in MediaType
+- MediaCacheable in ImageType
 
 ## [v0.4.13 (2019-11-05)](https://github.com/ixocreate/media-package/compare/0.4.12...0.4.13)
 ### Changed

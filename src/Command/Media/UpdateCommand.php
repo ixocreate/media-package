@@ -11,8 +11,10 @@ namespace Ixocreate\Media\Command\Media;
 
 use DateTimeImmutable;
 use Exception;
+use Ixocreate\Cache\CacheManager;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Media\Cacheable\MediaCacheable;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
@@ -59,21 +61,36 @@ class UpdateCommand extends AbstractCommand
     private $filesystem;
 
     /**
+     * @var CacheManager
+     */
+    private $cacheManager;
+
+    /**
+     * @var MediaCacheable
+     */
+    private $mediaCacheable;
+
+    /**
      * UpdateCommand constructor.
      *
      * @param MediaHandlerSubManager $mediaHandlerSubManager
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
+     * @param CacheManager $cacheManager
+     * @param MediaCacheable $mediaCacheable
      */
     public function __construct(
         MediaHandlerSubManager $mediaHandlerSubManager,
         MediaRepository $mediaRepository,
-        MediaConfig $mediaConfig
-    )
-    {
+        MediaConfig $mediaConfig,
+        CacheManager $cacheManager,
+        MediaCacheable $mediaCacheable
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
+        $this->cacheManager = $cacheManager;
+        $this->mediaCacheable = $mediaCacheable;
     }
 
     /**
@@ -122,14 +139,17 @@ class UpdateCommand extends AbstractCommand
 
     /**
      * @return bool
+     * @throws \Psr\Cache\InvalidArgumentException
      * @throws Exception
+     * @return bool
      */
     public function execute(): bool
     {
         // Filename
         if ($this->newFilename !== null) {
+            $this->filterNewFilename();
             /** @var string $newFilename */
-            $newFilename = $this->filterNewFilename($this->newFilename);
+            $newFilename = $this->newFilename;
 
             $fileInfo = \pathinfo($this->media->filename());
 
@@ -141,9 +161,6 @@ class UpdateCommand extends AbstractCommand
 
         // PublicStatus
         if ($this->publicStatus !== null) {
-            /**
-             * only change public status if it is allowed in mediaConfig
-             */
             if ($this->mediaConfig->publicStatus()) {
                 $desiredPublicStatus = $this->publicStatus;
                 /**
@@ -152,11 +169,9 @@ class UpdateCommand extends AbstractCommand
                 $publicDirectory = MediaPaths::PUBLIC_PATH . $this->media->basePath() . $this->media->filename();
                 $privateDirectory = MediaPaths::PRIVATE_PATH . $this->media->basePath() . $this->media->filename();
                 if ($desiredPublicStatus && !$this->filesystem->has($publicDirectory)) {
-                    $this->media =
-                        $this->moveMedia($this->media, MediaPaths::PRIVATE_PATH, MediaPaths::PUBLIC_PATH);
+                    $this->media = $this->moveMedia($this->media, MediaPaths::PRIVATE_PATH, MediaPaths::PUBLIC_PATH);
                 } elseif (!$desiredPublicStatus && !$this->filesystem->has($privateDirectory)) {
-                    $this->media =
-                        $this->moveMedia($this->media, MediaPaths::PUBLIC_PATH, MediaPaths::PRIVATE_PATH);
+                    $this->media = $this->moveMedia($this->media, MediaPaths::PUBLIC_PATH, MediaPaths::PRIVATE_PATH);
                 }
 
                 if ($this->media->publicStatus() !== $desiredPublicStatus) {
@@ -168,6 +183,8 @@ class UpdateCommand extends AbstractCommand
         $this->media = $this->media->with('updatedAt', new DateTimeImmutable());
 
         $this->mediaRepository->save($this->media);
+
+        $this->cacheManager->fetch($this->mediaCacheable->withMediaId($this->media->id()), true);
 
         return true;
     }
@@ -239,20 +256,16 @@ class UpdateCommand extends AbstractCommand
         return $media;
     }
 
-    /**
-     * @param $newFilename
-     * @return string
-     */
-    private function filterNewFilename($newFilename): string
+    private function filterNewFilename(): void
     {
         // remove whitespace
-        $newFilename = \trim($newFilename);
+        $newFilename = \trim($this->newFilename);
         // remove Extension
         $newFilename = \pathinfo($newFilename, PATHINFO_FILENAME);
         // remove all special Characters except "-_ /."
         $newFilename = \preg_replace("/([^A-Za-z0-9ÖöÄäÜü\/\-_\.])/", "", $newFilename);
 
-        return $newFilename;
+        $this->newFilename = $newFilename;
     }
 
     /**

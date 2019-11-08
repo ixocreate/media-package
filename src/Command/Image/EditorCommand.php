@@ -12,10 +12,10 @@ namespace Ixocreate\Media\Command\Image;
 use Ixocreate\Cache\CacheManager;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Media\Cacheable\MediaCacheable;
 use Ixocreate\Media\Cacheable\UrlVariantCacheable;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
-use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
@@ -77,6 +77,11 @@ final class EditorCommand extends AbstractCommand
     private $urlVariantCacheable;
 
     /**
+     * @var MediaCacheable
+     */
+    private $mediaCacheable;
+
+    /**
      * EditorCommand constructor.
      * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
@@ -84,6 +89,7 @@ final class EditorCommand extends AbstractCommand
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      * @param CacheManager $cacheManager
      * @param UrlVariantCacheable $urlVariantCacheable
+     * @param MediaCacheable $mediaCacheable
      */
     public function __construct(
         MediaRepository $mediaRepository,
@@ -91,7 +97,8 @@ final class EditorCommand extends AbstractCommand
         ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         CacheManager $cacheManager,
-        UrlVariantCacheable $urlVariantCacheable
+        UrlVariantCacheable $urlVariantCacheable,
+        MediaCacheable $mediaCacheable
     ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
@@ -99,6 +106,7 @@ final class EditorCommand extends AbstractCommand
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
         $this->cacheManager = $cacheManager;
         $this->urlVariantCacheable = $urlVariantCacheable;
+        $this->mediaCacheable = $mediaCacheable;
     }
 
     /**
@@ -146,8 +154,9 @@ final class EditorCommand extends AbstractCommand
     }
 
     /**
-     * @throws \Exception
      * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function execute(): bool
     {
@@ -191,7 +200,11 @@ final class EditorCommand extends AbstractCommand
 
         $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
         $this->cacheManager->fetch(
-            $this->urlVariantCacheable->withMediaId((string) $this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
+            $this->urlVariantCacheable->withMediaId((string)$this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
+            true
+        );
+        $this->cacheManager->fetch(
+            $this->mediaCacheable->withMediaId((string)$this->media->id()),
             true
         );
 

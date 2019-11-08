@@ -116,7 +116,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     public function __toString()
     {
         if (empty($this->value())) {
-            return "";
+            return '';
         }
 
         return (string)$this->value()->id();
@@ -174,6 +174,15 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         return $this->value()->metaData()['height'];
     }
 
+    public function fileSize(string $imageDefinitionServiceName = null)
+    {
+        if (!empty($imageDefinitionServiceName)) {
+            $mediaDefinitionInfo = $this->imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
+            return $mediaDefinitionInfo ? $mediaDefinitionInfo->fileSize() : null;
+        }
+        return $this->value()->fileSize();
+    }
+
     public function convertToDatabaseValue()
     {
         if (empty($this->value())) {
@@ -205,7 +214,6 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     {
         return \serialize([
             'mediaType' => $this->mediaType,
-            'imageDefinitionInfos' => $this->imageDefinitionInfos,
         ]);
     }
 
@@ -218,14 +226,15 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         $type = Type::get(ImageType::serviceName());
         $this->uri = $type->uri;
         $this->mediaConfig = $type->mediaConfig;
-        $this->imageDefinitionInfos = $type->imageDefinitionInfos;
+        $this->mediaRepository = $type->mediaRepository;
+        $this->mediaDefinitionInfoRepository = $type->mediaDefinitionInfoRepository;
+        $this->imageDefinitionSubManager = $type->imageDefinitionSubManager;
 
         $unserialized = \unserialize($serialized);
+
         if (!empty($unserialized['mediaType']) && $unserialized['mediaType'] instanceof MediaType) {
             $this->mediaType = $unserialized['mediaType'];
-        }
-        if (!empty($unserialized['imageDefinitionInfos'])) {
-            $this->imageDefinitionInfos = $unserialized['imageDefinitionInfos'];
+            $this->imageDefinitionInfos = $this->mediaType->mediaInfo()->definitionInfos();
         }
     }
 }

@@ -11,9 +11,11 @@ namespace Ixocreate\Cms\Cache;
 
 use Ixocreate\Cache\CacheConfigurator;
 use Ixocreate\Cache\Option\InMemory;
+use Ixocreate\Media\Cacheable\MediaCacheable;
 use Ixocreate\Media\Cacheable\UrlVariantCacheable;
 
 /** @var CacheConfigurator $cache */
 $cache->addCacheable(UrlVariantCacheable::class);
+$cache->addCacheable(MediaCacheable::class);
 
 $cache->addCache('media', new InMemory());
