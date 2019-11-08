@@ -141,6 +141,7 @@ class UpdateCommand extends AbstractCommand
      * @return bool
      * @throws \Psr\Cache\InvalidArgumentException
      * @throws Exception
+     * @return bool
      */
     public function execute(): bool
     {
