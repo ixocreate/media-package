@@ -10,6 +10,11 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Cacheable;
 
 use Ixocreate\Cache\CacheableInterface;
+use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Entity\MediaDefinitionInfo;
+use Ixocreate\Media\Exception\InvalidArgumentException;
+use Ixocreate\Media\MediaInfo;
+use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
 use Ixocreate\Media\Repository\MediaRepository;
 
 final class MediaCacheable implements CacheableInterface
@@ -22,14 +27,22 @@ final class MediaCacheable implements CacheableInterface
     private $mediaRepository;
 
     /**
+     * @var MediaDefinitionInfoRepository
+     */
+    private $mediaDefinitionInfoRepository;
+
+    /**
      * MediaCacheable constructor.
      * @param MediaRepository $mediaRepository
+     * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      */
     public function __construct(
-        MediaRepository $mediaRepository
+        MediaRepository $mediaRepository,
+        MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
     )
     {
         $this->mediaRepository = $mediaRepository;
+        $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
     }
 
     /**
@@ -49,7 +62,22 @@ final class MediaCacheable implements CacheableInterface
      */
     public function uncachedResult()
     {
-        return $this->mediaRepository->find($this->mediaId);
+        if (!$this->mediaId) {
+            throw new InvalidArgumentException('mediaId is empty');
+        }
+
+        /** @var Media $media */
+        $media = $this->mediaRepository->find($this->mediaId);
+
+        $mediaDefinitions = $this->mediaDefinitionInfoRepository->findBy([
+            'mediaId' => $this->mediaId
+        ]);
+        $definitionInfos = [];
+        foreach ($mediaDefinitions as $mediaDefinition) {
+            $definitionInfos[$mediaDefinition->imageDefinition] = $mediaDefinition;
+        }
+
+        return new MediaInfo($media, $definitionInfos);
     }
 
     /**
@@ -65,7 +93,7 @@ final class MediaCacheable implements CacheableInterface
      */
     public function cacheKey(): string
     {
-        return 'media.' . (string) $this->mediaId;
+        return 'media.' . (string)$this->mediaId;
     }
 
     /**
