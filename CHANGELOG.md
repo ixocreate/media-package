@@ -2,6 +2,11 @@
 
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.14...develop)
 
+## [v0.4.15 (2019-11-20)](https://github.com/ixocreate/media-package/compare/0.4.14...0.4.15)
+### Fixed
+- fix mimeType detection on upload
+- catch errors in image regeneration
+
 ## [v0.4.14 (2019-11-08)](https://github.com/ixocreate/media-package/compare/0.4.13...0.4.14)
 ### Added
 - MediaCacheable

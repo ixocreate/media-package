@@ -25,6 +25,11 @@ final class UploadHandler implements MediaCreateHandlerInterface
     private $stream;
 
     /**
+     * @var string
+     */
+    private $mimeType = null;
+
+    /**
      * UploadHandler constructor.
      *
      * @param UploadedFile $uploadedFile
@@ -57,7 +62,12 @@ final class UploadHandler implements MediaCreateHandlerInterface
      */
     public function mimeType(): string
     {
-        return $this->uploadedFile->getClientMediaType();
+        if ($this->mimeType === null) {
+            $finfo = \finfo_open(FILEINFO_MIME_TYPE);
+            $this->mimeType = \finfo_file($finfo, $this->tempFile());
+        }
+
+        return $this->mimeType;
     }
 
     /**
@@ -85,6 +95,7 @@ final class UploadHandler implements MediaCreateHandlerInterface
      */
     public function write(FilesystemInterface $storage, $destination)
     {
+        $this->mimeType();
         return $storage->writeStream($destination, $this->stream);
     }
 }

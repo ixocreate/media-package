@@ -398,40 +398,46 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
 
         $progressBar->start();
         foreach ($medias as $media) {
+            /** @var Media $media */
             if (!$this->imageHandler->isResponsible($media)) {
                 continue;
             }
 
-            if ($this->checkJsonFile($imageDefinition)) {
-                $style->writeln('Created .json File for ImageDefinition: ' . $imageDefinition::serviceName());
-            }
-            // If checkDefinitionChanges() returns true, evaluate existing editor generated crops
-            if ($this->checkDefinitionChanges($imageDefinition)) {
-                $style->writeln('Changes have been made in ImageDefinition: ' . $imageDefinition::serviceName());
-                $this->handleDefinitionChanges($imageDefinition);
-                $style->writeln('Overwrite .json File');
-                $this->checkDefinitionCropParameters($imageDefinition, $media);
-            }
-
-
-            if (\array_key_exists($imageDefinition::serviceName(), $this->cropParameters)) {
-                $this->editorCommand($media, $imageDefinition, $this->cropParameters);
-            }
-
-            if (!\array_key_exists($imageDefinition::serviceName(), $this->cropParameters)) {
-                // Check if there is already and Entry with MediaId + ImageDefinition
-                $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
-
-                if (!empty($mediaDefinitionInfo && $mediaDefinitionInfo->cropParameters() !== null)) {
-                    // If the Entry already has CropParameters, consider them
-                    $this->editorCommand($media, $imageDefinition, $mediaDefinitionInfo->cropParameters());
+            try {
+                if ($this->checkJsonFile($imageDefinition)) {
+                    $style->writeln('Created .json File for ImageDefinition: ' . $imageDefinition::serviceName());
                 }
-                // If there is no Entry at all or an Entry without Crop Parameters, proceed normally
-                if (empty($mediaDefinitionInfo) || $mediaDefinitionInfo->cropParameters() === null) {
-                    $imageHandler = $this->imageHandler->withImageDefinition($imageDefinition);
-                    $imageHandler->process($media, $this->filesystem);
+                // If checkDefinitionChanges() returns true, evaluate existing editor generated crops
+                if ($this->checkDefinitionChanges($imageDefinition)) {
+                    $style->writeln('Changes have been made in ImageDefinition: ' . $imageDefinition::serviceName());
+                    $this->handleDefinitionChanges($imageDefinition);
+                    $style->writeln('Overwrite .json File');
+                    $this->checkDefinitionCropParameters($imageDefinition, $media);
                 }
+
+
+                if (\array_key_exists($imageDefinition::serviceName(), $this->cropParameters)) {
+                    $this->editorCommand($media, $imageDefinition, $this->cropParameters);
+                }
+
+                if (!\array_key_exists($imageDefinition::serviceName(), $this->cropParameters)) {
+                    // Check if there is already and Entry with MediaId + ImageDefinition
+                    $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
+
+                    if (!empty($mediaDefinitionInfo && $mediaDefinitionInfo->cropParameters() !== null)) {
+                        // If the Entry already has CropParameters, consider them
+                        $this->editorCommand($media, $imageDefinition, $mediaDefinitionInfo->cropParameters());
+                    }
+                    // If there is no Entry at all or an Entry without Crop Parameters, proceed normally
+                    if (empty($mediaDefinitionInfo) || $mediaDefinitionInfo->cropParameters() === null) {
+                        $imageHandler = $this->imageHandler->withImageDefinition($imageDefinition);
+                        $imageHandler->process($media, $this->filesystem);
+                    }
+                }
+            } catch (\Throwable $e) {
+                $output->writeln('Unable to process media ' . $media->filename() . ' (' . $media->id() . ') - ' . $e->getMessage());
             }
+
             $progressBar->advance();
         }
 
