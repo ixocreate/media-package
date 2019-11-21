@@ -34,9 +34,9 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     private $mediaType;
 
     /**
-     * @var array
+     * @var array|false
      */
-    private $imageDefinitionInfos;
+    private $imageDefinitionInfos = false;
 
     /**
      * @var MediaUri
@@ -142,7 +142,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         /** @var Media $media */
         $media = $this->value();
         if (empty($media) || !($media instanceof Media)) {
-            return "";
+            return '';
         }
 
         return $this->uri->imageUrl($media, $imageDefinition);
@@ -155,7 +155,8 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     public function width(string $imageDefinitionServiceName = null)
     {
         if (!empty($imageDefinitionServiceName)) {
-            $mediaDefinitionInfo = $this->imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
+            $mediaDefinitionInfos = $this->imageDefinitionInfos();
+            $mediaDefinitionInfo = $imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
             return $mediaDefinitionInfo ? $mediaDefinitionInfo->width() : null;
         }
         return $this->value()->metaData()['width'];
@@ -168,7 +169,8 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     public function height(string $imageDefinitionServiceName = null)
     {
         if (!empty($imageDefinitionServiceName)) {
-            $mediaDefinitionInfo = $this->imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
+            $mediaDefinitionInfos = $this->imageDefinitionInfos();
+            $mediaDefinitionInfo = $imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
             return $mediaDefinitionInfo ? $mediaDefinitionInfo->height() : null;
         }
         return $this->value()->metaData()['height'];
@@ -177,7 +179,8 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     public function fileSize(string $imageDefinitionServiceName = null)
     {
         if (!empty($imageDefinitionServiceName)) {
-            $mediaDefinitionInfo = $this->imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
+            $mediaDefinitionInfos = $this->imageDefinitionInfos();
+            $mediaDefinitionInfo = $mediaDefinitionInfos[$imageDefinitionServiceName] ?? null;
             return $mediaDefinitionInfo ? $mediaDefinitionInfo->fileSize() : null;
         }
         return $this->value()->fileSize();
@@ -207,8 +210,17 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         return $builder->get(ImageElement::class);
     }
 
+    private function imageDefinitionInfos(): array
+    {
+        if ($this->imageDefinitionInfos === false) {
+            $this->imageDefinitionInfos = $this->mediaType->mediaInfo()->definitionInfos();
+        }
+
+        return $this->imageDefinitionInfos;
+    }
+
     /**
-     * @return string|void
+     * @return string
      */
     public function serialize()
     {
@@ -234,7 +246,6 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
 
         if (!empty($unserialized['mediaType']) && $unserialized['mediaType'] instanceof MediaType) {
             $this->mediaType = $unserialized['mediaType'];
-            $this->imageDefinitionInfos = $this->mediaType->mediaInfo()->definitionInfos();
         }
     }
 }

@@ -2,6 +2,10 @@
 
 ## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.14...develop)
 
+## [v0.4.16 (2019-11-21)](https://github.com/ixocreate/media-package/compare/0.4.15...0.4.16)
+### Fixed
+- fix serialization of MediaType
+
 ## [v0.4.15 (2019-11-20)](https://github.com/ixocreate/media-package/compare/0.4.14...0.4.15)
 ### Fixed
 - fix mimeType detection on upload

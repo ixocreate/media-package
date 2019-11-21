@@ -34,12 +34,17 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
     /**
      * @var MediaUri
      */
-    protected $uri;
+    protected $mediaUri;
 
     /**
      * @var CacheManager
      */
     private $cacheManager;
+
+    /**
+     * @var string|null
+     */
+    private $mediaId;
 
     /**
      * @var MediaCacheable
@@ -49,25 +54,24 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
     /**
      * @var MediaInfo
      */
-    private $mediaInfo;
+    private $mediaInfo = false;
 
     /**
      * ImageType constructor.
      *
      * @param MediaRepository $mediaRepository
+     * @param MediaUri $mediaUri
      * @param CacheManager $cacheManager
      * @param MediaCacheable $mediaCacheable
-     * @param MediaUri $uri
      */
     public function __construct(
         MediaRepository $mediaRepository,
+        MediaUri $mediaUri,
         CacheManager $cacheManager,
-        MediaCacheable $mediaCacheable,
-        MediaUri $uri
-    )
-    {
+        MediaCacheable $mediaCacheable
+    ) {
         $this->mediaRepository = $mediaRepository;
-        $this->uri = $uri;
+        $this->mediaUri = $mediaUri;
         $this->cacheManager = $cacheManager;
         $this->mediaCacheable = $mediaCacheable;
     }
@@ -97,7 +101,25 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
 
     public function mediaInfo(): ?MediaInfo
     {
+        if ($this->mediaInfo === false) {
+            /** @var MediaInfo $mediaInfo */
+            $mediaInfo = $this->cacheManager->fetch($this->mediaCacheable->withMediaId($this->mediaId));
+            $this->mediaInfo = $mediaInfo;
+        }
+
         return $this->mediaInfo;
+    }
+
+    public function value()
+    {
+        if ($this->value === null && $this->mediaId !== null) {
+            /** @var MediaInfo $mediaInfo */
+            $mediaInfo = $this->mediaInfo();
+            if ($mediaInfo !== null) {
+                $this->value = $mediaInfo->media();
+            }
+        }
+        return $this->value;
     }
 
     public function __toString()
@@ -146,7 +168,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
             return '';
         }
 
-        return $this->uri->imageUrl($media, $definition);
+        return $this->mediaUri->imageUrl($media, $definition);
     }
 
     public static function serviceName(): string
@@ -161,7 +183,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
 
     public function serialize()
     {
-        return \serialize($this->__toString());
+        return \serialize($this->convertToDatabaseValue());
     }
 
     /**
@@ -175,7 +197,7 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
         $mediaId = null;
         if (!empty($unserialized['value']) && $unserialized['value'] instanceof Media) {
             $mediaId = (string)$unserialized['value']->id();
-        } else if (\is_string($unserialized)) {
+        } elseif (\is_string($unserialized)) {
             $mediaId = $unserialized;
         }
 
@@ -185,14 +207,11 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
 
         /** @var MediaType $mediaType */
         $mediaType = Type::get(MediaType::serviceName());
+        $this->mediaRepository = $mediaType->mediaRepository;
+        $this->mediaUri = $mediaType->mediaUri;
         $this->cacheManager = $mediaType->cacheManager;
         $this->mediaCacheable = $mediaType->mediaCacheable;
-        $this->mediaRepository = $mediaType->mediaRepository;
-        $this->uri = $mediaType->uri;
 
-        /** @var MediaInfo $mediaInfo */
-        $mediaInfo = $this->cacheManager->fetch($this->mediaCacheable->withMediaId($mediaId));
-        $this->value = $mediaInfo->media();
-        $this->mediaInfo = $mediaInfo;
+        $this->mediaId = $mediaId;
     }
 }
