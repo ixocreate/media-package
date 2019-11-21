@@ -127,7 +127,7 @@ final class ImageAnnotatedType extends AbstractType implements DatabaseTypeInter
     public function __toString()
     {
         if (empty($this->value())) {
-            return "";
+            return '';
         }
 
         return (string)$this->value()->id();
@@ -154,7 +154,7 @@ final class ImageAnnotatedType extends AbstractType implements DatabaseTypeInter
         /** @var Media $media */
         $media = $this->value()['media'];
         if (empty($media) || !($media instanceof Media)) {
-            return "";
+            return '';
         }
 
         return $this->uri->imageUrl($media, $imageDefinition);

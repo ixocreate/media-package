@@ -84,7 +84,7 @@ final class AudioType extends AbstractType implements DatabaseTypeInterface, Ele
     public function __toString()
     {
         if (empty($this->value())) {
-            return "";
+            return '';
         }
 
         return (string)$this->value()->id();
@@ -110,7 +110,7 @@ final class AudioType extends AbstractType implements DatabaseTypeInterface, Ele
         /** @var Media $media */
         $media = $this->value();
         if (empty($media) || !($media instanceof Media)) {
-            return "";
+            return '';
         }
 
         return $this->uri->imageUrl($media, $imageDefinition);

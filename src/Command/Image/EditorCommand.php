@@ -154,9 +154,9 @@ final class EditorCommand extends AbstractCommand
     }
 
     /**
-     * @return bool
      * @throws \League\Flysystem\FileNotFoundException
      * @throws \Psr\Cache\InvalidArgumentException
+     * @return bool
      */
     public function execute(): bool
     {

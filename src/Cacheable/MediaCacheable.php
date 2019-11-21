@@ -11,7 +11,6 @@ namespace Ixocreate\Media\Cacheable;
 
 use Ixocreate\Cache\CacheableInterface;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\Exception\InvalidArgumentException;
 use Ixocreate\Media\MediaInfo;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
@@ -39,8 +38,7 @@ final class MediaCacheable implements CacheableInterface
     public function __construct(
         MediaRepository $mediaRepository,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
-    )
-    {
+    ) {
         $this->mediaRepository = $mediaRepository;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
     }
@@ -70,7 +68,7 @@ final class MediaCacheable implements CacheableInterface
         $media = $this->mediaRepository->find($this->mediaId);
 
         $mediaDefinitions = $this->mediaDefinitionInfoRepository->findBy([
-            'mediaId' => $this->mediaId
+            'mediaId' => $this->mediaId,
         ]);
         $definitionInfos = [];
         foreach ($mediaDefinitions as $mediaDefinition) {

@@ -84,7 +84,7 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
     public function __toString()
     {
         if (empty($this->value())) {
-            return "";
+            return '';
         }
 
         return (string)$this->value()->id();
@@ -110,7 +110,7 @@ final class DocumentType extends AbstractType implements DatabaseTypeInterface, 
         /** @var Media $media */
         $media = $this->value();
         if (empty($media) || !($media instanceof Media)) {
-            return "";
+            return '';
         }
 
         return $this->uri->imageUrl($media, $imageDefinition);
