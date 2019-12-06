@@ -32,6 +32,7 @@ $media->setAudioWhitelist([
     'audio/basic',
     'audio/mid',
     'audio/mp3',
+    'audio/mpeg',
 ]);
 
 $media->setDocumentWhitelist([

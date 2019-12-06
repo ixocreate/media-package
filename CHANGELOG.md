@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.14...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.17...develop)
+
+## [v0.4.17 (2019-12-06)](https://github.com/ixocreate/media-package/compare/0.4.16...0.4.17)
+### Added
+- Include`audio/mpeg` in audio whitelist
 
 ## [v0.4.16 (2019-11-21)](https://github.com/ixocreate/media-package/compare/0.4.15...0.4.16)
 ### Fixed
