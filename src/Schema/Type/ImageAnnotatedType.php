@@ -130,7 +130,7 @@ final class ImageAnnotatedType extends AbstractType implements DatabaseTypeInter
             return '';
         }
 
-        return (string)$this->value()->id();
+        return (string)$this->value()['media']->id();
     }
 
     /**
