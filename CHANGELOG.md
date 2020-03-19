@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.18...develop)
+## [Unreleased](https://github.com/ixocreate/media-package/compare/0.4.19...develop)
+
+## [v0.4.19 (2020-03-19)](https://github.com/ixocreate/media-package/compare/0.4.18...0.4.19)
+### Fixed
+- fix typo in variable name
 
 ## [v0.4.18 (2020-01-30)](https://github.com/ixocreate/media-package/compare/0.4.17...0.4.18)
 ### Fixed

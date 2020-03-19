@@ -156,7 +156,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     {
         if (!empty($imageDefinitionServiceName)) {
             $mediaDefinitionInfos = $this->imageDefinitionInfos();
-            $mediaDefinitionInfo = $imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
+            $mediaDefinitionInfo = $mediaDefinitionInfos[$imageDefinitionServiceName] ?? null;
             return $mediaDefinitionInfo ? $mediaDefinitionInfo->width() : null;
         }
         return $this->value()->metaData()['width'];
@@ -170,7 +170,7 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
     {
         if (!empty($imageDefinitionServiceName)) {
             $mediaDefinitionInfos = $this->imageDefinitionInfos();
-            $mediaDefinitionInfo = $imageDefinitionInfos[$imageDefinitionServiceName] ?? null;
+            $mediaDefinitionInfo = $mediaDefinitionInfos[$imageDefinitionServiceName] ?? null;
             return $mediaDefinitionInfo ? $mediaDefinitionInfo->height() : null;
         }
         return $this->value()->metaData()['height'];
