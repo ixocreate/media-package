@@ -25,7 +25,7 @@ class MediaPackageConfigTest extends TestCase
      */
     private $mediaConfigurator;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mediaConfigurator = new MediaConfigurator();
         $this->mediaConfigurator->setGlobalWhitelist(['farBoo']);

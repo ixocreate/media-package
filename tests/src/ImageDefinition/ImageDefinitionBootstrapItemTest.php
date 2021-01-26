@@ -20,7 +20,7 @@ class ImageDefinitionBootstrapItemTest extends TestCase
      */
     private $imageDefinitionBootstrapItem;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->imageDefinitionBootstrapItem = new ImageDefinitionBootstrapItem();
     }

@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Test\Media\Config\Factory;
 
 use Ixocreate\Application\Service\ServiceManagerConfig;
-use Ixocreate\Application\Service\ServiceManagerConfigurator;
+use Ixocreate\Application\ServiceManager\ServiceManagerConfigurator;
 use Ixocreate\Application\Uri\ApplicationUri;
 use Ixocreate\Application\Uri\ApplicationUriConfigurator;
 use Ixocreate\Media\Config\Factory\MediaConfigFactory;
@@ -29,7 +29,7 @@ class MediaConfigFactoryTest extends TestCase
      */
     private $serviceManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $serviceManagerConfigurator = new ServiceManagerConfigurator();
 

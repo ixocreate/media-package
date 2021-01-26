@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Handler;
 
-use Ixocreate\ServiceManager\SubManager\SubManager;
+use Ixocreate\ServiceManager\SubManager\AbstractSubManager;
 
-final class MediaHandlerSubManager extends SubManager
+final class MediaHandlerSubManager extends AbstractSubManager
 {
 }

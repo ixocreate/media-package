@@ -43,7 +43,7 @@ final class MediaProvider implements ClientConfigProviderInterface
 
         $result = [];
 
-        foreach ($this->imageDefinitionSubManager->getServices() as $serviceName) {
+        foreach ($this->imageDefinitionSubManager->services() as $serviceName) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($serviceName);
 

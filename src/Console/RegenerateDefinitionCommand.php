@@ -197,7 +197,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
      */
     private function runAll(OutputInterface $output, SymfonyStyle $style)
     {
-        foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
+        foreach ($this->imageDefinitionSubManager->services() as $imageDefinitionClassName) {
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
             $this->processImages($imageDefinition, $output, $style);
@@ -231,7 +231,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     private function runChanged(OutputInterface $output, SymfonyStyle $style)
     {
         $changedDefinitions = [];
-        foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
+        foreach ($this->imageDefinitionSubManager->services() as $imageDefinitionClassName) {
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
             if ($this->checkDefinitionChanges($imageDefinition)) {
@@ -309,9 +309,8 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
      * Returns "false" if no changes have been made
      *
      * @param ImageDefinitionInterface $imageDefinition
-     * @return bool
      */
-    private function handleDefinitionChanges(ImageDefinitionInterface $imageDefinition): bool
+    private function handleDefinitionChanges(ImageDefinitionInterface $imageDefinition): void
     {
         $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
 
@@ -320,7 +319,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         $json['mode'] = $imageDefinition->mode();
         $json['upscale'] = $imageDefinition->upscale();
 
-        return $this->filesystem->put($jsonFile, \json_encode($json));
+        $this->filesystem->write($jsonFile, \json_encode($json));
     }
 
     /**

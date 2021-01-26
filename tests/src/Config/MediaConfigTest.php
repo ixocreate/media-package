@@ -24,7 +24,7 @@ class MediaConfigTest extends TestCase
      */
     private $mediaConfig;
 
-    public function setUp()
+    public function setUp(): void
     {
         $mediaConfigurator = new MediaConfigurator();
 

@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\Handler;
 
+use Ixocreate\Application\ServiceManager\NamedServiceInterface;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\MediaInterface;
-use Ixocreate\ServiceManager\NamedServiceInterface;
 
 interface MediaHandlerInterface extends NamedServiceInterface
 {

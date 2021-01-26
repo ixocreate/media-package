@@ -100,7 +100,7 @@ final class DetailAction implements MiddlewareInterface
         $width = $media->metaData()['width'];
         $height = $media->metaData()['height'];
 
-        foreach ($this->imageDefinitionSubManager->getServices() as $key => $name) {
+        foreach ($this->imageDefinitionSubManager->services() as $key => $name) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($name);
             $validSize = $this->checkValidSize($imageDefinition, $width, $height);

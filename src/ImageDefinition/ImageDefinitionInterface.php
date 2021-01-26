@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\ImageDefinition;
 
-use Ixocreate\ServiceManager\NamedServiceInterface;
+use Ixocreate\Application\ServiceManager\NamedServiceInterface;
 
 interface ImageDefinitionInterface extends NamedServiceInterface
 {

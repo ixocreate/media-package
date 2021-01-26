@@ -29,7 +29,7 @@ class MediaLinkTest extends TestCase
 
     private $media;
 
-    public function setUp()
+    public function setUp(): void
     {
         (new TypeMockHelper($this, [
             UuidType::class => new UuidType(),

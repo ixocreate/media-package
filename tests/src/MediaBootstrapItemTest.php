@@ -20,7 +20,7 @@ class MediaBootstrapItemTest extends TestCase
      */
     private $mediaBootstrapItem;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mediaBootstrapItem = new MediaBootstrapItem();
     }

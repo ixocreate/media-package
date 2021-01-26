@@ -11,7 +11,7 @@ namespace Ixocreate\Test\Media\Admin\Config\Client\Provider;
 
 use Ixocreate\Admin\UserInterface;
 use Ixocreate\Application\Service\ServiceManagerConfig;
-use Ixocreate\Application\Service\ServiceManagerConfigurator;
+use Ixocreate\Application\ServiceManager\ServiceManagerConfigurator;
 use Ixocreate\Media\Admin\Config\Client\Provider\MediaProvider;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
@@ -32,7 +32,7 @@ class MediaProviderTest extends TestCase
      */
     private $mediaProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $imageDefinitionConfigurator = new ServiceManagerConfigurator();
         $imageDefinitionConfigurator->addFactory(ImageDefinitionMock::class);

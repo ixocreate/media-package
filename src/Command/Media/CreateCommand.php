@@ -236,7 +236,7 @@ class CreateCommand extends AbstractCommand
     private function createDir(string $mediaPath): string
     {
         do {
-            $basePath = \implode('/', \str_split(\bin2hex(\random_bytes(3)), 2)) . '/';
+            $basePath = \implode('/', \mb_str_split(\bin2hex(\random_bytes(3)), 2)) . '/';
             $exists = $this->filesystem->has($mediaPath . $basePath);
             if (\mb_strpos($basePath, 'ad') !== false) {
                 $exists = false;

@@ -12,7 +12,7 @@ namespace Ixocreate\Media;
 use Ixocreate\Application\Configurator\ConfiguratorInterface;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Media\Config\MediaPackageConfig;
-use Zend\Diactoros\Uri;
+use Laminas\Diactoros\Uri;
 
 class MediaConfigurator implements ConfiguratorInterface
 {

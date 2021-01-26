@@ -17,12 +17,12 @@ use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Repository\MediaRepository;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 final class StreamAction implements MiddlewareInterface
 {

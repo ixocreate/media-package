@@ -15,11 +15,11 @@ use Ixocreate\Admin\Response\ApiSuccessResponse;
 use Ixocreate\CommandBus\CommandBus;
 use Ixocreate\Media\Command\Media\CreateCommand;
 use Ixocreate\Media\CreateHandler\UploadHandler;
+use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\UploadedFile;
 
 final class UploadAction implements MiddlewareInterface
 {

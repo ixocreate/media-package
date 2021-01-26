@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media;
 
-use Ixocreate\Application\Service\ServiceManagerConfigurator;
+use Ixocreate\Application\ServiceManager\ServiceManagerConfigurator;
 use Ixocreate\Media\Config\Factory\MediaConfigFactory;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;

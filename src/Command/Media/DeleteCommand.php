@@ -74,7 +74,7 @@ class DeleteCommand extends AbstractCommand
         /**
          * move output files from mediaHandlers as well
          */
-        foreach ($this->mediaHandlerSubManager->getServices() as $key => $mediaHandlerClassName) {
+        foreach ($this->mediaHandlerSubManager->services() as $key => $mediaHandlerClassName) {
             /** @var MediaHandlerInterface $handler */
             $handler = $this->mediaHandlerSubManager->get($mediaHandlerClassName);
 

@@ -197,7 +197,7 @@ class UpdateCommand extends AbstractCommand
     private function renameFiles(MediaInterface $media, string $newFilename, array $fileInfo): MediaInterface
     {
         $mediaPath = $media->publicStatus() ? MediaPaths::PUBLIC_PATH : MediaPaths::PRIVATE_PATH;
-        foreach ($this->mediaHandlerSubManager->getServices() as $mediaHandlerClassName) {
+        foreach ($this->mediaHandlerSubManager->services() as $mediaHandlerClassName) {
             /** @var MediaHandlerInterface $mediaHandler */
             $mediaHandler = $this->mediaHandlerSubManager->get($mediaHandlerClassName);
             if ($mediaHandler->isResponsible($media)) {
@@ -236,7 +236,7 @@ class UpdateCommand extends AbstractCommand
         /**
          * move output files from mediaHandlers as well
          */
-        foreach ($this->mediaHandlerSubManager->getServices() as $mediaHandlerClassName) {
+        foreach ($this->mediaHandlerSubManager->services() as $mediaHandlerClassName) {
             /** @var MediaHandlerInterface $mediaHandler */
             $mediaHandler = $this->mediaHandlerSubManager->get($mediaHandlerClassName);
 

@@ -45,7 +45,7 @@ final class DisplayImageDefinition extends Command implements CommandInterface
     {
         $rows = [];
 
-        foreach ($this->imageDefinitionSubManager->getServices() as $service) {
+        foreach ($this->imageDefinitionSubManager->services() as $service) {
             /** @var ImageDefinitionInterface $service */
             $service = $this->imageDefinitionSubManager->get($service);
 

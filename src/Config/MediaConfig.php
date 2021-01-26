@@ -12,8 +12,8 @@ namespace Ixocreate\Media\Config;
 use Ixocreate\Application\Uri\ApplicationUri;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Exception\InvalidExtensionException;
+use Laminas\Diactoros\Uri;
 use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\Uri;
 
 final class MediaConfig
 {

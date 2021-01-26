@@ -12,7 +12,7 @@ namespace Ixocreate\Media\ImageDefinition;
 use Ixocreate\Application\Configurator\ConfiguratorInterface;
 use Ixocreate\Application\Service\AbstractServiceManagerConfigurator;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
-use Ixocreate\Application\Service\SubManagerConfigurator;
+use Ixocreate\Application\ServiceManager\SubManagerConfigurator;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;
 
 final class ImageDefinitionConfigurator implements ConfiguratorInterface

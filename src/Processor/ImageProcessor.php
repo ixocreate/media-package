@@ -113,7 +113,7 @@ final class ImageProcessor
 
         $file = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
 
-        $put = $this->filesystem->put(
+        $put = $this->filesystem->write(
             $file,
             (string) $image->encode(\pathinfo($file, PATHINFO_EXTENSION))
         );

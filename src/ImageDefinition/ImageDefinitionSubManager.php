@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Media\ImageDefinition;
 
-use Ixocreate\ServiceManager\SubManager\SubManager;
+use Ixocreate\ServiceManager\SubManager\AbstractSubManager;
 
-final class ImageDefinitionSubManager extends SubManager
+final class ImageDefinitionSubManager extends AbstractSubManager
 {
 }

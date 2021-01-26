@@ -25,7 +25,7 @@ class ImageDefinitionConfiguratorTest extends TestCase
      */
     private $imageDefinitionConfigurator;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->imageDefinitionConfigurator = new ImageDefinitionConfigurator();
     }

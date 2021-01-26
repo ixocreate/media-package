@@ -162,7 +162,7 @@ final class ImageHandler implements MediaHandlerInterface
                 $pids = [];
                 $this->connection->close();
 
-                foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
+                foreach ($this->imageDefinitionSubManager->services() as $imageDefinitionClassName) {
                     /** @var ImageDefinitionInterface $imageDefinition */
                     $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
@@ -185,7 +185,7 @@ final class ImageHandler implements MediaHandlerInterface
 
                 $this->connection->connect();
             } else {
-                foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
+                foreach ($this->imageDefinitionSubManager->services() as $imageDefinitionClassName) {
                     /** @var ImageDefinitionInterface $imageDefinition */
                     $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
                     $this->generate($imageDefinition, $filesystem);
@@ -241,7 +241,7 @@ final class ImageHandler implements MediaHandlerInterface
     public function directories(): array
     {
         $directories = [];
-        foreach ($this->imageDefinitionSubManager->getServices() as $imageDefinitionClassName) {
+        foreach ($this->imageDefinitionSubManager->services() as $imageDefinitionClassName) {
             /** @var ImageDefinitionInterface $imageDefinition */
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
