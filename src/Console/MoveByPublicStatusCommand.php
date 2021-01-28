@@ -66,6 +66,8 @@ final class MoveByPublicStatusCommand extends Command implements CommandInterfac
             $command = $command->withPublicStatus($mediaFile->publicStatus());
             $this->commandBus->dispatch($command);
         }
+
+        return 0;
     }
 
     /**

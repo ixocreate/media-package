@@ -66,6 +66,8 @@ final class DisplayImageDefinition extends Command implements CommandInterface
             ->setHeaders(['Name', 'Width', 'Height', 'Mode', 'Upscale', 'directory'])
             ->setRows($rows);
         $table->render();
+
+        return 0;
     }
 
     /**

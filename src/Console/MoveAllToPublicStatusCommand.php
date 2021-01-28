@@ -66,6 +66,8 @@ final class MoveAllToPublicStatusCommand extends Command implements CommandInter
             $command = $command->withPublicStatus(true);
             $this->commandBus->dispatch($command);
         }
+
+        return 0;
     }
 
     /**

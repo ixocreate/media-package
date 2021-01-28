@@ -171,7 +171,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
             $inputName = \mb_strtolower($inputName);
 
             $this->runSpecific($inputName, $output, $style);
-            return;
+            return 0;
         }
 
         if ($input->getOption('changed') && $input->getOption('all')) {
@@ -182,10 +182,12 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         // In Case all Definitions should be checked
         if ($input->getOption('all')) {
             $this->runAll($output, $style);
-            return;
+            return 0;
         }
 
         $this->runChanged($output, $style);
+
+        return 0;
     }
 
     /**
