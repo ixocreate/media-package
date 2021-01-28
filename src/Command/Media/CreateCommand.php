@@ -182,7 +182,7 @@ class CreateCommand extends AbstractCommand
 
         $media = $this->mediaRepository->save($media);
 
-        foreach ($this->mediaHandlerSubManager->getServiceManagerConfig()->getNamedServices() as $name => $mediaHandlerClassName) {
+        foreach ($this->mediaHandlerSubManager->serviceManagerConfig()->getNamedServices() as $name => $mediaHandlerClassName) {
             /** @var MediaHandlerInterface $$handler */
             $handler = $this->mediaHandlerSubManager->get($mediaHandlerClassName);
             if (!$handler->isResponsible($media)) {
