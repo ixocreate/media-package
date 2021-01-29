@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 use Ixocreate\Schema\Type\DateTimeType;
 use Ixocreate\Schema\Type\UuidType;
@@ -22,16 +22,17 @@ final class Version20180918092733 extends AbstractMigration
         $table = $schema->createTable('media_media_crop');
         $table->addColumn('id', UuidType::serviceName());
         $table->addColumn('mediaId', UuidType::serviceName());
-        $table->addColumn('imageDefinition', Type::STRING);
-        $table->addColumn('cropParameters', Type::JSON);
+        $table->addColumn('imageDefinition', Types::STRING);
+        $table->addColumn('cropParameters', Types::JSON);
         $table->addColumn('createdAt', DateTimeType::serviceName());
         $table->addColumn('updatedAt', DateTimeType::serviceName());
+
         $table->setPrimaryKey(['id']);
         $table->addForeignKeyConstraint('media_media', ['mediaId'], ['id'], ['onDelete' => 'CASCADE']);
     }
 
     public function down(Schema $schema): void
     {
-        $schema->dropTable("media_media_crop");
+        $schema->dropTable('media_media_crop');
     }
 }
