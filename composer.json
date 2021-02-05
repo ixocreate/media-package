@@ -33,7 +33,7 @@
         "ext-gd": ">=2.0",
         "ext-imagick": "*",
         "ixocreate/coding-standard": "^2.0",
-        "ixocreate/test": "^0.1"
+        "ixocreate/test": "^0.2"
     },
     "autoload": {
         "psr-4": {

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Ixocreate\Test\Media\Config\Factory;
 
-use Ixocreate\Application\Service\ServiceManagerConfig;
+use Ixocreate\Application\ServiceManager\ServiceManagerConfig;
 use Ixocreate\Application\ServiceManager\ServiceManagerConfigurator;
 use Ixocreate\Application\Uri\ApplicationUri;
 use Ixocreate\Application\Uri\ApplicationUriConfigurator;

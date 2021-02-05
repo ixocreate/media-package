@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Media\ImageDefinition;
 
 use Ixocreate\Application\Configurator\ConfiguratorInterface;
-use Ixocreate\Application\Service\AbstractServiceManagerConfigurator;
+use Ixocreate\Application\ServiceManager\AbstractServiceManagerConfigurator;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
 use Ixocreate\Application\ServiceManager\SubManagerConfigurator;
 use Ixocreate\ServiceManager\Factory\AutowireFactory;

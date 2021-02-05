@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace Ixocreate\Test\Media\ImageDefinition;
 
-use Ixocreate\Application\Service\AbstractServiceManagerConfigurator;
-use Ixocreate\Application\Service\ServiceManagerConfig;
+use Ixocreate\Application\ServiceManager\AbstractServiceManagerConfigurator;
+use Ixocreate\Application\ServiceManager\ServiceManagerConfig;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Application\ServiceManager\SubManagerConfig;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionConfigurator;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
@@ -40,9 +41,11 @@ class ImageDefinitionConfiguratorTest extends TestCase
         $this->imageDefinitionConfigurator->addDirectory('/foo', true);
         $configurator = $this->imageDefinitionConfigurator->getManagerConfigurator();
 
-        $this->assertSame('/foo', $configurator->getDirectories()[0]['dir']);
-        $this->assertSame(true, $configurator->getDirectories()[0]['recursive']);
-        $this->assertSame(ImageDefinitionInterface::class, $configurator->getDirectories()[0]['only'][0]);
+        $directories = $configurator->getDirectories();
+        $this->assertArrayHasKey('/foo/', $directories);
+        $this->assertSame('/foo/', $directories['/foo/']['dir']);
+        $this->assertSame(true, $directories['/foo/']['recursive']);
+        $this->assertSame(ImageDefinitionInterface::class, $directories['/foo/']['only'][0]);
     }
 
     public function testAddImageDefinition()
@@ -63,6 +66,6 @@ class ImageDefinitionConfiguratorTest extends TestCase
         $this->imageDefinitionConfigurator->registerService($serviceRegistry);
 
         $this->assertArrayHasKey(ImageDefinitionSubManager::class . '::Config', $collector);
-        $this->assertInstanceOf(ServiceManagerConfig::class, $collector[ImageDefinitionSubManager::class . '::Config']);
+        $this->assertInstanceOf(SubManagerConfig::class, $collector[ImageDefinitionSubManager::class . '::Config']);
     }
 }

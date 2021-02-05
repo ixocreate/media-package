@@ -13,4 +13,8 @@ use Ixocreate\ServiceManager\SubManager\AbstractSubManager;
 
 final class ImageDefinitionSubManager extends AbstractSubManager
 {
+    public static function validation(): ?string
+    {
+        return ImageDefinitionInterface::class;
+    }
 }

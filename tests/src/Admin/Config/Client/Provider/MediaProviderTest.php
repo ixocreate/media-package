@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Test\Media\Admin\Config\Client\Provider;
 
 use Ixocreate\Admin\UserInterface;
-use Ixocreate\Application\Service\ServiceManagerConfig;
+use Ixocreate\Application\ServiceManager\ServiceManagerConfig;
 use Ixocreate\Application\ServiceManager\ServiceManagerConfigurator;
 use Ixocreate\Media\Admin\Config\Client\Provider\MediaProvider;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
@@ -39,8 +39,7 @@ class MediaProviderTest extends TestCase
 
         $this->imageDefinitionSubManager = new ImageDefinitionSubManager(
             new ServiceManager(new ServiceManagerConfig(new ServiceManagerConfigurator()), new ServiceManagerSetup()),
-            new ServiceManagerConfig($imageDefinitionConfigurator),
-            ImageDefinitionInterface::class
+            new ServiceManagerConfig($imageDefinitionConfigurator)
         );
 
         $this->mediaProvider = new MediaProvider($this->imageDefinitionSubManager);
