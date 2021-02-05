@@ -9,9 +9,8 @@ declare(strict_types=1);
 
 namespace Ixocreate\Test\Media\ImageDefinition;
 
-use Ixocreate\Application\ServiceManager\AbstractServiceManagerConfigurator;
-use Ixocreate\Application\ServiceManager\ServiceManagerConfig;
 use Ixocreate\Application\Service\ServiceRegistryInterface;
+use Ixocreate\Application\ServiceManager\AbstractServiceManagerConfigurator;
 use Ixocreate\Application\ServiceManager\SubManagerConfig;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionConfigurator;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;

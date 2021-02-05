@@ -13,7 +13,6 @@ use Ixocreate\Admin\UserInterface;
 use Ixocreate\Application\ServiceManager\ServiceManagerConfig;
 use Ixocreate\Application\ServiceManager\ServiceManagerConfigurator;
 use Ixocreate\Media\Admin\Config\Client\Provider\MediaProvider;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Misc\Media\ImageDefinitionMock;
 use Ixocreate\ServiceManager\ServiceManager;
