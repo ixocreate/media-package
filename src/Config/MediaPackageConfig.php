@@ -76,6 +76,7 @@ class MediaPackageConfig implements SerializableServiceInterface
         $this->publicStatus = $mediaConfigurator->publicStatus();
         $this->uri = $mediaConfigurator->uri();
         $this->parallelImageProcessing = $mediaConfigurator->isParallelImageProcessing();
+        $this->generateWebP = $mediaConfigurator->generateWebP();
     }
 
     /**

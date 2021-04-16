@@ -122,7 +122,7 @@ final class ImageProcessor
                 (string)$image->encode($extension)
             );
             if ($this->mediaConfig->generateWebP()) {
-                $webpFile = \substr($file, 0, \strlen($extension) * -1) . 'webp';
+                $webpFile = \mb_substr($file, 0, \mb_strlen($extension) * -1) . 'webp';
                 $this->filesystem->write(
                     $webpFile,
                     (string)$image->encode('webp')

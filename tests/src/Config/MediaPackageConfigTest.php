@@ -106,6 +106,7 @@ class MediaPackageConfigTest extends TestCase
             'driver' => $this->mediaPackageConfig->driver(),
             'uri' => $this->mediaPackageConfig->uri(),
             'parallelImageProcessing' => $this->mediaPackageConfig->isParallelImageProcessing(),
+            'generateWebP' => $this->mediaPackageConfig->generateWebP(),
         ]);
 
         $this->assertSame($serialize, $this->mediaPackageConfig->serialize());
@@ -125,6 +126,7 @@ class MediaPackageConfigTest extends TestCase
             'driver' => $this->mediaPackageConfig->driver(),
             'uri' => $this->mediaPackageConfig->uri(),
             'parallelImageProcessing' => $this->mediaPackageConfig->isParallelImageProcessing(),
+            'generateWebP' => $this->mediaPackageConfig->generateWebP(),
         ]);
 
         $expected = \unserialize($serialize);
@@ -143,6 +145,7 @@ class MediaPackageConfigTest extends TestCase
             'driver' => $this->mediaPackageConfig->driver(),
             'uri' => $this->mediaPackageConfig->uri(),
             'parallelImageProcessing' => $this->mediaPackageConfig->isParallelImageProcessing(),
+            'generateWebP' => $this->mediaPackageConfig->generateWebP(),
         ];
 
         $this->assertSame($expected, $unserialize);

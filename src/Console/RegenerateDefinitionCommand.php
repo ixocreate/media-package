@@ -140,7 +140,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         $style = new SymfonyStyle($input, $output);
         $style->title('Regenerate Definition');
 
-        $limit = \str_ireplace(['G', 'M', 'K'], ['000000000', '000000', '000'], ini_get('memory_limit'));
+        $limit = \str_ireplace(['G', 'M', 'K'], ['000000000', '000000', '000'], \ini_get('memory_limit'));
         if ($limit < 256000000) {
             \ini_set('memory_limit', '256M');
             $style->info('Increase memory limit to 256M');
@@ -378,7 +378,6 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
 
                 $imageHandler = $this->imageHandler->withImageDefinition($imageDefinition);
                 $imageHandler->process($media, $this->filesystem);
-                //printf("x2; %.2f\n", memory_get_usage(true) / 1024 / 1024);
 
             } catch (\Throwable $e) {
                 $output->writeln('Unable to process media ' . $media->filename() . ' (' . $media->id() . ') - ' . $e->getMessage());
