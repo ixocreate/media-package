@@ -17,6 +17,7 @@ use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\MediaInterface;
+use League\Flysystem\FilesystemException;
 
 final class ImageProcessor
 {
@@ -112,15 +113,28 @@ final class ImageProcessor
         $this->checkMode($image, $this->imageParameters);
 
         $file = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
+        $extension = \pathinfo($file, PATHINFO_EXTENSION);
 
-        $put = $this->filesystem->write(
-            $file,
-            (string) $image->encode(\pathinfo($file, PATHINFO_EXTENSION))
-        );
+        $success = false;
+        try {
+            $this->filesystem->write(
+                $file,
+                (string)$image->encode($extension)
+            );
+            if ($this->mediaConfig->generateWebP()) {
+                $webpFile = \substr($file, 0, \strlen($extension) * -1) . 'webp';
+                $this->filesystem->write(
+                    $webpFile,
+                    (string)$image->encode('webp')
+                );
+            }
+            $success = true;
+        } catch (FilesystemException $e) {
+        }
 
         $image->destroy();
 
-        return $put;
+        return $success;
     }
 
     /**

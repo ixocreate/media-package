@@ -141,11 +141,18 @@ final class MediaConfig
         return $this->mediaPackageConfig->isParallelImageProcessing();
     }
 
+    /**
+     * @return bool
+     */
+    public function generateWebP(): bool
+    {
+        return $this->mediaPackageConfig->generateWebP();
+    }
+
     private function assertUri(): void
     {
         $uri = new Uri($this->mediaPackageConfig->uri());
         if (empty($uri->getHost())) {
-            /** @var Uri $projectUri */
             $projectUri = $this->projectUri;
 
             $uri = $uri->withPath(\rtrim($projectUri->getMainUri()->getPath(), '/') . '/' . \ltrim($uri->getPath(), '/'));

@@ -43,6 +43,11 @@ class MediaPackageConfig implements SerializableServiceInterface
     private $parallelImageProcessing;
 
     /**
+     * @var bool
+     */
+    private $generateWebP;
+
+    /**
      * MediaPackageConfig constructor.
      *
      * @param MediaConfigurator $mediaConfigurator
@@ -151,6 +156,14 @@ class MediaPackageConfig implements SerializableServiceInterface
     }
 
     /**
+     * @return bool
+     */
+    public function generateWebP(): bool
+    {
+        return $this->generateWebP;
+    }
+
+    /**
      * @return string
      */
     public function serialize()
@@ -161,6 +174,7 @@ class MediaPackageConfig implements SerializableServiceInterface
             'driver' => $this->driver,
             'uri' => $this->uri,
             'parallelImageProcessing' => $this->parallelImageProcessing,
+            'generateWebP' => $this->generateWebP,
         ]);
     }
 
@@ -175,5 +189,6 @@ class MediaPackageConfig implements SerializableServiceInterface
         $this->driver = $unserialized['driver'];
         $this->uri = $unserialized['uri'];
         $this->parallelImageProcessing = $unserialized['parallelImageProcessing'];
+        $this->generateWebP = $unserialized['generateWebP'];
     }
 }

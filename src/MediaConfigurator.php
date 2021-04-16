@@ -45,6 +45,11 @@ class MediaConfigurator implements ConfiguratorInterface
     private $parallelImageProcessing = false;
 
     /**
+     * @var bool
+     */
+    private $generateWebP = false;
+
+    /**
      * @return array
      */
     public function whitelist(): array
@@ -82,6 +87,14 @@ class MediaConfigurator implements ConfiguratorInterface
     public function isParallelImageProcessing(): bool
     {
         return $this->parallelImageProcessing;
+    }
+
+    /**
+     * @return bool
+     */
+    public function generateWebP(): bool
+    {
+        return $this->generateWebP;
     }
 
     /**
@@ -160,6 +173,14 @@ class MediaConfigurator implements ConfiguratorInterface
     public function setParallelImageProcessing(bool $parallelImageProcessing)
     {
         $this->parallelImageProcessing = $parallelImageProcessing;
+    }
+
+    /**
+     * @param bool $generateWebP
+     */
+    public function setGenerateWebP(bool $generateWebP)
+    {
+        $this->generateWebP = $generateWebP;
     }
 
     public function registerService(ServiceRegistryInterface $serviceRegistry): void
