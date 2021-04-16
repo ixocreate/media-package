@@ -103,7 +103,13 @@ class MediaType extends AbstractType implements DatabaseTypeInterface, ElementPr
     {
         if ($this->mediaInfo === false) {
             /** @var MediaInfo $mediaInfo */
-            $mediaInfo = $this->cacheManager->fetch($this->mediaCacheable->withMediaId($this->mediaId));
+            if ($this->value !== null) {
+                $cacheable = $this->mediaCacheable->withMedia($this->value);
+            } else {
+                $cacheable = $this->mediaCacheable->withMediaId($this->mediaId);
+            }
+
+            $mediaInfo = $this->cacheManager->fetch($cacheable);
             $this->mediaInfo = $mediaInfo;
         }
 

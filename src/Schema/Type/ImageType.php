@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Ixocreate\Media\Schema\Type;
 
 use Doctrine\DBAL\Types\GuidType;
-use Ixocreate\Collection\Collection;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
@@ -89,9 +88,6 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
 
         if (!empty($mediaType->value()) && \in_array($mediaType->value()->mimeType(), $this->mediaConfig->imageWhitelist())) {
             $type->mediaType = $mediaType;
-
-            $type->imageDefinitionInfos = (new Collection($this->mediaDefinitionInfoRepository
-                ->findBy(['mediaId' => $mediaType->value()->id()]), 'imageDefinition'))->toArray();
         }
 
         return $type;
@@ -212,8 +208,10 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
 
     private function imageDefinitionInfos(): array
     {
-        if ($this->imageDefinitionInfos === false) {
-            $this->imageDefinitionInfos = $this->mediaType->mediaInfo()->definitionInfos();
+        if ($this->mediaType !== null && $this->imageDefinitionInfos === false) {
+            if ($this->imageDefinitionInfos === false) {
+                $this->imageDefinitionInfos = $this->mediaType->mediaInfo()->definitionInfos();
+            }
         }
 
         return $this->imageDefinitionInfos;

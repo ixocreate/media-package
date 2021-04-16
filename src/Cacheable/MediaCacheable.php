@@ -20,6 +20,9 @@ final class MediaCacheable implements CacheableInterface
 {
     private $mediaId;
 
+    /** @var Media */
+    private $media;
+
     /**
      * @var MediaRepository
      */
@@ -56,6 +59,19 @@ final class MediaCacheable implements CacheableInterface
     }
 
     /**
+     * @param Media $media
+     * @return MediaCacheable
+     */
+    public function withMedia(Media $media): MediaCacheable
+    {
+        $cacheable = clone $this;
+        $cacheable->media = $media;
+        $cacheable->mediaId = $media->id();
+
+        return $cacheable;
+    }
+
+    /**
      * @return mixed
      */
     public function uncachedResult()
@@ -64,8 +80,9 @@ final class MediaCacheable implements CacheableInterface
             throw new InvalidArgumentException('mediaId is empty');
         }
 
-        /** @var Media $media */
-        $media = $this->mediaRepository->find($this->mediaId);
+        if ($this->media === null) {
+            $this->media = $this->mediaRepository->find($this->mediaId);
+        }
 
         $mediaDefinitions = $this->mediaDefinitionInfoRepository->findBy([
             'mediaId' => $this->mediaId,
@@ -75,7 +92,7 @@ final class MediaCacheable implements CacheableInterface
             $definitionInfos[$mediaDefinition->imageDefinition] = $mediaDefinition;
         }
 
-        return new MediaInfo($media, $definitionInfos);
+        return new MediaInfo($this->media, $definitionInfos);
     }
 
     /**
