@@ -18,28 +18,16 @@ use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
-use Ixocreate\Media\ImageDefinition\ImageDefinitionSubManager;
 use Ixocreate\Media\MediaInterface;
 use Ixocreate\Media\Processor\EditorProcessor;
 use Ixocreate\Media\Repository\MediaDefinitionInfoRepository;
-use Ixocreate\Media\Repository\MediaRepository;
 
 final class EditorCommand extends AbstractCommand
 {
     /**
-     * @var MediaRepository
-     */
-    private $mediaRepository;
-
-    /**
      * @var MediaConfig
      */
     private $mediaConfig;
-
-    /**
-     * @var ImageDefinitionSubManager
-     */
-    private $imageDefinitionSubManager;
 
     /**
      * @var MediaDefinitionInfoRepository
@@ -83,26 +71,20 @@ final class EditorCommand extends AbstractCommand
 
     /**
      * EditorCommand constructor.
-     * @param MediaRepository $mediaRepository
      * @param MediaConfig $mediaConfig
-     * @param ImageDefinitionSubManager $imageDefinitionSubManager
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      * @param CacheManager $cacheManager
      * @param UrlVariantCacheable $urlVariantCacheable
      * @param MediaCacheable $mediaCacheable
      */
     public function __construct(
-        MediaRepository $mediaRepository,
         MediaConfig $mediaConfig,
-        ImageDefinitionSubManager $imageDefinitionSubManager,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         CacheManager $cacheManager,
         UrlVariantCacheable $urlVariantCacheable,
         MediaCacheable $mediaCacheable
     ) {
-        $this->mediaRepository = $mediaRepository;
         $this->mediaConfig = $mediaConfig;
-        $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
         $this->cacheManager = $cacheManager;
         $this->urlVariantCacheable = $urlVariantCacheable;
@@ -154,7 +136,7 @@ final class EditorCommand extends AbstractCommand
     }
 
     /**
-     * @throws \League\Flysystem\FileNotFoundException
+     * @throws \League\Flysystem\FilesystemException
      * @throws \Psr\Cache\InvalidArgumentException
      * @return bool
      */

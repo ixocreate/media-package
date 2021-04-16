@@ -88,7 +88,7 @@ final class EditorProcessor
     }
 
     /**
-     * @throws \League\Flysystem\FileNotFoundException
+     * @throws \League\Flysystem\FilesystemException
      */
     public function process()
     {
@@ -110,6 +110,8 @@ final class EditorProcessor
             $this->filesystem,
             $image
         ))->process();
+
+        $image->destroy();
     }
 
     /**

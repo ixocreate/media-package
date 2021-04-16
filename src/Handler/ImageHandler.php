@@ -227,11 +227,13 @@ final class ImageHandler implements MediaHandlerInterface
                     'createdAt' => new \DateTimeImmutable(),
                     'updatedAt' => new \DateTimeImmutable(),
                 ]);
-                $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
             } else {
+                $mediaDefinitionInfo = $mediaDefinitionInfo->with('width', $imageData[0]);
+                $mediaDefinitionInfo = $mediaDefinitionInfo->with('height', $imageData[1]);
+                $mediaDefinitionInfo = $mediaDefinitionInfo->with('fileSize', $fileSize);
                 $mediaDefinitionInfo = $mediaDefinitionInfo->with('updatedAt', new \DateTimeImmutable());
-                $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
             }
+            $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
         }
     }
 

@@ -125,7 +125,7 @@ final class MediaUri
     public function generateImageUrl(string $basePath, string $filename, string $imageDefinition = null, string $suffix = null): string
     {
         if ($imageDefinition === null) {
-            return $this->generateUrl($basePath, $filename);
+            return $this->packages->getUrl($basePath . $filename);
         }
 
         if ($suffix) {
