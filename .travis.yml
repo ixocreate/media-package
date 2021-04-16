@@ -14,7 +14,7 @@ cache:
 install:
   - pear config-set preferred_state beta
   - pecl channel-update pecl.php.net
-  - if [ $TRAVIS_PHP_VERSION -ne '8.0' ]; yes | pecl install imagick fi
+  - if [ $TRAVIS_PHP_VERSION -ne '8.0' ]; then yes | pecl install imagick; fi
   - composer install --prefer-dist --no-interaction
 
 script:
