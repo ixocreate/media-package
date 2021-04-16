@@ -11,19 +11,17 @@
             "role": "Developer"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
         "php": "^7.2 || ^8.0",
         "ext-fileinfo": "*",
         "cocur/slugify": "^4.0",
         "firebase/php-jwt": "^5.0",
         "intervention/image": "^2.4.1",
-        "ixocreate/admin-package": "dev-develop",
-        "ixocreate/application": "dev-develop",
-        "ixocreate/cache-package": "dev-develop",
+        "ixocreate/admin-package": "^0.4.0",
+        "ixocreate/application": "^0.3.0",
+        "ixocreate/cache-package": "^0.2.0",
         "ixocreate/collection": "^0.2",
-        "ixocreate/filesystem-package": "dev-develop",
+        "ixocreate/filesystem-package": "^0.4.0",
         "symfony/asset": "^5.2"
     },
     "suggest": {
