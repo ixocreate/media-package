@@ -378,7 +378,6 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
 
                 $imageHandler = $this->imageHandler->withImageDefinition($imageDefinition);
                 $imageHandler->process($media, $this->filesystem);
-
             } catch (\Throwable $e) {
                 $output->writeln('Unable to process media ' . $media->filename() . ' (' . $media->id() . ') - ' . $e->getMessage());
                 \var_dump($e);
