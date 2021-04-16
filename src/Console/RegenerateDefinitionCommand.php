@@ -14,10 +14,8 @@ use Ixocreate\CommandBus\CommandBus;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Filesystem\FilesystemManager;
 use Ixocreate\Media\Command\Image\EditorCommand;
-use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
-use Ixocreate\Media\Entity\MediaDefinitionInfo;
 use Ixocreate\Media\Exception\InvalidConfigException;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
@@ -36,16 +34,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class RegenerateDefinitionCommand extends Command implements CommandInterface
 {
-    /**
-     * @var array
-     */
-    private $cropParameters = [];
-
-    /**
-     * @var MediaConfig
-     */
-    private $mediaConfig;
-
     /**
      * @var ImageHandler
      */
@@ -84,7 +72,6 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     /**
      * RegenerateDefinition constructor.
      *
-     * @param MediaConfig $mediaConfig
      * @param ImageHandler $imageHandler
      * @param FilesystemManager $filesystemManager
      * @param MediaRepository $mediaRepository
@@ -93,7 +80,6 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
      * @param CommandBus $commandBus
      */
     public function __construct(
-        MediaConfig $mediaConfig,
         ImageHandler $imageHandler,
         FilesystemManager $filesystemManager,
         MediaRepository $mediaRepository,
@@ -104,7 +90,6 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
         parent::__construct(self::getCommandName());
         $this->imageDefinitionSubManager = $imageDefinitionSubManager;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
-        $this->mediaConfig = $mediaConfig;
         $this->mediaRepository = $mediaRepository;
         $this->filesystemManager = $filesystemManager;
         $this->imageHandler = $imageHandler;
@@ -128,13 +113,12 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     {
         $this
             ->setDescription('Regenerates or generates ImageDefinition related files')
-            // TODO: Define useful Help Text
-            ->setHelp('Useful Help Text')
+            ->setHelp('After adding or changing an ImageDefinition use this command to update the files')
             ->setDefinition(
                 new InputDefinition([
                     new InputArgument('name', InputArgument::OPTIONAL, 'Name of specific ImageDefinition to be regenerated'),
                     new InputOption('all', 'a', null, 'All Definitions will be regenerated'),
-                    new InputOption('changed', 'c', null, 'Only files of changed ImageDefinitions will be regenerated'),
+                    new InputOption('changed', 'c', null, 'Only files of new or changed ImageDefinitions will be (re)generated'),
                 ])
             );
     }
@@ -155,6 +139,12 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
 
         $style = new SymfonyStyle($input, $output);
         $style->title('Regenerate Definition');
+
+        $limit = \str_ireplace(['G', 'M', 'K'], ['000000000', '000000', '000'], ini_get('memory_limit'));
+        if ($limit < 256000000) {
+            \ini_set('memory_limit', '256M');
+            $style->info('Increase memory limit to 256M');
+        }
 
         if (!$input->getOption('all') && !$input->getOption('changed') && !$input->getArgument('name')) {
             $style->error('Please enter a valid option or specify a valid ImageDefinition "name"');
@@ -185,7 +175,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
             return 0;
         }
 
-        $this->runChanged($output, $style);
+        $this->runNewOrChanged($output, $style);
 
         return 0;
     }
@@ -230,13 +220,13 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
      * @param SymfonyStyle $style
      * @throws \Exception
      */
-    private function runChanged(OutputInterface $output, SymfonyStyle $style)
+    private function runNewOrChanged(OutputInterface $output, SymfonyStyle $style)
     {
         $changedDefinitions = [];
         foreach ($this->imageDefinitionSubManager->services() as $imageDefinitionClassName) {
             $imageDefinition = $this->imageDefinitionSubManager->get($imageDefinitionClassName);
 
-            if ($this->checkDefinitionChanges($imageDefinition)) {
+            if ($this->checkDefinitionChanges($imageDefinition, true)) {
                 $changedDefinitions[] = $imageDefinition;
                 $style->writeln(\sprintf("change detected for '%s'", $imageDefinition));
             }
@@ -252,42 +242,16 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     }
 
     /**
-     * Checks if there is a existing .json File.
-     * If not a new one will be created with the ImageDefinition credentials.
-     *
-     * Returns "true" if a new .json File was created
-     * Returns "false" if there is a .json File already
-     *
-     * @param ImageDefinitionInterface $imageDefinition
-     * @return bool
-     */
-    private function checkJsonFile(ImageDefinitionInterface $imageDefinition): bool
-    {
-        $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
-
-        if (!$this->filesystem->has($jsonFile)) {
-            $json['serviceName'] = $imageDefinition::serviceName();
-            $json['width'] = $imageDefinition->width();
-            $json['height'] = $imageDefinition->height();
-            $json['mode'] = $imageDefinition->mode();
-            $json['upscale'] = $imageDefinition->upscale();
-            $json['directory'] = $imageDefinition->directory();
-            $this->filesystem->write($jsonFile, \json_encode($json));
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Checks if there are differences between the .json File and the corresponding ImageDefinition.
      *
      * Returns "true" if .json File is different to the ImageDefinition
      * Returns "false" if no differences occurred
      *
      * @param ImageDefinitionInterface $imageDefinition
+     * @param bool $missingFileIsChange
      * @return bool
      */
-    private function checkDefinitionChanges(ImageDefinitionInterface $imageDefinition): bool
+    private function checkDefinitionChanges(ImageDefinitionInterface $imageDefinition, bool $missingFileIsChange = false): bool
     {
         $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
 
@@ -302,50 +266,34 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
             ) {
                 return true;
             }
+            return false;
         }
-        return false;
+        return $missingFileIsChange;
     }
 
     /**
-     * Returns "true" if .json File was overwritten
-     * Returns "false" if no changes have been made
+     * Saves json file for an ImageDefinition
      *
      * @param ImageDefinitionInterface $imageDefinition
+     * @param bool $force
      */
-    private function handleDefinitionChanges(ImageDefinitionInterface $imageDefinition): void
+    private function writeJsonFile(ImageDefinitionInterface $imageDefinition, bool $force = false): bool
     {
         $jsonFile = MediaPaths::PUBLIC_PATH . MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition->directory() . '/' . $imageDefinition::serviceName() . '.json';
 
+        if ($this->filesystem->has($jsonFile) && !$force) {
+            return false;
+        }
+
+        $json['serviceName'] = $imageDefinition::serviceName();
         $json['width'] = $imageDefinition->width();
         $json['height'] = $imageDefinition->height();
         $json['mode'] = $imageDefinition->mode();
         $json['upscale'] = $imageDefinition->upscale();
+        $json['directory'] = $imageDefinition->directory();
+        $this->filesystem->write($jsonFile, \json_encode($json, JSON_PRETTY_PRINT));
 
-        $this->filesystem->write($jsonFile, \json_encode($json));
-    }
-
-    /**
-     * Checks if there are existing Crop Parameters and evaluates them. If the existing Parameters are valid, sets the class variable.
-     *
-     * @param ImageDefinitionInterface $imageDefinition
-     * @param Media $media
-     * @return void
-     */
-    private function checkDefinitionCropParameters(ImageDefinitionInterface $imageDefinition, Media $media)
-    {
-        try {
-            /** @var MediaDefinitionInfo $mediaDefinitionInfo */
-            $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()])[0];
-            if ($mediaDefinitionInfo->cropParameters() !== null) {
-                if ($this->evaluateExistingCropParameters($media, $imageDefinition, $mediaDefinitionInfo->cropParameters())) {
-                    $this->cropParameters = [
-                        $imageDefinition::serviceName() => $mediaDefinitionInfo->cropParameters(),
-                    ];
-                }
-            }
-        } catch (\Exception $exception) {
-            return;
-        }
+        return true;
     }
 
     /**
@@ -359,7 +307,7 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
      * @param array $cropParameters
      * @return bool
      */
-    private function evaluateExistingCropParameters(MediaInterface $media, ImageDefinitionInterface $imageDefinition, array $cropParameters)
+    private function evaluateExistingCropParameters(MediaInterface $media, ImageDefinitionInterface $imageDefinition, array $cropParameters): bool
     {
         $xLength = $cropParameters['x2'] - $cropParameters['x1'];
         $yLength = $cropParameters['y2'] - $cropParameters['y1'];
@@ -395,6 +343,11 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
     {
         $medias = $this->mediaRepository->findAll();
 
+        $definitionHasChanges = $this->checkDefinitionChanges($imageDefinition);
+        if ($this->writeJsonFile($imageDefinition, $definitionHasChanges)) {
+            $style->writeln('Created or updated .json file for ImageDefinition: ' . $imageDefinition::serviceName());
+        }
+
         $progressBar = $this->customProgressBar($output, $imageDefinition, \count($medias));
 
         $progressBar->start();
@@ -404,39 +357,32 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
                 continue;
             }
 
+            if ((string)$media->id() !== 'a3ad9c72-4f01-4132-9838-640aa3ced5d9') {
+                continue;
+            }
+
             try {
-                if ($this->checkJsonFile($imageDefinition)) {
-                    $style->writeln('Created .json File for ImageDefinition: ' . $imageDefinition::serviceName());
-                }
-                // If checkDefinitionChanges() returns true, evaluate existing editor generated crops
-                if ($this->checkDefinitionChanges($imageDefinition)) {
-                    $style->writeln('Changes have been made in ImageDefinition: ' . $imageDefinition::serviceName());
-                    $this->handleDefinitionChanges($imageDefinition);
-                    $style->writeln('Overwrite .json File');
-                    $this->checkDefinitionCropParameters($imageDefinition, $media);
-                }
+                // Check if there is already and Entry with MediaId + ImageDefinition
+                $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
 
-
-                if (\array_key_exists($imageDefinition::serviceName(), $this->cropParameters)) {
-                    $this->editorCommand($media, $imageDefinition, $this->cropParameters);
-                }
-
-                if (!\array_key_exists($imageDefinition::serviceName(), $this->cropParameters)) {
-                    // Check if there is already and Entry with MediaId + ImageDefinition
-                    $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
-
-                    if (!empty($mediaDefinitionInfo && $mediaDefinitionInfo->cropParameters() !== null)) {
+                if (!empty($mediaDefinitionInfo && $mediaDefinitionInfo->cropParameters() !== null)) {
+                    // If checkDefinitionChanges() returns true, evaluate existing editor generated crops
+                    if (!$definitionHasChanges || $this->evaluateExistingCropParameters($media, $imageDefinition, $mediaDefinitionInfo->cropParameters())) {
                         // If the Entry already has CropParameters, consider them
                         $this->editorCommand($media, $imageDefinition, $mediaDefinitionInfo->cropParameters());
-                    }
-                    // If there is no Entry at all or an Entry without Crop Parameters, proceed normally
-                    if (empty($mediaDefinitionInfo) || $mediaDefinitionInfo->cropParameters() === null) {
-                        $imageHandler = $this->imageHandler->withImageDefinition($imageDefinition);
-                        $imageHandler->process($media, $this->filesystem);
+
+                        $progressBar->advance();
+                        continue;
                     }
                 }
+
+                $imageHandler = $this->imageHandler->withImageDefinition($imageDefinition);
+                $imageHandler->process($media, $this->filesystem);
+                //printf("x2; %.2f\n", memory_get_usage(true) / 1024 / 1024);
+
             } catch (\Throwable $e) {
                 $output->writeln('Unable to process media ' . $media->filename() . ' (' . $media->id() . ') - ' . $e->getMessage());
+                \var_dump($e);
             }
 
             $progressBar->advance();
