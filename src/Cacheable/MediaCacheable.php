@@ -108,7 +108,7 @@ final class MediaCacheable implements CacheableInterface
      */
     public function cacheKey(): string
     {
-        return 'media.' . (string)$this->mediaId;
+        return 'media.' . $this->mediaId;
     }
 
     /**

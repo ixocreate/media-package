@@ -13,4 +13,4 @@ use Ixocreate\Filesystem\FilesystemConfigurator;
 use Ixocreate\Filesystem\Option\LocalOption;
 
 /** @var FilesystemConfigurator $filesystem */
-$filesystem->addStorage("media", new LocalOption(\getcwd() . '/data/'));
+$filesystem->addStorage('media', new LocalOption(\getcwd() . '/data/'));

@@ -13,7 +13,7 @@ use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Application\Uri\ApplicationUri;
 use Ixocreate\Cache\CacheableSubManager;
 use Ixocreate\Cache\CacheManager;
-use Ixocreate\Media\Cacheable\UrlVariantCacheable;
+use Ixocreate\Media\Cacheable\MediaCacheable;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
@@ -59,7 +59,7 @@ final class MediaUriFactory implements FactoryInterface
             $adminConfig,
             $delegatorSubManager,
             $container->get(CacheManager::class),
-            $container->get(CacheableSubManager::class)->get(UrlVariantCacheable::class)
+            $container->get(CacheableSubManager::class)->get(MediaCacheable::class)
         );
     }
 }

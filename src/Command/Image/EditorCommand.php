@@ -13,7 +13,6 @@ use Ixocreate\Cache\CacheManager;
 use Ixocreate\CommandBus\Command\AbstractCommand;
 use Ixocreate\Filesystem\FilesystemInterface;
 use Ixocreate\Media\Cacheable\MediaCacheable;
-use Ixocreate\Media\Cacheable\UrlVariantCacheable;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\MediaDefinitionInfo;
@@ -60,11 +59,6 @@ final class EditorCommand extends AbstractCommand
     private $cacheManager;
 
     /**
-     * @var UrlVariantCacheable
-     */
-    private $urlVariantCacheable;
-
-    /**
      * @var MediaCacheable
      */
     private $mediaCacheable;
@@ -74,20 +68,17 @@ final class EditorCommand extends AbstractCommand
      * @param MediaConfig $mediaConfig
      * @param MediaDefinitionInfoRepository $mediaDefinitionInfoRepository
      * @param CacheManager $cacheManager
-     * @param UrlVariantCacheable $urlVariantCacheable
      * @param MediaCacheable $mediaCacheable
      */
     public function __construct(
         MediaConfig $mediaConfig,
         MediaDefinitionInfoRepository $mediaDefinitionInfoRepository,
         CacheManager $cacheManager,
-        UrlVariantCacheable $urlVariantCacheable,
         MediaCacheable $mediaCacheable
     ) {
         $this->mediaConfig = $mediaConfig;
         $this->mediaDefinitionInfoRepository = $mediaDefinitionInfoRepository;
         $this->cacheManager = $cacheManager;
-        $this->urlVariantCacheable = $urlVariantCacheable;
         $this->mediaCacheable = $mediaCacheable;
     }
 
@@ -181,10 +172,7 @@ final class EditorCommand extends AbstractCommand
         }
 
         $this->mediaDefinitionInfoRepository->save($mediaDefinitionInfo);
-        $this->cacheManager->fetch(
-            $this->urlVariantCacheable->withMediaId((string)$this->media->id())->withImageDefinition($this->imageDefinition::serviceName()),
-            true
-        );
+
         $this->cacheManager->fetch(
             $this->mediaCacheable->withMediaId((string)$this->media->id()),
             true

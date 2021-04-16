@@ -12,12 +12,13 @@ namespace Ixocreate\Media\Uri;
 use Firebase\JWT\JWT;
 use Ixocreate\Admin\Config\AdminConfig;
 use Ixocreate\Cache\CacheManager;
-use Ixocreate\Media\Cacheable\UrlVariantCacheable;
+use Ixocreate\Media\Cacheable\MediaCacheable;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\Entity\Media;
 use Ixocreate\Media\Handler\ImageHandler;
 use Ixocreate\Media\Handler\MediaHandlerInterface;
 use Ixocreate\Media\Handler\MediaHandlerSubManager;
+use Ixocreate\Media\MediaInfo;
 use Symfony\Component\Asset\Packages;
 
 final class MediaUri
@@ -43,9 +44,9 @@ final class MediaUri
     private $cacheManager;
 
     /**
-     * @var UrlVariantCacheable
+     * @var MediaCacheable
      */
-    private $urlVariantCacheable;
+    private $mediaCacheable;
 
     /**
      * ApplicationUri constructor.
@@ -59,13 +60,13 @@ final class MediaUri
         AdminConfig $adminConfig,
         MediaHandlerSubManager $mediaHandlerSubManager,
         CacheManager $cacheManager,
-        UrlVariantCacheable $urlVariantCacheable
+        MediaCacheable $mediaCacheable
     ) {
         $this->packages = $packages;
         $this->adminConfig = $adminConfig;
         $this->mediaHandlerSubManager = $mediaHandlerSubManager;
         $this->cacheManager = $cacheManager;
-        $this->urlVariantCacheable = $urlVariantCacheable;
+        $this->mediaCacheable = $mediaCacheable;
     }
 
     /**
@@ -98,8 +99,9 @@ final class MediaUri
         }
 
         if ($media->publicStatus()) {
-            $suffix = $this->cacheManager->fetch($this->urlVariantCacheable->withImageDefinition($imageDefinition)->withMediaId((string) $media->id()));
-            return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition, $suffix);
+            /** @var MediaInfo $mediaInfo */
+            $mediaInfo = $this->cacheManager->fetch($this->mediaCacheable->withMedia($media));
+            return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition, $mediaInfo->urlVariant($imageDefinition));
         }
 
         return $this->generateStreamUrl($media, $imageDefinition);
@@ -128,7 +130,7 @@ final class MediaUri
             return $this->packages->getUrl($basePath . $filename);
         }
 
-        if ($suffix) {
+        if (!empty($suffix)) {
             return $this->packages->getUrl(MediaPaths::IMAGE_DEFINITION_PATH . $imageDefinition . '/' . $basePath . $filename . '?variant=' . $suffix);
         }
 

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Ixocreate\Media;
 
 use Ixocreate\Media\Entity\Media;
+use Ixocreate\Media\Entity\MediaDefinitionInfo;
 
 final class MediaInfo
 {
@@ -19,7 +20,7 @@ final class MediaInfo
     private $media;
 
     /**
-     * @var array
+     * @var MediaDefinitionInfo[]
      */
     private $definitionInfos;
 
@@ -42,5 +43,14 @@ final class MediaInfo
     public function definitionInfos(): array
     {
         return $this->definitionInfos;
+    }
+
+    public function urlVariant(string $imageDefinition)
+    {
+        if (\array_key_exists($imageDefinition, $this->definitionInfos)) {
+            return \mb_substr(\sha1($this->definitionInfos[$imageDefinition]->updatedAt()->format('c')), 0, 8);
+        }
+
+        return '';
     }
 }
