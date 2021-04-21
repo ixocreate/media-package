@@ -357,10 +357,6 @@ final class RegenerateDefinitionCommand extends Command implements CommandInterf
                 continue;
             }
 
-            if ((string)$media->id() !== 'a3ad9c72-4f01-4132-9838-640aa3ced5d9') {
-                continue;
-            }
-
             try {
                 // Check if there is already and Entry with MediaId + ImageDefinition
                 $mediaDefinitionInfo = $this->mediaDefinitionInfoRepository->findOneBy(['mediaId' => $media->id(), 'imageDefinition' => $imageDefinition::serviceName()]);
