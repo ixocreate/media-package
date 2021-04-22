@@ -144,6 +144,17 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
         return $this->uri->imageUrl($media, $imageDefinition);
     }
 
+    public function getWebpUrl(string $imageDefinition): string
+    {
+        /** @var Media $media */
+        $media = $this->value();
+        if (empty($media) || !($media instanceof Media)) {
+            return '';
+        }
+
+        return $this->uri->imageUrl($media, $imageDefinition, true);
+    }
+
     /**
      * @param string|null $imageDefinitionServiceName
      * @return int|null

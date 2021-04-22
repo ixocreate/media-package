@@ -86,7 +86,7 @@ final class MediaUri
      * @param string|null $imageDefinition
      * @return string
      */
-    public function imageUrl(Media $media, string $imageDefinition = null): string
+    public function imageUrl(Media $media, string $imageDefinition = null, bool $webP = false): string
     {
         /** @var MediaHandlerInterface $imageHandler */
         $imageHandler = $this->mediaHandlerSubManager->get(ImageHandler::serviceName());
@@ -101,7 +101,7 @@ final class MediaUri
         if ($media->publicStatus()) {
             /** @var MediaInfo $mediaInfo */
             $mediaInfo = $this->cacheManager->fetch($this->mediaCacheable->withMedia($media));
-            return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition, $mediaInfo->urlVariant($imageDefinition));
+            return $this->generateImageUrl($media->basePath(), $media->filename(), $imageDefinition, $mediaInfo->urlVariant($imageDefinition), $webP);
         }
 
         return $this->generateStreamUrl($media, $imageDefinition);
@@ -124,10 +124,14 @@ final class MediaUri
      * @param string|null $suffix
      * @return string
      */
-    public function generateImageUrl(string $basePath, string $filename, string $imageDefinition = null, string $suffix = null): string
+    public function generateImageUrl(string $basePath, string $filename, string $imageDefinition = null, string $suffix = null, bool $webP = false): string
     {
         if ($imageDefinition === null) {
             return $this->packages->getUrl($basePath . $filename);
+        }
+
+        if ($webP) {
+            $filename = \mb_substr($filename, 0, \mb_strlen(\pathinfo($filename, PATHINFO_EXTENSION)) * -1) . 'webp';
         }
 
         if (!empty($suffix)) {
