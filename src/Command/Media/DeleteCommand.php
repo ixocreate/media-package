@@ -109,13 +109,14 @@ class DeleteCommand extends AbstractCommand
      */
     private function deleteFolder($path)
     {
-        $content = $this->filesystem->listContents($path);
+        $directoryListing = $this->filesystem->listContents($path);
+        $directoryListingArray = $directoryListing->toArray();
 
-        if (\count($content) === 0) {
+        if (\count($directoryListingArray) === 0) {
             return;
         }
 
-        foreach ($content as $file) {
+        foreach ($directoryListingArray as $file) {
             $this->filesystem->delete($file['path']);
         }
 
