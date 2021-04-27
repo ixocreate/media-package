@@ -13,11 +13,14 @@ use Intervention\Image\Constraint;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Filesystem\Settings;
 use Ixocreate\Media\Config\MediaConfig;
 use Ixocreate\Media\Config\MediaPaths;
 use Ixocreate\Media\ImageDefinition\ImageDefinitionInterface;
 use Ixocreate\Media\MediaInterface;
+use League\Flysystem\Config;
 use League\Flysystem\FilesystemException;
+use League\Flysystem\Visibility;
 
 final class ImageProcessor
 {
@@ -115,17 +118,22 @@ final class ImageProcessor
         $file = $mediaPath . MediaPaths::IMAGE_DEFINITION_PATH . $this->imageDefinition->directory() . '/' . $this->media->basePath() . $this->media->filename();
         $extension = \pathinfo($file, PATHINFO_EXTENSION);
 
+        $visibility = $this->media->publicStatus() ? Visibility::PUBLIC : Visibility::PRIVATE;
+        $settings = new Settings([Config::OPTION_DIRECTORY_VISIBILITY => $visibility, Config::OPTION_VISIBILITY => $visibility]);
+
         $success = false;
         try {
             $this->filesystem->write(
                 $file,
-                (string)$image->encode($extension)
+                (string)$image->encode($extension),
+                $settings
             );
             if ($this->mediaConfig->generateWebP()) {
                 $webpFile = \mb_substr($file, 0, \mb_strlen($extension) * -1) . 'webp';
                 $this->filesystem->write(
                     $webpFile,
-                    (string)$image->encode('webp')
+                    (string)$image->encode('webp'),
+                    $settings
                 );
             }
             $success = true;

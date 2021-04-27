@@ -10,7 +10,10 @@ declare(strict_types=1);
 namespace Ixocreate\Media\CreateHandler;
 
 use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Filesystem\Settings;
 use Laminas\Diactoros\UploadedFile;
+use League\Flysystem\Config;
+use League\Flysystem\Visibility;
 
 final class UploadHandler implements MediaCreateHandlerInterface
 {
@@ -93,9 +96,13 @@ final class UploadHandler implements MediaCreateHandlerInterface
      * @param $destination
      * @return bool
      */
-    public function write(FilesystemInterface $storage, $destination)
+    public function write(FilesystemInterface $storage, $destination, bool $isPublic = true)
     {
         $this->mimeType();
-        return $storage->writeStream($destination, $this->stream);
+
+        $visibility = $isPublic ? Visibility::PUBLIC : Visibility::PRIVATE;
+        $storage->writeStream($destination, $this->stream, new Settings([Config::OPTION_DIRECTORY_VISIBILITY => $visibility, Config::OPTION_VISIBILITY => $visibility]));
+
+        return true;
     }
 }

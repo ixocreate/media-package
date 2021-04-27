@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace Ixocreate\Media\CreateHandler;
 
 use Ixocreate\Filesystem\FilesystemInterface;
+use Ixocreate\Filesystem\Settings;
+use League\Flysystem\Config;
+use League\Flysystem\Visibility;
 
 final class LocalFileHandler implements MediaCreateHandlerInterface
 {
@@ -77,10 +80,12 @@ final class LocalFileHandler implements MediaCreateHandlerInterface
      * @param $destination
      * @return bool
      */
-    public function write(FilesystemInterface $storage, $destination): bool
+    public function write(FilesystemInterface $storage, $destination, bool $isPublic = true): bool
     {
+        $visibility = $isPublic ? Visibility::PUBLIC : Visibility::PRIVATE;
+
         $f = \fopen($this->file, 'r');
-        $storage->writeStream($destination, $f);
+        $storage->writeStream($destination, $f, new Settings([Config::OPTION_DIRECTORY_VISIBILITY => $visibility, Config::OPTION_VISIBILITY => $visibility]));
 
         \fclose($f);
         if ($this->deleteAfterWrite) {
