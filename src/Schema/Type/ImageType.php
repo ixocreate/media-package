@@ -219,10 +219,8 @@ final class ImageType extends AbstractType implements DatabaseTypeInterface, Ele
 
     private function imageDefinitionInfos(): array
     {
-        if ($this->mediaType !== null && $this->imageDefinitionInfos === false) {
-            if ($this->imageDefinitionInfos === false) {
-                $this->imageDefinitionInfos = $this->mediaType->mediaInfo()->definitionInfos();
-            }
+        if ($this->imageDefinitionInfos === false) {
+            $this->imageDefinitionInfos = ($this->mediaType !== null) ? $this->mediaType->mediaInfo()->definitionInfos() : [];
         }
 
         return $this->imageDefinitionInfos;
